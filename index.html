@@ -186,11 +186,20 @@ body.pc-mode .main { padding: 24px 32px; }
   color: var(--text2); font-family: 'Nunito', sans-serif; transition: all 0.2s;
 }
 .kana-tab.active { background: var(--sky); border-color: var(--sky); color: white; }
-.kana-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; }
+.kana-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  direction: rtl;
+  gap: 8px;
+  overflow-x: auto;
+}
 .kana-cell {
   background: white; border: 2.5px solid var(--border);
   border-radius: 16px; padding: 12px 6px; text-align: center;
   cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  direction: ltr; min-width: 60px;
 }
 .kana-cell:hover { transform: scale(1.08); border-color: var(--sky); box-shadow: 0 4px 16px rgba(77,150,255,0.2); }
 .kana-cell.mastered {
@@ -418,8 +427,260 @@ body.pc-mode .main { padding: 24px 32px; }
   border-right: 10px solid transparent;
   border-top: 12px solid var(--pink-light);
 }
+/* ===== ENEMY BATTLE STAGE ===== */
+.enemy-stage {
+  background: linear-gradient(180deg, #1a0533 0%, #2d1060 50%, #1a2a5e 100%);
+  border-radius: 20px; padding: 16px 20px 20px;
+  border: 3px solid #7B2FBE; position: relative; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(123,47,190,0.4);
+}
+.enemy-stage::before {
+  content: '⭐🌟✨💫⭐🌟✨💫';
+  position: absolute; top: 6px; left: 0; right: 0;
+  font-size: 14px; letter-spacing: 28px; opacity: 0.12;
+  pointer-events: none; white-space: nowrap; overflow: hidden;
+}
+.enemy-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.enemy-name-badge {
+  background: rgba(255,255,255,0.15); color: white;
+  font-size: 13px; font-weight: 900; padding: 3px 12px; border-radius: 99px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+}
+.enemy-level-badge {
+  background: var(--yellow); color: #7a4f00;
+  font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 99px;
+}
+.dmg-label {
+  margin-left: auto; font-size: 22px; font-weight: 900;
+  color: var(--yellow); text-shadow: 0 0 12px rgba(255,211,61,0.8);
+  animation: dmgPop 0.8s ease forwards;
+}
+@keyframes dmgPop {
+  0%   { opacity:1; transform: scale(1.5) translateY(0); }
+  100% { opacity:0; transform: scale(1) translateY(-20px); }
+}
+.enemy-hp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.enemy-hp-wrap { flex: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+.enemy-hp-bar { height: 100%; background: linear-gradient(90deg, #FF3366, #FF9F43); border-radius: 99px; transition: width 0.5s ease; }
+.enemy-hp-num { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; white-space: nowrap; }
+.enemy-sprite {
+  font-size: 80px; text-align: center; display: block;
+  margin: 4px 0 8px; line-height: 1;
+  filter: drop-shadow(0 0 20px rgba(199,125,255,0.6));
+}
+.enemy-sprite.shake { animation: enemyShake 0.4s ease; }
+.enemy-sprite.defeated { animation: enemyDefeat 0.7s ease forwards; }
+@keyframes enemyShake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-8px) rotate(-5deg); }
+  40% { transform: translateX(8px) rotate(5deg); }
+  60% { transform: translateX(-5px) rotate(-3deg); }
+  80% { transform: translateX(5px) rotate(3deg); }
+}
+@keyframes enemyDefeat {
+  0%   { transform: scale(1) rotate(0deg); opacity:1; }
+  50%  { transform: scale(1.3) rotate(20deg); filter: brightness(3); }
+  100% { transform: scale(0) rotate(40deg); opacity:0; }
+}
+.enemy-status-msg { text-align: center; color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 700; margin-top: 6px; }
+.speak-btn {
+  background: none; border: none; cursor: pointer; font-size: 18px;
+  padding: 3px 5px; border-radius: 50%; transition: background 0.15s; vertical-align: middle;
+}
+.speak-btn:hover { background: var(--pink-pale); }
+/* ===== CONVERSATION GAME ===== */
+.convo-scene {
+  border-radius: 20px; overflow: hidden;
+  border: 3px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+}
+.convo-scene-header {
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 15px; color: white;
+}
+.convo-scene-body {
+  background: white; padding: 16px;
+  min-height: 240px; display: flex; flex-direction: column; gap: 12px;
+}
+.bubble-row { display: flex; align-items: flex-end; gap: 10px; }
+.bubble-row.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0; border: 2px solid var(--border);
+  background: var(--pink-pale);
+}
+.bubble {
+  max-width: 72%; padding: 10px 14px;
+  border-radius: 18px; font-size: 14px; line-height: 1.6;
+  position: relative;
+}
+.bubble.left {
+  background: var(--pink-pale); border: 1.5px solid var(--pink-light);
+  border-bottom-left-radius: 4px; color: var(--text);
+}
+.bubble.right {
+  background: linear-gradient(135deg, var(--sky), var(--purple));
+  color: white; border-bottom-right-radius: 4px;
+}
+.bubble .ja { font-size: 15px; font-weight: 700; display: block; }
+.bubble .en { font-size: 11px; opacity: 0.7; margin-top: 3px; display: block; }
+.bubble.right .en { color: rgba(255,255,255,0.8); }
+.bubble.hidden-ja .ja { filter: blur(4px); cursor: pointer; transition: filter 0.3s; }
+.bubble.hidden-ja .ja:hover { filter: blur(0); }
+.convo-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.convo-choice {
+  padding: 12px 16px; border-radius: 14px;
+  border: 2.5px solid var(--border); background: white;
+  cursor: pointer; font-size: 14px; font-weight: 700;
+  color: var(--text); text-align: left;
+  font-family: 'Nunito','Noto Sans JP',sans-serif;
+  transition: all 0.18s;
+}
+.convo-choice:hover { border-color: var(--purple); background: var(--purple-light); }
+.convo-choice.correct { background: var(--mint-light); border-color: var(--mint); color: #145c1f; }
+.convo-choice.wrong { background: #FFE0E0; border-color: #FF5252; color: #8B0000; }
+.convo-choice .ja-ans { display: block; font-size: 13px; }
+.convo-choice .en-ans { display: block; font-size: 11px; color: var(--text2); margin-top: 2px; }
+.convo-choice.correct .en-ans { color: #145c1f; }
+.convo-result {
+  padding: 14px 16px; border-radius: 14px;
+  font-size: 14px; font-weight: 700; margin-top: 4px;
+  display: none;
+}
+.convo-result.show { display: block; }
+.convo-result.ok { background: var(--mint-light); color: #145c1f; border: 2px solid var(--mint); }
+.convo-result.ng { background: #FFE0E0; color: #8B0000; border: 2px solid #FF5252; }
+.scene-selector {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;
+  margin-bottom: 20px;
+}
+.scene-card {
+  background: white; border: 2.5px solid var(--border);
+  border-radius: 18px; padding: 16px 12px; text-align: center;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.scene-card:hover { transform: translateY(-3px); border-color: var(--pink); box-shadow: var(--shadow-lg); }
+.scene-card.active-scene { border-color: var(--pink); background: var(--pink-pale); }
+.scene-card .sc-icon { font-size: 32px; margin-bottom: 6px; }
+.scene-card .sc-title { font-size: 13px; font-weight: 800; color: var(--text); }
+.scene-card .sc-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.convo-progress {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.convo-step-dots { display: flex; gap: 5px; }
+.convo-step-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--border); transition: background 0.3s;
+}
+.convo-step-dot.done { background: var(--mint); }
+.convo-step-dot.current { background: var(--pink); transform: scale(1.3); }
+.scene-complete {
+  text-align: center; padding: 28px 20px;
+  background: linear-gradient(135deg, var(--yellow-light), var(--mint-light));
+  border-radius: 20px; border: 2px solid var(--yellow);
+  display: none;
+}
+.scene-complete.show { display: block; }
+.scene-complete .big-emoji { font-size: 56px; margin-bottom: 10px; }
+.scene-complete h3 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+.scene-complete p { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
+.typing-indicator { display: flex; gap: 4px; padding: 10px 14px; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--pink-light); animation: typingBounce 1s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+.ad-slot {
+  background: white;
+  border: 2px dashed var(--pink-light);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 6px;
+  color: var(--text2); font-size: 12px; font-weight: 700;
+  position: relative; overflow: hidden;
+  min-height: 90px;
+}
+.ad-slot-banner { width: 100%; min-height: 90px; margin-bottom: 12px; }
+.ad-slot-rect { width: 100%; min-height: 250px; margin: 12px 0; }
+.ad-slot-label {
+  position: absolute; top: 6px; left: 10px;
+  font-size: 10px; color: var(--pink-light); font-weight: 700; letter-spacing: 1px;
+}
+.ad-slot ins { display: block; width: 100%; }
+
+/* ===== FOOTER ===== */
+.site-footer {
+  background: white; border-top: 3px solid var(--pink-light);
+  padding: 24px 20px; margin-top: 32px; text-align: center;
+}
+.footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+.footer-link {
+  font-size: 13px; font-weight: 700; color: var(--text2);
+  text-decoration: none; cursor: pointer;
+  transition: color 0.2s;
+}
+.footer-link:hover { color: var(--pink); }
+.footer-copy { font-size: 12px; color: var(--text2); }
+
+/* ===== CONTACT / PRIVACY PAGES ===== */
+.page-hero {
+  background: linear-gradient(135deg, var(--pink-pale), var(--purple-light));
+  border-radius: 20px; padding: 28px 24px; margin-bottom: 20px;
+  border: 2px solid var(--pink-light); text-align: center;
+}
+.page-hero h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.page-hero p { font-size: 14px; color: var(--text2); }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 12px 16px;
+  border: 2.5px solid var(--border); border-radius: 14px;
+  font-size: 14px; font-family: 'Nunito','Noto Sans JP',sans-serif;
+  color: var(--text); background: white; outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--pink); }
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-submit {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white; border: none; border-radius: 99px;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  font-family: 'Nunito',sans-serif; transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(255,107,157,0.35);
+}
+.form-submit:hover { transform: scale(1.02); }
+.form-success {
+  background: var(--mint-light); border: 2px solid var(--mint);
+  border-radius: 16px; padding: 20px; text-align: center;
+  display: none;
+}
+.form-success .icon { font-size: 40px; margin-bottom: 8px; }
+.form-success p { font-weight: 700; color: #1a5e22; }
+.privacy-section { margin-bottom: 24px; }
+.privacy-section h3 {
+  font-size: 16px; font-weight: 900; color: var(--pink);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--pink-light);
+}
+.privacy-section p { font-size: 14px; color: var(--text2); line-height: 1.8; margin-bottom: 8px; }
+.privacy-section ul { padding-left: 20px; }
+.privacy-section ul li { font-size: 14px; color: var(--text2); line-height: 2; }
+.updated-badge {
+  display: inline-block; background: var(--yellow-light); border: 1.5px solid var(--yellow);
+  border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700;
+  color: #8B6914; margin-bottom: 20px;
+}
 </style>
-</head>
 <body>
 
 <!-- KANJI POPUP -->
@@ -460,6 +721,18 @@ body.pc-mode .main { padding: 24px 32px; }
   <button class="nav-btn" onclick="showSec('quest',this)">📜 クエスト</button>
   <button class="nav-btn" onclick="showSec('flashcard',this)">🃏 カード</button>
   <button class="nav-btn" onclick="showSec('battle',this)">⚔️ バトル</button>
+  <button class="nav-btn" onclick="showSec('convo',this)">💬 会話ゲーム</button>
+  <button class="nav-btn" onclick="showSec('contact',this)">✉️ お問い合わせ</button>
+  <button class="nav-btn" onclick="showSec('privacy',this)">🔒 プライバシー</button>
+</div>
+
+<!-- AD BANNER TOP (レスポンシブ横長) -->
+<div class="ad-slot ad-slot-banner" style="margin:8px 24px 0; max-width:860px; margin-left:auto; margin-right:auto;">
+  <span class="ad-slot-label">ADVERTISEMENT</span>
+  <!-- Google AdSense ここに貼る ↓ -->
+  <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+  <span>📢 広告スペース（横長バナー）</span>
+  <span style="font-size:10px;opacity:0.6;">728×90 / レスポンシブ対応</span>
 </div>
 
 <!-- MAIN -->
@@ -485,7 +758,7 @@ body.pc-mode .main { padding: 24px 32px; }
       <div class="dash-card" onclick="showSec('quest',document.querySelectorAll('.nav-btn')[2])">
         <div class="icon">📜</div>
         <div class="title"><span class="k" data-k="単語">単語</span>クエスト</div>
-        <div class="sub">30 <span class="k" data-k="単語">単語</span>を<span class="k" data-k="習得">習得</span></div>
+        <div class="sub">500 <span class="k" data-k="単語">単語</span>を<span class="k" data-k="習得">習得</span></div>
         <div class="progress-mini"><div class="progress-mini-fill" id="dc-vocab-fill" style="width:0%;background:linear-gradient(90deg,#FFD93D,#FF9F43)"></div></div>
       </div>
       <div class="dash-card" onclick="showSec('flashcard',document.querySelectorAll('.nav-btn')[3])">
@@ -500,8 +773,22 @@ body.pc-mode .main { padding: 24px 32px; }
         <div class="sub">クイズで<span class="k" data-k="敵">敵</span>を<span class="k" data-k="倒">倒</span>す！</div>
         <div class="progress-mini"><div class="progress-mini-fill" style="width:30%;background:linear-gradient(90deg,#FF6B9D,#FF3366)"></div></div>
       </div>
+      <div class="dash-card" onclick="showSec('convo',document.querySelectorAll('.nav-btn')[5])">
+        <div class="icon">💬</div>
+        <div class="title">会話ゲーム</div>
+        <div class="sub">ラーメン・電車・カラオケ…</div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:0%;background:linear-gradient(90deg,#C77DFF,#4D96FF)"></div></div>
+      </div>
     </div>
     <button class="btn btn-primary" onclick="showSec('battle',document.querySelectorAll('.nav-btn')[4])" style="width:100%;font-size:17px;padding:16px;">⚔️ バトルを<span class="k" data-k="始">始</span>める！</button>
+
+    <!-- AD RECT (記事内 300×250) -->
+    <div class="ad-slot ad-slot-rect" style="margin-top:20px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="rectangle"></ins> -->
+      <span>📢 広告スペース（レクタングル）</span>
+      <span style="font-size:10px;opacity:0.6;">300×250</span>
+    </div>
   </div>
 
   <!-- KANA -->
@@ -518,8 +805,6 @@ body.pc-mode .main { padding: 24px 32px; }
 
   <!-- QUEST -->
   <div id="sec-quest" class="section">
-    <h2 style="font-size:20px;font-weight:900;margin-bottom:16px;">📜 <span class="k" data-k="単語">単語</span>クエスト</h2>
-    <div class="quest-list" id="quest-list"></div>
   </div>
 
   <!-- FLASHCARD -->
@@ -553,31 +838,187 @@ body.pc-mode .main { padding: 24px 32px; }
   <!-- BATTLE -->
   <div id="sec-battle" class="section">
     <div class="battle-score-row">
-      <div class="battle-stat"><div class="num" id="b-score">0</div><div class="lab">⭐ <span class="k" data-k="正解">正解</span></div></div>
+      <div class="battle-stat"><div class="num" id="b-score">0</div><div class="lab">⭐ 正解</div></div>
       <div class="battle-stat"><div class="num" id="b-streak">0</div><div class="lab">🔥 連続</div></div>
-      <div class="battle-stat"><div class="num" id="b-total">0</div><div class="lab">📊 <span class="k" data-k="問題">問題</span></div></div>
+      <div class="battle-stat"><div class="num" id="b-total">0</div><div class="lab">📊 問題</div></div>
     </div>
-    <div class="battle-arena">
-      <div class="battle-instruction" id="b-inst"><span class="k" data-k="読">読</span>み<span class="k" data-k="方">方</span>を<span class="k" data-k="選">選</span>んでください</div>
+
+    <!-- ENEMY STAGE -->
+    <div class="enemy-stage" id="enemy-stage">
+      <div class="enemy-name-row">
+        <span class="enemy-name-badge" id="enemy-name-badge">???</span>
+        <span class="enemy-level-badge" id="enemy-level-badge">Lv.1</span>
+        <span class="dmg-label" id="dmg-label" style="display:none"></span>
+      </div>
+      <div class="enemy-hp-row">
+        <span style="font-size:11px;color:rgba(255,255,255,0.7);">Enemy HP</span>
+        <div class="enemy-hp-wrap"><div class="enemy-hp-bar" id="enemy-hp-bar" style="width:100%"></div></div>
+        <span class="enemy-hp-num" id="enemy-hp-num">100/100</span>
+      </div>
+      <div class="enemy-sprite" id="enemy-sprite">🐉</div>
+      <div class="enemy-status-msg" id="enemy-status-msg">どんな読み方？攻撃せよ！</div>
+    </div>
+
+    <div class="battle-arena" style="margin-top:12px;">
+      <div class="battle-instruction" id="b-inst">読み方を選んでください</div>
       <div class="battle-question" id="b-question">？</div>
       <div class="battle-timer-wrap">
-        <div class="battle-timer" id="b-timer">⏱ <span class="k" data-k="準備">準備</span>中...</div>
+        <div class="battle-timer" id="b-timer">⏱ 準備中...</div>
       </div>
       <div class="battle-hp">
-        <span class="hp-label">❤️ HP</span>
+        <span class="hp-label">❤️ 自分HP</span>
         <div class="hp-bar-wrap"><div class="hp-bar" id="b-hp" style="width:100%"></div></div>
         <span style="font-size:12px;color:rgba(255,255,255,0.6);" id="b-hp-num">3/3</span>
       </div>
     </div>
     <div class="options-grid" id="b-options"></div>
     <div style="text-align:center;margin-top:16px;">
-      <button class="btn btn-outline" onclick="newBattle()">🔄 次の<span class="k" data-k="問題">問題</span></button>
+      <button class="btn btn-outline" onclick="newBattle()">🔄 次の問題</button>
     </div>
   </div>
 
-</div>
+  <!-- CONVERSATION GAME -->
+  <div id="sec-convo" class="section">
+    <div class="page-hero" style="margin-bottom:16px;">
+      <div style="font-size:36px;margin-bottom:6px;">💬</div>
+      <h2>会話ゲーム</h2>
+      <p>リアルな状況で日本語会話を練習しよう！シーンを選んでスタート！</p>
+    </div>
+    <div class="scene-selector" id="scene-selector"></div>
+    <div id="convo-game" style="display:none">
+      <div class="convo-progress">
+        <div class="convo-step-dots" id="convo-dots"></div>
+        <span style="font-size:12px;color:var(--text2);font-weight:700;" id="convo-step-label">シーン 1/5</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--orange);font-weight:800;" id="convo-score-label">⭐ 0pts</span>
+      </div>
+      <div class="convo-scene" id="convo-scene-box">
+        <div class="convo-scene-header" id="convo-scene-header"></div>
+        <div class="convo-scene-body" id="convo-scene-body"></div>
+      </div>
+      <div class="convo-result" id="convo-result"></div>
+      <div class="convo-choices" id="convo-choices"></div>
+      <div class="scene-complete" id="scene-complete">
+        <div class="big-emoji" id="sc-emoji">🎊</div>
+        <h3 id="sc-title">シーンクリア！</h3>
+        <p id="sc-msg">全問正解！</p>
+        <button class="btn btn-primary" onclick="nextConvoScene()" style="margin:0 auto;display:block;">次のシーンへ ➡️</button>
+      </div>
+    </div>
+  </div>
 
-<!-- LEVEL UP POPUP -->
+  <!-- CONTACT -->
+  <div id="sec-contact" class="section">
+    <div class="page-hero">
+      <div style="font-size:40px;margin-bottom:8px;">✉️</div>
+      <h2>お問い合わせ</h2>
+      <p>ご質問・ご意見・バグ報告などお気軽にどうぞ！</p>
+    </div>
+    <!-- AD -->
+    <div class="ad-slot ad-slot-banner" style="margin-bottom:16px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" ...></ins> -->
+      <span>📢 広告スペース</span>
+    </div>
+    <div class="card" style="background:white;border:2px solid var(--border);border-radius:20px;padding:24px;">
+      <div id="contact-form">
+        <div class="form-group">
+          <label class="form-label">📛 お名前</label>
+          <input class="form-input" id="cf-name" type="text" placeholder="例：山田 太郎">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📧 メールアドレス</label>
+          <input class="form-input" id="cf-email" type="email" placeholder="例：example@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📋 お問い合わせ種別</label>
+          <select class="form-select" id="cf-type">
+            <option value="">選択してください</option>
+            <option value="bug">🐛 バグ報告</option>
+            <option value="suggest">💡 機能のご提案</option>
+            <option value="content">📖 コンテンツについて</option>
+            <option value="other">📝 その他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">💬 メッセージ</label>
+          <textarea class="form-textarea" id="cf-msg" placeholder="お問い合わせ内容をご記入ください..."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitContact()">✨ 送信する</button>
+        <p style="font-size:11px;color:var(--text2);text-align:center;margin-top:12px;">※このフォームはデモです。実際の送信にはFormspreeやEmailJS等をご利用ください。</p>
+      </div>
+      <div class="form-success" id="contact-success">
+        <div class="icon">🎉</div>
+        <p>お問い合わせありがとうございます！<br>3〜5営業日以内にご返信いたします。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY -->
+  <div id="sec-privacy" class="section">
+    <div class="page-hero">
+      <div style="font-size:40px;margin-bottom:8px;">🔒</div>
+      <h2>プライバシーポリシー</h2>
+      <p>個人情報の取り扱いについて</p>
+    </div>
+    <div class="updated-badge">📅 最終更新：2026年5月</div>
+    <!-- AD -->
+    <div class="ad-slot ad-slot-banner" style="margin-bottom:20px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" ...></ins> -->
+      <span>📢 広告スペース</span>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:20px;padding:24px;">
+      <div class="privacy-section">
+        <h3>1. 基本方針</h3>
+        <p>にほんごBOUKEN（以下「当サイト」）は、ユーザーの個人情報保護を重要な責務と認識し、適切な管理・保護に努めます。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>2. 収集する情報</h3>
+        <p>当サイトでは、以下の情報を収集する場合があります：</p>
+        <ul>
+          <li>お問い合わせフォームから送信された氏名・メールアドレス・メッセージ</li>
+          <li>アクセス解析のためのCookieおよびIPアドレス</li>
+          <li>Google AdSenseによる広告配信のための情報</li>
+        </ul>
+      </div>
+      <div class="privacy-section">
+        <h3>3. Google AdSenseについて</h3>
+        <p>当サイトはGoogle AdSenseを利用しています。Googleはユーザーの興味に応じた広告を表示するためにCookieを使用することがあります。</p>
+        <p>Cookieを無効にする方法や、GoogleによるCookieの使用については<a href="https://policies.google.com/technologies/ads" target="_blank" style="color:var(--pink);">Googleの広告ポリシー</a>をご確認ください。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>4. Google Analyticsについて</h3>
+        <p>当サイトはアクセス解析にGoogle Analyticsを使用する場合があります。収集されるデータは匿名であり、個人を特定するものではありません。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>5. 情報の第三者提供</h3>
+        <p>当サイトは、法令に基づく場合を除き、収集した個人情報を第三者に提供することはありません。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>6. お問い合わせ</h3>
+        <p>プライバシーポリシーに関するご質問は、<span style="color:var(--pink);cursor:pointer;font-weight:700;" onclick="showSec('contact',document.querySelectorAll('.nav-btn')[5])">お問い合わせページ</span>よりご連絡ください。</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <!-- AD FOOTER -->
+  <div class="ad-slot ad-slot-banner" style="max-width:860px;margin:0 auto 20px;">
+    <span class="ad-slot-label">ADVERTISEMENT</span>
+    <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+    <span>📢 フッター広告スペース</span>
+    <span style="font-size:10px;opacity:0.6;">728×90 / レスポンシブ</span>
+  </div>
+  <div class="footer-links">
+    <span class="footer-link" onclick="showSec('dashboard',document.querySelectorAll('.nav-btn')[0])">🏠 ホーム</span>
+    <span class="footer-link" onclick="showSec('contact',document.querySelectorAll('.nav-btn')[5])">✉️ お問い合わせ</span>
+    <span class="footer-link" onclick="showSec('privacy',document.querySelectorAll('.nav-btn')[6])">🔒 プライバシーポリシー</span>
+  </div>
+  <div class="footer-copy">© 2026 にほんごBOUKEN 🌸 All rights reserved.</div>
+</footer>
 <div class="popup-overlay" id="popup">
   <div class="popup-box">
     <div class="popup-emoji">🎉</div>
@@ -590,16 +1031,28 @@ body.pc-mode .main { padding: 24px 32px; }
 <script>
 // ===== DATA =====
 const hiragana = [
+  // あ行
   ['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],
+  // か行
   ['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],
+  // さ行
   ['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],
+  // た行
   ['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],
+  // な行
   ['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],
+  // は行
   ['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],
+  // ま行
   ['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],
-  ['や','ya'],['ゆ','yu'],['よ','yo'],
+  // や行（空白セルで揃える）
+  ['や','ya'],['',''],['ゆ','yu'],['',''],['よ','yo'],
+  // ら行
   ['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],
-  ['わ','wa'],['を','wo'],['ん','n']
+  // わ行
+  ['わ','wa'],['',''],['',''],['',''],['を','wo'],
+  // ん（単独）
+  ['ん','n'],['',''],['',''],['',''],['',''],
 ];
 const katakana = [
   ['ア','a'],['イ','i'],['ウ','u'],['エ','e'],['オ','o'],
@@ -609,42 +1062,474 @@ const katakana = [
   ['ナ','na'],['ニ','ni'],['ヌ','nu'],['ネ','ne'],['ノ','no'],
   ['ハ','ha'],['ヒ','hi'],['フ','fu'],['ヘ','he'],['ホ','ho'],
   ['マ','ma'],['ミ','mi'],['ム','mu'],['メ','me'],['モ','mo'],
-  ['ヤ','ya'],['ユ','yu'],['ヨ','yo'],
+  ['ヤ','ya'],['',''],['ユ','yu'],['',''],['ヨ','yo'],
   ['ラ','ra'],['リ','ri'],['ル','ru'],['レ','re'],['ロ','ro'],
-  ['ワ','wa'],['ヲ','wo'],['ン','n']
+  ['ワ','wa'],['',''],['',''],['',''],['ヲ','wo'],
+  ['ン','n'],['',''],['',''],['',''],['',''],
 ];
 const vocab = [
-  {ja:'水',rd:'みず',en:'water',icon:'💧'},
-  {ja:'食べる',rd:'たべる',en:'食べる (to eat)',icon:'🍜'},
-  {ja:'飲む',rd:'のむ',en:'飲む (to drink)',icon:'🥤'},
-  {ja:'行く',rd:'いく',en:'行く (to go)',icon:'🚶'},
-  {ja:'来る',rd:'くる',en:'来る (to come)',icon:'🏃'},
-  {ja:'見る',rd:'みる',en:'見る (to see)',icon:'👀'},
-  {ja:'聞く',rd:'きく',en:'聞く (to listen)',icon:'👂'},
-  {ja:'話す',rd:'はなす',en:'話す (to speak)',icon:'💬'},
-  {ja:'読む',rd:'よむ',en:'読む (to read)',icon:'📚'},
-  {ja:'書く',rd:'かく',en:'書く (to write)',icon:'✏️'},
-  {ja:'猫',rd:'ねこ',en:'cat',icon:'🐱'},
-  {ja:'犬',rd:'いぬ',en:'dog',icon:'🐶'},
-  {ja:'魚',rd:'さかな',en:'fish',icon:'🐟'},
-  {ja:'鳥',rd:'とり',en:'bird',icon:'🐦'},
-  {ja:'花',rd:'はな',en:'flower',icon:'🌸'},
-  {ja:'木',rd:'き',en:'tree',icon:'🌳'},
-  {ja:'山',rd:'やま',en:'mountain',icon:'🗻'},
-  {ja:'川',rd:'かわ',en:'river',icon:'🏞️'},
-  {ja:'海',rd:'うみ',en:'sea',icon:'🌊'},
-  {ja:'空',rd:'そら',en:'sky',icon:'☁️'},
-  {ja:'友達',rd:'ともだち',en:'friend',icon:'👫'},
-  {ja:'先生',rd:'せんせい',en:'teacher',icon:'👩‍🏫'},
-  {ja:'学校',rd:'がっこう',en:'school',icon:'🏫'},
-  {ja:'本',rd:'ほん',en:'book',icon:'📖'},
-  {ja:'電車',rd:'でんしゃ',en:'train',icon:'🚃'},
-  {ja:'駅',rd:'えき',en:'station',icon:'🚉'},
-  {ja:'時間',rd:'じかん',en:'time',icon:'⏰'},
-  {ja:'今日',rd:'きょう',en:'today',icon:'📅'},
-  {ja:'明日',rd:'あした',en:'tomorrow',icon:'🌅'},
-  {ja:'昨日',rd:'きのう',en:'yesterday',icon:'🌇'},
+  // N5 基本
+  {ja:'水',rd:'みず',en:'water',icon:'💧',lvl:'N5'},
+  {ja:'火',rd:'ひ',en:'fire',icon:'🔥',lvl:'N5'},
+  {ja:'風',rd:'かぜ',en:'wind',icon:'🌬️',lvl:'N5'},
+  {ja:'土',rd:'つち',en:'earth/soil',icon:'🟫',lvl:'N5'},
+  {ja:'木',rd:'き',en:'tree',icon:'🌳',lvl:'N5'},
+  {ja:'花',rd:'はな',en:'flower',icon:'🌸',lvl:'N5'},
+  {ja:'草',rd:'くさ',en:'grass',icon:'🌿',lvl:'N5'},
+  {ja:'山',rd:'やま',en:'mountain',icon:'🗻',lvl:'N5'},
+  {ja:'川',rd:'かわ',en:'river',icon:'🏞️',lvl:'N5'},
+  {ja:'海',rd:'うみ',en:'sea',icon:'🌊',lvl:'N5'},
+  {ja:'空',rd:'そら',en:'sky',icon:'☁️',lvl:'N5'},
+  {ja:'太陽',rd:'たいよう',en:'sun',icon:'☀️',lvl:'N5'},
+  {ja:'月',rd:'つき',en:'moon',icon:'🌙',lvl:'N5'},
+  {ja:'星',rd:'ほし',en:'star',icon:'⭐',lvl:'N5'},
+  {ja:'雨',rd:'あめ',en:'rain',icon:'🌧️',lvl:'N5'},
+  {ja:'雪',rd:'ゆき',en:'snow',icon:'❄️',lvl:'N5'},
+  {ja:'猫',rd:'ねこ',en:'cat',icon:'🐱',lvl:'N5'},
+  {ja:'犬',rd:'いぬ',en:'dog',icon:'🐶',lvl:'N5'},
+  {ja:'魚',rd:'さかな',en:'fish',icon:'🐟',lvl:'N5'},
+  {ja:'鳥',rd:'とり',en:'bird',icon:'🐦',lvl:'N5'},
+  {ja:'牛',rd:'うし',en:'cow',icon:'🐄',lvl:'N5'},
+  {ja:'馬',rd:'うま',en:'horse',icon:'🐴',lvl:'N5'},
+  {ja:'豚',rd:'ぶた',en:'pig',icon:'🐷',lvl:'N5'},
+  {ja:'ウサギ',rd:'うさぎ',en:'rabbit',icon:'🐰',lvl:'N5'},
+  {ja:'食べる',rd:'たべる',en:'to eat',icon:'🍜',lvl:'N5'},
+  {ja:'飲む',rd:'のむ',en:'to drink',icon:'🥤',lvl:'N5'},
+  {ja:'行く',rd:'いく',en:'to go',icon:'🚶',lvl:'N5'},
+  {ja:'来る',rd:'くる',en:'to come',icon:'🏃',lvl:'N5'},
+  {ja:'見る',rd:'みる',en:'to see',icon:'👀',lvl:'N5'},
+  {ja:'聞く',rd:'きく',en:'to listen',icon:'👂',lvl:'N5'},
+  {ja:'話す',rd:'はなす',en:'to speak',icon:'💬',lvl:'N5'},
+  {ja:'読む',rd:'よむ',en:'to read',icon:'📚',lvl:'N5'},
+  {ja:'書く',rd:'かく',en:'to write',icon:'✏️',lvl:'N5'},
+  {ja:'買う',rd:'かう',en:'to buy',icon:'🛍️',lvl:'N5'},
+  {ja:'売る',rd:'うる',en:'to sell',icon:'💰',lvl:'N5'},
+  {ja:'寝る',rd:'ねる',en:'to sleep',icon:'😴',lvl:'N5'},
+  {ja:'起きる',rd:'おきる',en:'to wake up',icon:'⏰',lvl:'N5'},
+  {ja:'立つ',rd:'たつ',en:'to stand',icon:'🧍',lvl:'N5'},
+  {ja:'座る',rd:'すわる',en:'to sit',icon:'🪑',lvl:'N5'},
+  {ja:'走る',rd:'はしる',en:'to run',icon:'🏃',lvl:'N5'},
+  {ja:'歩く',rd:'あるく',en:'to walk',icon:'🚶',lvl:'N5'},
+  {ja:'泳ぐ',rd:'およぐ',en:'to swim',icon:'🏊',lvl:'N5'},
+  {ja:'飛ぶ',rd:'とぶ',en:'to fly/jump',icon:'✈️',lvl:'N5'},
+  {ja:'友達',rd:'ともだち',en:'friend',icon:'👫',lvl:'N5'},
+  {ja:'先生',rd:'せんせい',en:'teacher',icon:'👩‍🏫',lvl:'N5'},
+  {ja:'学生',rd:'がくせい',en:'student',icon:'🎒',lvl:'N5'},
+  {ja:'学校',rd:'がっこう',en:'school',icon:'🏫',lvl:'N5'},
+  {ja:'本',rd:'ほん',en:'book',icon:'📖',lvl:'N5'},
+  {ja:'電車',rd:'でんしゃ',en:'train',icon:'🚃',lvl:'N5'},
+  {ja:'駅',rd:'えき',en:'station',icon:'🚉',lvl:'N5'},
+  {ja:'時間',rd:'じかん',en:'time',icon:'⏰',lvl:'N5'},
+  {ja:'今日',rd:'きょう',en:'today',icon:'📅',lvl:'N5'},
+  {ja:'明日',rd:'あした',en:'tomorrow',icon:'🌅',lvl:'N5'},
+  {ja:'昨日',rd:'きのう',en:'yesterday',icon:'🌇',lvl:'N5'},
+  {ja:'朝',rd:'あさ',en:'morning',icon:'🌄',lvl:'N5'},
+  {ja:'昼',rd:'ひる',en:'noon/daytime',icon:'🌞',lvl:'N5'},
+  {ja:'夜',rd:'よる',en:'night',icon:'🌃',lvl:'N5'},
+  {ja:'父',rd:'ちち',en:'father (own)',icon:'👨',lvl:'N5'},
+  {ja:'母',rd:'はは',en:'mother (own)',icon:'👩',lvl:'N5'},
+  {ja:'兄',rd:'あに',en:'older brother',icon:'👦',lvl:'N5'},
+  {ja:'姉',rd:'あね',en:'older sister',icon:'👧',lvl:'N5'},
+  {ja:'弟',rd:'おとうと',en:'younger brother',icon:'👶',lvl:'N5'},
+  {ja:'妹',rd:'いもうと',en:'younger sister',icon:'👶',lvl:'N5'},
+  {ja:'家族',rd:'かぞく',en:'family',icon:'👪',lvl:'N5'},
+  {ja:'家',rd:'いえ',en:'house/home',icon:'🏠',lvl:'N5'},
+  {ja:'部屋',rd:'へや',en:'room',icon:'🛋️',lvl:'N5'},
+  {ja:'ドア',rd:'どあ',en:'door',icon:'🚪',lvl:'N5'},
+  {ja:'窓',rd:'まど',en:'window',icon:'🪟',lvl:'N5'},
+  {ja:'机',rd:'つくえ',en:'desk',icon:'🪑',lvl:'N5'},
+  {ja:'椅子',rd:'いす',en:'chair',icon:'🪑',lvl:'N5'},
+  {ja:'ベッド',rd:'べっど',en:'bed',icon:'🛏️',lvl:'N5'},
+  {ja:'食べ物',rd:'たべもの',en:'food',icon:'🍱',lvl:'N5'},
+  {ja:'ご飯',rd:'ごはん',en:'rice/meal',icon:'🍚',lvl:'N5'},
+  {ja:'パン',rd:'ぱん',en:'bread',icon:'🍞',lvl:'N5'},
+  {ja:'肉',rd:'にく',en:'meat',icon:'🥩',lvl:'N5'},
+  {ja:'野菜',rd:'やさい',en:'vegetables',icon:'🥦',lvl:'N5'},
+  {ja:'果物',rd:'くだもの',en:'fruit',icon:'🍎',lvl:'N5'},
+  {ja:'卵',rd:'たまご',en:'egg',icon:'🥚',lvl:'N5'},
+  {ja:'牛乳',rd:'ぎゅうにゅう',en:'milk',icon:'🥛',lvl:'N5'},
+  {ja:'お茶',rd:'おちゃ',en:'tea',icon:'🍵',lvl:'N5'},
+  {ja:'コーヒー',rd:'こーひー',en:'coffee',icon:'☕',lvl:'N5'},
+  {ja:'ジュース',rd:'じゅーす',en:'juice',icon:'🧃',lvl:'N5'},
+  {ja:'服',rd:'ふく',en:'clothes',icon:'👕',lvl:'N5'},
+  {ja:'靴',rd:'くつ',en:'shoes',icon:'👟',lvl:'N5'},
+  {ja:'帽子',rd:'ぼうし',en:'hat/cap',icon:'🧢',lvl:'N5'},
+  {ja:'鞄',rd:'かばん',en:'bag',icon:'👜',lvl:'N5'},
+  {ja:'財布',rd:'さいふ',en:'wallet',icon:'👛',lvl:'N5'},
+  {ja:'眼鏡',rd:'めがね',en:'glasses',icon:'👓',lvl:'N5'},
+  {ja:'時計',rd:'とけい',en:'clock/watch',icon:'⌚',lvl:'N5'},
+  {ja:'電話',rd:'でんわ',en:'telephone',icon:'📞',lvl:'N5'},
+  {ja:'車',rd:'くるま',en:'car',icon:'🚗',lvl:'N5'},
+  {ja:'自転車',rd:'じてんしゃ',en:'bicycle',icon:'🚲',lvl:'N5'},
+  {ja:'バス',rd:'ばす',en:'bus',icon:'🚌',lvl:'N5'},
+  {ja:'飛行機',rd:'ひこうき',en:'airplane',icon:'✈️',lvl:'N5'},
+  {ja:'お金',rd:'おかね',en:'money',icon:'💴',lvl:'N5'},
+  {ja:'店',rd:'みせ',en:'shop/store',icon:'🏪',lvl:'N5'},
+  {ja:'病院',rd:'びょういん',en:'hospital',icon:'🏥',lvl:'N5'},
+  {ja:'銀行',rd:'ぎんこう',en:'bank',icon:'🏦',lvl:'N5'},
+  {ja:'郵便局',rd:'ゆうびんきょく',en:'post office',icon:'📮',lvl:'N5'},
+  {ja:'公園',rd:'こうえん',en:'park',icon:'🌳',lvl:'N5'},
+  {ja:'図書館',rd:'としょかん',en:'library',icon:'📚',lvl:'N5'},
+  {ja:'大きい',rd:'おおきい',en:'big/large',icon:'🔆',lvl:'N5'},
+  {ja:'小さい',rd:'ちいさい',en:'small/little',icon:'🔅',lvl:'N5'},
+  {ja:'長い',rd:'ながい',en:'long',icon:'📏',lvl:'N5'},
+  {ja:'短い',rd:'みじかい',en:'short',icon:'📏',lvl:'N5'},
+  {ja:'高い',rd:'たかい',en:'tall/expensive',icon:'⬆️',lvl:'N5'},
+  {ja:'低い',rd:'ひくい',en:'low',icon:'⬇️',lvl:'N5'},
+  {ja:'新しい',rd:'あたらしい',en:'new',icon:'✨',lvl:'N5'},
+  {ja:'古い',rd:'ふるい',en:'old',icon:'🏚️',lvl:'N5'},
+  {ja:'良い',rd:'よい',en:'good',icon:'👍',lvl:'N5'},
+  {ja:'悪い',rd:'わるい',en:'bad',icon:'👎',lvl:'N5'},
+  {ja:'速い',rd:'はやい',en:'fast',icon:'⚡',lvl:'N5'},
+  {ja:'遅い',rd:'おそい',en:'slow',icon:'🐢',lvl:'N5'},
+  {ja:'暑い',rd:'あつい',en:'hot (weather)',icon:'🌡️',lvl:'N5'},
+  {ja:'寒い',rd:'さむい',en:'cold (weather)',icon:'🥶',lvl:'N5'},
+  {ja:'熱い',rd:'あつい',en:'hot (touch)',icon:'🔥',lvl:'N5'},
+  {ja:'冷たい',rd:'つめたい',en:'cold (touch)',icon:'🧊',lvl:'N5'},
+  {ja:'甘い',rd:'あまい',en:'sweet',icon:'🍬',lvl:'N5'},
+  {ja:'辛い',rd:'からい',en:'spicy',icon:'🌶️',lvl:'N5'},
+  {ja:'一',rd:'いち',en:'one',icon:'1️⃣',lvl:'N5'},
+  {ja:'二',rd:'に',en:'two',icon:'2️⃣',lvl:'N5'},
+  {ja:'三',rd:'さん',en:'three',icon:'3️⃣',lvl:'N5'},
+  {ja:'四',rd:'し/よん',en:'four',icon:'4️⃣',lvl:'N5'},
+  {ja:'五',rd:'ご',en:'five',icon:'5️⃣',lvl:'N5'},
+  {ja:'六',rd:'ろく',en:'six',icon:'6️⃣',lvl:'N5'},
+  {ja:'七',rd:'しち/なな',en:'seven',icon:'7️⃣',lvl:'N5'},
+  {ja:'八',rd:'はち',en:'eight',icon:'8️⃣',lvl:'N5'},
+  {ja:'九',rd:'く/きゅう',en:'nine',icon:'9️⃣',lvl:'N5'},
+  {ja:'十',rd:'じゅう',en:'ten',icon:'🔟',lvl:'N5'},
+  {ja:'百',rd:'ひゃく',en:'hundred',icon:'💯',lvl:'N5'},
+  {ja:'千',rd:'せん',en:'thousand',icon:'🔢',lvl:'N5'},
+  // N4
+  {ja:'旅行',rd:'りょこう',en:'travel',icon:'✈️',lvl:'N4'},
+  {ja:'準備',rd:'じゅんび',en:'preparation',icon:'📋',lvl:'N4'},
+  {ja:'説明',rd:'せつめい',en:'explanation',icon:'📢',lvl:'N4'},
+  {ja:'練習',rd:'れんしゅう',en:'practice',icon:'💪',lvl:'N4'},
+  {ja:'試験',rd:'しけん',en:'exam/test',icon:'📝',lvl:'N4'},
+  {ja:'合格',rd:'ごうかく',en:'passing (exam)',icon:'🎉',lvl:'N4'},
+  {ja:'失敗',rd:'しっぱい',en:'failure',icon:'😓',lvl:'N4'},
+  {ja:'成功',rd:'せいこう',en:'success',icon:'🏆',lvl:'N4'},
+  {ja:'約束',rd:'やくそく',en:'promise',icon:'🤝',lvl:'N4'},
+  {ja:'連絡',rd:'れんらく',en:'contact/communication',icon:'📱',lvl:'N4'},
+  {ja:'確認',rd:'かくにん',en:'confirmation',icon:'✅',lvl:'N4'},
+  {ja:'予約',rd:'よやく',en:'reservation',icon:'📅',lvl:'N4'},
+  {ja:'注文',rd:'ちゅうもん',en:'order',icon:'📋',lvl:'N4'},
+  {ja:'支払い',rd:'しはらい',en:'payment',icon:'💳',lvl:'N4'},
+  {ja:'割引',rd:'わりびき',en:'discount',icon:'🏷️',lvl:'N4'},
+  {ja:'送る',rd:'おくる',en:'to send',icon:'📨',lvl:'N4'},
+  {ja:'受け取る',rd:'うけとる',en:'to receive',icon:'📥',lvl:'N4'},
+  {ja:'返す',rd:'かえす',en:'to return',icon:'↩️',lvl:'N4'},
+  {ja:'借りる',rd:'かりる',en:'to borrow',icon:'🤲',lvl:'N4'},
+  {ja:'貸す',rd:'かす',en:'to lend',icon:'🤝',lvl:'N4'},
+  {ja:'覚える',rd:'おぼえる',en:'to memorize',icon:'🧠',lvl:'N4'},
+  {ja:'忘れる',rd:'わすれる',en:'to forget',icon:'💭',lvl:'N4'},
+  {ja:'始める',rd:'はじめる',en:'to begin',icon:'▶️',lvl:'N4'},
+  {ja:'終わる',rd:'おわる',en:'to end',icon:'⏹️',lvl:'N4'},
+  {ja:'続ける',rd:'つづける',en:'to continue',icon:'⏩',lvl:'N4'},
+  {ja:'止まる',rd:'とまる',en:'to stop',icon:'🛑',lvl:'N4'},
+  {ja:'変える',rd:'かえる',en:'to change',icon:'🔄',lvl:'N4'},
+  {ja:'使う',rd:'つかう',en:'to use',icon:'🔧',lvl:'N4'},
+  {ja:'作る',rd:'つくる',en:'to make',icon:'🔨',lvl:'N4'},
+  {ja:'直す',rd:'なおす',en:'to fix/correct',icon:'🔧',lvl:'N4'},
+  {ja:'壊す',rd:'こわす',en:'to break',icon:'💥',lvl:'N4'},
+  {ja:'開ける',rd:'あける',en:'to open',icon:'🔓',lvl:'N4'},
+  {ja:'閉める',rd:'しめる',en:'to close',icon:'🔒',lvl:'N4'},
+  {ja:'入る',rd:'はいる',en:'to enter',icon:'🚪',lvl:'N4'},
+  {ja:'出る',rd:'でる',en:'to exit/leave',icon:'🚶',lvl:'N4'},
+  {ja:'上がる',rd:'あがる',en:'to rise/go up',icon:'⬆️',lvl:'N4'},
+  {ja:'下がる',rd:'さがる',en:'to descend/go down',icon:'⬇️',lvl:'N4'},
+  {ja:'増える',rd:'ふえる',en:'to increase',icon:'📈',lvl:'N4'},
+  {ja:'減る',rd:'へる',en:'to decrease',icon:'📉',lvl:'N4'},
+  {ja:'集める',rd:'あつめる',en:'to collect',icon:'📦',lvl:'N4'},
+  {ja:'探す',rd:'さがす',en:'to search',icon:'🔍',lvl:'N4'},
+  {ja:'見つける',rd:'みつける',en:'to find',icon:'🎯',lvl:'N4'},
+  {ja:'選ぶ',rd:'えらぶ',en:'to choose',icon:'✅',lvl:'N4'},
+  {ja:'決める',rd:'きめる',en:'to decide',icon:'✔️',lvl:'N4'},
+  {ja:'考える',rd:'かんがえる',en:'to think',icon:'💭',lvl:'N4'},
+  {ja:'信じる',rd:'しんじる',en:'to believe',icon:'🙏',lvl:'N4'},
+  {ja:'心配する',rd:'しんぱいする',en:'to worry',icon:'😰',lvl:'N4'},
+  {ja:'楽しむ',rd:'たのしむ',en:'to enjoy',icon:'😄',lvl:'N4'},
+  {ja:'悲しむ',rd:'かなしむ',en:'to grieve',icon:'😢',lvl:'N4'},
+  {ja:'怒る',rd:'おこる',en:'to get angry',icon:'😡',lvl:'N4'},
+  {ja:'笑う',rd:'わらう',en:'to laugh',icon:'😂',lvl:'N4'},
+  {ja:'泣く',rd:'なく',en:'to cry',icon:'😭',lvl:'N4'},
+  {ja:'驚く',rd:'おどろく',en:'to be surprised',icon:'😲',lvl:'N4'},
+  {ja:'疲れる',rd:'つかれる',en:'to get tired',icon:'😴',lvl:'N4'},
+  {ja:'休む',rd:'やすむ',en:'to rest',icon:'💤',lvl:'N4'},
+  {ja:'働く',rd:'はたらく',en:'to work',icon:'💼',lvl:'N4'},
+  {ja:'手伝う',rd:'てつだう',en:'to help',icon:'🤝',lvl:'N4'},
+  {ja:'教える',rd:'おしえる',en:'to teach',icon:'👩‍🏫',lvl:'N4'},
+  {ja:'学ぶ',rd:'まなぶ',en:'to learn',icon:'📖',lvl:'N4'},
+  {ja:'答える',rd:'こたえる',en:'to answer',icon:'💬',lvl:'N4'},
+  {ja:'質問',rd:'しつもん',en:'question',icon:'❓',lvl:'N4'},
+  {ja:'会議',rd:'かいぎ',en:'meeting',icon:'👥',lvl:'N4'},
+  {ja:'報告',rd:'ほうこく',en:'report',icon:'📊',lvl:'N4'},
+  {ja:'計画',rd:'けいかく',en:'plan',icon:'📅',lvl:'N4'},
+  {ja:'目的',rd:'もくてき',en:'purpose/goal',icon:'🎯',lvl:'N4'},
+  {ja:'理由',rd:'りゆう',en:'reason',icon:'💡',lvl:'N4'},
+  {ja:'方法',rd:'ほうほう',en:'method',icon:'🔧',lvl:'N4'},
+  {ja:'問題',rd:'もんだい',en:'problem',icon:'❗',lvl:'N4'},
+  {ja:'答え',rd:'こたえ',en:'answer',icon:'✅',lvl:'N4'},
+  {ja:'結果',rd:'けっか',en:'result',icon:'📊',lvl:'N4'},
+  {ja:'原因',rd:'げんいん',en:'cause',icon:'🔍',lvl:'N4'},
+  {ja:'影響',rd:'えいきょう',en:'influence/effect',icon:'💥',lvl:'N4'},
+  {ja:'関係',rd:'かんけい',en:'relationship',icon:'🔗',lvl:'N4'},
+  {ja:'種類',rd:'しゅるい',en:'type/kind',icon:'📂',lvl:'N4'},
+  {ja:'場合',rd:'ばあい',en:'case/situation',icon:'📋',lvl:'N4'},
+  {ja:'状況',rd:'じょうきょう',en:'situation',icon:'🗺️',lvl:'N4'},
+  {ja:'様子',rd:'ようす',en:'appearance/situation',icon:'👁️',lvl:'N4'},
+  {ja:'特に',rd:'とくに',en:'especially',icon:'⭐',lvl:'N4'},
+  {ja:'最近',rd:'さいきん',en:'recently',icon:'📅',lvl:'N4'},
+  {ja:'以前',rd:'いぜん',en:'before/previously',icon:'⏪',lvl:'N4'},
+  {ja:'以後',rd:'いご',en:'after/from now on',icon:'⏩',lvl:'N4'},
+  {ja:'必要',rd:'ひつよう',en:'necessary',icon:'‼️',lvl:'N4'},
+  {ja:'大切',rd:'たいせつ',en:'important/precious',icon:'💎',lvl:'N4'},
+  {ja:'安全',rd:'あんぜん',en:'safe',icon:'🛡️',lvl:'N4'},
+  {ja:'危険',rd:'きけん',en:'dangerous',icon:'⚠️',lvl:'N4'},
+  {ja:'難しい',rd:'むずかしい',en:'difficult',icon:'😤',lvl:'N4'},
+  {ja:'簡単',rd:'かんたん',en:'easy/simple',icon:'😊',lvl:'N4'},
+  {ja:'複雑',rd:'ふくざつ',en:'complicated',icon:'🌀',lvl:'N4'},
+  {ja:'正確',rd:'せいかく',en:'accurate',icon:'🎯',lvl:'N4'},
+  {ja:'曖昧',rd:'あいまい',en:'vague/ambiguous',icon:'🌫️',lvl:'N4'},
+  {ja:'自由',rd:'じゆう',en:'freedom',icon:'🕊️',lvl:'N4'},
+  {ja:'平和',rd:'へいわ',en:'peace',icon:'☮️',lvl:'N4'},
+  // N3
+  {ja:'経験',rd:'けいけん',en:'experience',icon:'🎖️',lvl:'N3'},
+  {ja:'記憶',rd:'きおく',en:'memory',icon:'🧠',lvl:'N3'},
+  {ja:'想像',rd:'そうぞう',en:'imagination',icon:'💭',lvl:'N3'},
+  {ja:'感情',rd:'かんじょう',en:'emotion/feeling',icon:'❤️',lvl:'N3'},
+  {ja:'意識',rd:'いしき',en:'consciousness',icon:'💡',lvl:'N3'},
+  {ja:'判断',rd:'はんだん',en:'judgment',icon:'⚖️',lvl:'N3'},
+  {ja:'選択',rd:'せんたく',en:'choice/selection',icon:'✅',lvl:'N3'},
+  {ja:'行動',rd:'こうどう',en:'action/behavior',icon:'🏃',lvl:'N3'},
+  {ja:'態度',rd:'たいど',en:'attitude',icon:'🤔',lvl:'N3'},
+  {ja:'習慣',rd:'しゅうかん',en:'habit',icon:'🔄',lvl:'N3'},
+  {ja:'文化',rd:'ぶんか',en:'culture',icon:'🎭',lvl:'N3'},
+  {ja:'伝統',rd:'でんとう',en:'tradition',icon:'🏮',lvl:'N3'},
+  {ja:'歴史',rd:'れきし',en:'history',icon:'📜',lvl:'N3'},
+  {ja:'社会',rd:'しゃかい',en:'society',icon:'🏙️',lvl:'N3'},
+  {ja:'政治',rd:'せいじ',en:'politics',icon:'🗳️',lvl:'N3'},
+  {ja:'経済',rd:'けいざい',en:'economy',icon:'💹',lvl:'N3'},
+  {ja:'環境',rd:'かんきょう',en:'environment',icon:'🌍',lvl:'N3'},
+  {ja:'自然',rd:'しぜん',en:'nature',icon:'🌿',lvl:'N3'},
+  {ja:'科学',rd:'かがく',en:'science',icon:'🔬',lvl:'N3'},
+  {ja:'技術',rd:'ぎじゅつ',en:'technology/skill',icon:'⚙️',lvl:'N3'},
+  {ja:'医学',rd:'いがく',en:'medicine',icon:'🏥',lvl:'N3'},
+  {ja:'法律',rd:'ほうりつ',en:'law',icon:'⚖️',lvl:'N3'},
+  {ja:'教育',rd:'きょういく',en:'education',icon:'🎓',lvl:'N3'},
+  {ja:'芸術',rd:'げいじゅつ',en:'art',icon:'🎨',lvl:'N3'},
+  {ja:'音楽',rd:'おんがく',en:'music',icon:'🎵',lvl:'N3'},
+  {ja:'映画',rd:'えいが',en:'movie',icon:'🎬',lvl:'N3'},
+  {ja:'演劇',rd:'えんげき',en:'theater/drama',icon:'🎭',lvl:'N3'},
+  {ja:'スポーツ',rd:'すぽーつ',en:'sports',icon:'⚽',lvl:'N3'},
+  {ja:'競争',rd:'きょうそう',en:'competition',icon:'🏆',lvl:'N3'},
+  {ja:'勝つ',rd:'かつ',en:'to win',icon:'🥇',lvl:'N3'},
+  {ja:'負ける',rd:'まける',en:'to lose',icon:'😔',lvl:'N3'},
+  {ja:'引き分け',rd:'ひきわけ',en:'draw/tie',icon:'🤝',lvl:'N3'},
+  {ja:'努力',rd:'どりょく',en:'effort',icon:'💪',lvl:'N3'},
+  {ja:'挑戦',rd:'ちょうせん',en:'challenge',icon:'⚔️',lvl:'N3'},
+  {ja:'克服',rd:'こくふく',en:'to overcome',icon:'🏋️',lvl:'N3'},
+  {ja:'達成',rd:'たっせい',en:'achievement',icon:'🎯',lvl:'N3'},
+  {ja:'諦める',rd:'あきらめる',en:'to give up',icon:'🏳️',lvl:'N3'},
+  {ja:'我慢する',rd:'がまんする',en:'to endure',icon:'😤',lvl:'N3'},
+  {ja:'辛抱',rd:'しんぼう',en:'patience/perseverance',icon:'🧘',lvl:'N3'},
+  {ja:'喜び',rd:'よろこび',en:'joy/delight',icon:'😊',lvl:'N3'},
+  {ja:'悲しみ',rd:'かなしみ',en:'sadness',icon:'😢',lvl:'N3'},
+  {ja:'恐れ',rd:'おそれ',en:'fear',icon:'😱',lvl:'N3'},
+  {ja:'怒り',rd:'いかり',en:'anger',icon:'😠',lvl:'N3'},
+  {ja:'驚き',rd:'おどろき',en:'surprise',icon:'😲',lvl:'N3'},
+  {ja:'恥ずかしい',rd:'はずかしい',en:'embarrassing',icon:'😳',lvl:'N3'},
+  {ja:'羨ましい',rd:'うらやましい',en:'envious/jealous',icon:'😒',lvl:'N3'},
+  {ja:'寂しい',rd:'さびしい',en:'lonely',icon:'😔',lvl:'N3'},
+  {ja:'懐かしい',rd:'なつかしい',en:'nostalgic',icon:'🥹',lvl:'N3'},
+  {ja:'誇り',rd:'ほこり',en:'pride',icon:'🦁',lvl:'N3'},
+  {ja:'後悔',rd:'こうかい',en:'regret',icon:'😞',lvl:'N3'},
+  {ja:'希望',rd:'きぼう',en:'hope',icon:'🌟',lvl:'N3'},
+  {ja:'夢',rd:'ゆめ',en:'dream',icon:'💭',lvl:'N3'},
+  {ja:'目標',rd:'もくひょう',en:'goal/target',icon:'🎯',lvl:'N3'},
+  {ja:'計画',rd:'けいかく',en:'plan',icon:'📋',lvl:'N3'},
+  {ja:'戦略',rd:'せんりゃく',en:'strategy',icon:'♟️',lvl:'N3'},
+  {ja:'協力',rd:'きょうりょく',en:'cooperation',icon:'🤝',lvl:'N3'},
+  {ja:'信頼',rd:'しんらい',en:'trust',icon:'🤗',lvl:'N3'},
+  {ja:'裏切り',rd:'うらぎり',en:'betrayal',icon:'🗡️',lvl:'N3'},
+  {ja:'許す',rd:'ゆるす',en:'to forgive',icon:'🙏',lvl:'N3'},
+  {ja:'謝る',rd:'あやまる',en:'to apologize',icon:'🙇',lvl:'N3'},
+  {ja:'感謝',rd:'かんしゃ',en:'gratitude',icon:'🙏',lvl:'N3'},
+  {ja:'尊敬',rd:'そんけい',en:'respect',icon:'🫡',lvl:'N3'},
+  {ja:'批判',rd:'ひはん',en:'criticism',icon:'🗣️',lvl:'N3'},
+  {ja:'比較',rd:'ひかく',en:'comparison',icon:'⚖️',lvl:'N3'},
+  {ja:'分析',rd:'ぶんせき',en:'analysis',icon:'🔬',lvl:'N3'},
+  {ja:'評価',rd:'ひょうか',en:'evaluation',icon:'⭐',lvl:'N3'},
+  {ja:'改善',rd:'かいぜん',en:'improvement',icon:'📈',lvl:'N3'},
+  {ja:'提案',rd:'ていあん',en:'proposal/suggestion',icon:'💡',lvl:'N3'},
+  {ja:'意見',rd:'いけん',en:'opinion',icon:'💬',lvl:'N3'},
+  {ja:'議論',rd:'ぎろん',en:'discussion/debate',icon:'🗣️',lvl:'N3'},
+  {ja:'主張',rd:'しゅちょう',en:'assertion',icon:'📢',lvl:'N3'},
+  {ja:'反論',rd:'はんろん',en:'counterargument',icon:'↩️',lvl:'N3'},
+  {ja:'証明',rd:'しょうめい',en:'proof',icon:'📜',lvl:'N3'},
+  {ja:'事実',rd:'じじつ',en:'fact',icon:'✅',lvl:'N3'},
+  {ja:'嘘',rd:'うそ',en:'lie',icon:'🤥',lvl:'N3'},
+  {ja:'秘密',rd:'ひみつ',en:'secret',icon:'🤫',lvl:'N3'},
+  {ja:'噂',rd:'うわさ',en:'rumor/gossip',icon:'🗣️',lvl:'N3'},
+  {ja:'事件',rd:'じけん',en:'incident/case',icon:'🚨',lvl:'N3'},
+  {ja:'事故',rd:'じこ',en:'accident',icon:'🚑',lvl:'N3'},
+  {ja:'災害',rd:'さいがい',en:'disaster',icon:'🌪️',lvl:'N3'},
+  {ja:'救助',rd:'きゅうじょ',en:'rescue',icon:'🆘',lvl:'N3'},
+  {ja:'警告',rd:'けいこく',en:'warning',icon:'⚠️',lvl:'N3'},
+  {ja:'禁止',rd:'きんし',en:'prohibition',icon:'🚫',lvl:'N3'},
+  {ja:'許可',rd:'きょか',en:'permission',icon:'✅',lvl:'N3'},
+  {ja:'義務',rd:'ぎむ',en:'obligation/duty',icon:'📋',lvl:'N3'},
+  {ja:'権利',rd:'けんり',en:'right/entitlement',icon:'✊',lvl:'N3'},
+  {ja:'責任',rd:'せきにん',en:'responsibility',icon:'⚖️',lvl:'N3'},
+  {ja:'役割',rd:'やくわり',en:'role',icon:'🎭',lvl:'N3'},
+  {ja:'立場',rd:'たちば',en:'position/standpoint',icon:'🗺️',lvl:'N3'},
+  {ja:'背景',rd:'はいけい',en:'background',icon:'🖼️',lvl:'N3'},
+  {ja:'状態',rd:'じょうたい',en:'state/condition',icon:'📊',lvl:'N3'},
+  {ja:'変化',rd:'へんか',en:'change',icon:'🔄',lvl:'N3'},
+  {ja:'発展',rd:'はってん',en:'development',icon:'📈',lvl:'N3'},
+  {ja:'進歩',rd:'しんぽ',en:'progress',icon:'⏩',lvl:'N3'},
+  {ja:'衰退',rd:'すいたい',en:'decline',icon:'📉',lvl:'N3'},
+  {ja:'原則',rd:'げんそく',en:'principle/rule',icon:'📜',lvl:'N3'},
+  {ja:'例外',rd:'れいがい',en:'exception',icon:'❗',lvl:'N3'},
+  // N2
+  {ja:'概念',rd:'がいねん',en:'concept/notion',icon:'💡',lvl:'N2'},
+  {ja:'抽象',rd:'ちゅうしょう',en:'abstraction',icon:'🌀',lvl:'N2'},
+  {ja:'具体',rd:'ぐたい',en:'concrete/specific',icon:'🔷',lvl:'N2'},
+  {ja:'論理',rd:'ろんり',en:'logic',icon:'🧮',lvl:'N2'},
+  {ja:'矛盾',rd:'むじゅん',en:'contradiction',icon:'⚡',lvl:'N2'},
+  {ja:'前提',rd:'ぜんてい',en:'premise/prerequisite',icon:'📌',lvl:'N2'},
+  {ja:'仮定',rd:'かてい',en:'hypothesis/assumption',icon:'❓',lvl:'N2'},
+  {ja:'結論',rd:'けつろん',en:'conclusion',icon:'🏁',lvl:'N2'},
+  {ja:'根拠',rd:'こんきょ',en:'basis/ground',icon:'📐',lvl:'N2'},
+  {ja:'客観',rd:'きゃっかん',en:'objectivity',icon:'🔭',lvl:'N2'},
+  {ja:'主観',rd:'しゅかん',en:'subjectivity',icon:'👁️',lvl:'N2'},
+  {ja:'本質',rd:'ほんしつ',en:'essence',icon:'💎',lvl:'N2'},
+  {ja:'現象',rd:'げんしょう',en:'phenomenon',icon:'✨',lvl:'N2'},
+  {ja:'観察',rd:'かんさつ',en:'observation',icon:'🔭',lvl:'N2'},
+  {ja:'実験',rd:'じっけん',en:'experiment',icon:'🧪',lvl:'N2'},
+  {ja:'仮説',rd:'かせつ',en:'hypothesis',icon:'💭',lvl:'N2'},
+  {ja:'検証',rd:'けんしょう',en:'verification',icon:'✅',lvl:'N2'},
+  {ja:'模倣',rd:'もほう',en:'imitation',icon:'🪞',lvl:'N2'},
+  {ja:'革新',rd:'かくしん',en:'innovation',icon:'🚀',lvl:'N2'},
+  {ja:'普及',rd:'ふきゅう',en:'spread/popularization',icon:'📡',lvl:'N2'},
+  {ja:'依存',rd:'いぞん',en:'dependence',icon:'🔗',lvl:'N2'},
+  {ja:'独立',rd:'どくりつ',en:'independence',icon:'🦅',lvl:'N2'},
+  {ja:'統合',rd:'とうごう',en:'integration',icon:'🔀',lvl:'N2'},
+  {ja:'分離',rd:'ぶんり',en:'separation',icon:'✂️',lvl:'N2'},
+  {ja:'対立',rd:'たいりつ',en:'conflict/opposition',icon:'⚔️',lvl:'N2'},
+  {ja:'妥協',rd:'だきょう',en:'compromise',icon:'🤝',lvl:'N2'},
+  {ja:'交渉',rd:'こうしょう',en:'negotiation',icon:'🗣️',lvl:'N2'},
+  {ja:'合意',rd:'ごうい',en:'agreement/consensus',icon:'✅',lvl:'N2'},
+  {ja:'調整',rd:'ちょうせい',en:'adjustment',icon:'🎚️',lvl:'N2'},
+  {ja:'維持',rd:'いじ',en:'maintenance/upkeep',icon:'🔧',lvl:'N2'},
+  {ja:'促進',rd:'そくしん',en:'promotion/facilitation',icon:'🚀',lvl:'N2'},
+  {ja:'抑制',rd:'よくせい',en:'suppression/restraint',icon:'🛑',lvl:'N2'},
+  {ja:'強化',rd:'きょうか',en:'strengthening',icon:'💪',lvl:'N2'},
+  {ja:'緩和',rd:'かんわ',en:'alleviation/relaxation',icon:'😌',lvl:'N2'},
+  {ja:'深刻',rd:'しんこく',en:'serious/grave',icon:'😰',lvl:'N2'},
+  {ja:'軽微',rd:'けいび',en:'minor/slight',icon:'🤏',lvl:'N2'},
+  {ja:'急激',rd:'きゅうげき',en:'sudden/rapid',icon:'⚡',lvl:'N2'},
+  {ja:'緩やか',rd:'ゆるやか',en:'gradual/gentle',icon:'🌊',lvl:'N2'},
+  {ja:'持続',rd:'じぞく',en:'continuity/sustainability',icon:'♻️',lvl:'N2'},
+  {ja:'循環',rd:'じゅんかん',en:'circulation/cycle',icon:'🔄',lvl:'N2'},
+  {ja:'均衡',rd:'きんこう',en:'balance/equilibrium',icon:'⚖️',lvl:'N2'},
+  {ja:'偏り',rd:'かたより',en:'bias/skew',icon:'📐',lvl:'N2'},
+  {ja:'多様性',rd:'たようせい',en:'diversity',icon:'🌈',lvl:'N2'},
+  {ja:'普遍',rd:'ふへん',en:'universal',icon:'🌍',lvl:'N2'},
+  {ja:'特殊',rd:'とくしゅ',en:'special/peculiar',icon:'⭐',lvl:'N2'},
+  {ja:'稀少',rd:'きしょう',en:'rare/scarce',icon:'💎',lvl:'N2'},
+  {ja:'豊富',rd:'ほうふ',en:'abundant/rich',icon:'🌾',lvl:'N2'},
+  {ja:'欠乏',rd:'けつぼう',en:'shortage/deficiency',icon:'📉',lvl:'N2'},
+  {ja:'拡大',rd:'かくだい',en:'expansion',icon:'🔍',lvl:'N2'},
+  {ja:'縮小',rd:'しゅくしょう',en:'reduction/shrinkage',icon:'🔎',lvl:'N2'},
+  // N1
+  {ja:'哲学',rd:'てつがく',en:'philosophy',icon:'🤔',lvl:'N1'},
+  {ja:'倫理',rd:'りんり',en:'ethics/morality',icon:'⚖️',lvl:'N1'},
+  {ja:'価値観',rd:'かちかん',en:'value system',icon:'💎',lvl:'N1'},
+  {ja:'世界観',rd:'せかいかん',en:'world view',icon:'🌍',lvl:'N1'},
+  {ja:'人生観',rd:'じんせいかん',en:'outlook on life',icon:'🧭',lvl:'N1'},
+  {ja:'存在',rd:'そんざい',en:'existence/being',icon:'✨',lvl:'N1'},
+  {ja:'本能',rd:'ほんのう',en:'instinct',icon:'🦁',lvl:'N1'},
+  {ja:'理性',rd:'りせい',en:'reason/rationality',icon:'🧠',lvl:'N1'},
+  {ja:'直感',rd:'ちょっかん',en:'intuition',icon:'⚡',lvl:'N1'},
+  {ja:'認識',rd:'にんしき',en:'recognition/cognition',icon:'👁️',lvl:'N1'},
+  {ja:'思想',rd:'しそう',en:'thought/ideology',icon:'💭',lvl:'N1'},
+  {ja:'観念',rd:'かんねん',en:'idea/notion',icon:'💡',lvl:'N1'},
+  {ja:'精神',rd:'せいしん',en:'spirit/mind',icon:'🌟',lvl:'N1'},
+  {ja:'魂',rd:'たましい',en:'soul',icon:'👻',lvl:'N1'},
+  {ja:'運命',rd:'うんめい',en:'fate/destiny',icon:'⭐',lvl:'N1'},
+  {ja:'偶然',rd:'ぐうぜん',en:'coincidence/chance',icon:'🎲',lvl:'N1'},
+  {ja:'必然',rd:'ひつぜん',en:'necessity/inevitability',icon:'🎯',lvl:'N1'},
+  {ja:'矛盾',rd:'むじゅん',en:'contradiction',icon:'⚡',lvl:'N1'},
+  {ja:'逆説',rd:'ぎゃくせつ',en:'paradox',icon:'🌀',lvl:'N1'},
+  {ja:'隠喩',rd:'いんゆ',en:'metaphor',icon:'🎭',lvl:'N1'},
+  {ja:'皮肉',rd:'ひにく',en:'irony/sarcasm',icon:'😏',lvl:'N1'},
+  {ja:'暗示',rd:'あんじ',en:'hint/implication',icon:'🤫',lvl:'N1'},
+  {ja:'象徴',rd:'しょうちょう',en:'symbol',icon:'🔮',lvl:'N1'},
+  {ja:'抽象化',rd:'ちゅうしょうか',en:'abstraction',icon:'🎨',lvl:'N1'},
+  {ja:'具現化',rd:'ぐげんか',en:'realization/embodiment',icon:'✨',lvl:'N1'},
+  {ja:'超越',rd:'ちょうえつ',en:'transcendence',icon:'🚀',lvl:'N1'},
+  {ja:'内在',rd:'ないざい',en:'immanence',icon:'🔍',lvl:'N1'},
+  {ja:'外在',rd:'がいざい',en:'external existence',icon:'🌐',lvl:'N1'},
+  {ja:'二項対立',rd:'にこうたいりつ',en:'binary opposition',icon:'⚔️',lvl:'N1'},
+  {ja:'弁証法',rd:'べんしょうほう',en:'dialectics',icon:'🔄',lvl:'N1'},
+  {ja:'帰納',rd:'きのう',en:'induction (logic)',icon:'⬆️',lvl:'N1'},
+  {ja:'演繹',rd:'えんえき',en:'deduction (logic)',icon:'⬇️',lvl:'N1'},
+  {ja:'類推',rd:'るいすい',en:'analogy/inference',icon:'🔗',lvl:'N1'},
+  {ja:'批評',rd:'ひひょう',en:'criticism/review',icon:'✍️',lvl:'N1'},
+  {ja:'解釈',rd:'かいしゃく',en:'interpretation',icon:'🔍',lvl:'N1'},
+  {ja:'文脈',rd:'ぶんみゃく',en:'context',icon:'📖',lvl:'N1'},
+  {ja:'含意',rd:'がんい',en:'implication',icon:'💬',lvl:'N1'},
+  {ja:'前後関係',rd:'ぜんごかんけい',en:'context (before/after)',icon:'↔️',lvl:'N1'},
+  {ja:'因果関係',rd:'いんがかんけい',en:'causality',icon:'🔗',lvl:'N1'},
+  {ja:'相互作用',rd:'そうごさよう',en:'interaction',icon:'🔄',lvl:'N1'},
+  {ja:'パラダイム',rd:'ぱらだいむ',en:'paradigm',icon:'🌐',lvl:'N1'},
+  {ja:'構造',rd:'こうぞう',en:'structure',icon:'🏗️',lvl:'N1'},
+  {ja:'体系',rd:'たいけい',en:'system/framework',icon:'📊',lvl:'N1'},
+  {ja:'枠組み',rd:'わくぐみ',en:'framework',icon:'🖼️',lvl:'N1'},
+  {ja:'視点',rd:'してん',en:'viewpoint/perspective',icon:'👁️',lvl:'N1'},
+  {ja:'観点',rd:'かんてん',en:'viewpoint/standpoint',icon:'🔭',lvl:'N1'},
+  {ja:'側面',rd:'そくめん',en:'aspect/facet',icon:'🎲',lvl:'N1'},
+  {ja:'次元',rd:'じげん',en:'dimension',icon:'📐',lvl:'N1'},
+  {ja:'境界',rd:'きょうかい',en:'boundary',icon:'🚧',lvl:'N1'},
+  {ja:'閾値',rd:'しきいち',en:'threshold',icon:'⚡',lvl:'N1'},
+  {ja:'臨界点',rd:'りんかいてん',en:'critical point',icon:'⚠️',lvl:'N1'},
 ];
+
+// ===== SPEAK =====
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.85; u.pitch = 1;
+  window.speechSynthesis.speak(u);
+}
+
+// ===== QUEST FILTER STATE =====
+let questFilter = 'all', questSearch = '';
+
+// ===== QUEST SECTION HTML =====
+(function injectQuestUI() {
+  const sec = document.getElementById('sec-quest');
+  if (!sec) return;
+  sec.innerHTML = `
+    <h2 style="font-size:20px;font-weight:900;margin-bottom:12px;">📜 単語クエスト <span style="font-size:13px;color:var(--text2);font-weight:600;" id="quest-count"></span></h2>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
+      <input id="quest-search" type="text" placeholder="🔍 単語を検索..." oninput="questSearch=this.value;buildQuest()"
+        style="flex:1;min-width:160px;padding:9px 14px;border:2px solid var(--border);border-radius:99px;font-size:14px;font-family:inherit;outline:none;">
+      <select id="quest-lvl-filter" onchange="questFilter=this.value;buildQuest()"
+        style="padding:8px 14px;border:2px solid var(--border);border-radius:99px;font-size:13px;font-family:inherit;font-weight:700;background:white;outline:none;cursor:pointer;">
+        <option value="all">🌏 全レベル</option>
+        <option value="N5">🟢 N5</option>
+        <option value="N4">🔵 N4</option>
+        <option value="N3">🟣 N3</option>
+        <option value="N2">🟠 N2</option>
+        <option value="N1">🔴 N1</option>
+      </select>
+    </div>
+    <div class="quest-list" id="quest-list"></div>`;
+})();
+
 
 // ===== STATE =====
 let xp = 0, level = 1, coins = 0, streak = 1;
@@ -711,6 +1596,7 @@ function showSec(name, btn) {
   if (name === 'kana') buildKanaGrid();
   if (name === 'flashcard') loadFC(fcIdx);
   if (name === 'quest') buildQuest();
+  if (name === 'convo') buildSceneSelector();
 }
 
 // ===== KANA =====
@@ -721,6 +1607,13 @@ function buildKanaGrid() {
   grid.innerHTML = '';
   data.forEach(([char, rom], i) => {
     const cell = document.createElement('div');
+    if (!char) {
+      // empty placeholder cell
+      cell.className = 'kana-cell';
+      cell.style.cssText = 'background:transparent;border-color:transparent;box-shadow:none;pointer-events:none;';
+      grid.appendChild(cell);
+      return;
+    }
     cell.className = 'kana-cell' + (known.has(i) ? ' mastered' : '');
     cell.innerHTML = `<span class="char">${char}</span><span class="rom">${rom}</span>`;
     cell.onclick = (e) => {
@@ -744,30 +1637,52 @@ function updateDashKana() {
 }
 
 // ===== QUEST =====
+const lvlColor = {N5:'#6BCB77',N4:'#4D96FF',N3:'#C77DFF',N2:'#FF9F43',N1:'#FF3366'};
 function buildQuest() {
+  const search = (questSearch||'').toLowerCase();
+  const filtered = vocab.filter((w,i) => {
+    if (questFilter !== 'all' && w.lvl !== questFilter) return false;
+    if (search && !w.ja.includes(questSearch) && !w.rd.includes(search) && !w.en.toLowerCase().includes(search)) return false;
+    return true;
+  });
   const el = document.getElementById('quest-list');
-  el.innerHTML = vocab.map((w, i) => `
-    <div class="quest-card" id="qc-${i}" onclick="learnWord(${i}, event)">
+  const cnt = document.getElementById('quest-count');
+  if (cnt) cnt.textContent = `(${filtered.length}語)`;
+  if (!el) return;
+  el.innerHTML = filtered.map((w) => {
+    const i = vocab.indexOf(w);
+    const done = learnedWords.has(i);
+    return `<div class="quest-card ${done?'done':''}" id="qc-${i}">
       <div class="quest-icon">${w.icon}</div>
       <div class="quest-info">
-        <div class="quest-ja">${w.ja}</div>
-        <div class="quest-reading">${w.rd}</div>
+        <div class="quest-ja">${w.ja}
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${w.ja}')" title="発音を聞く">🔊</button>
+        </div>
+        <div class="quest-reading">
+          ${w.rd}
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${w.rd}')" title="読み方を聞く" style="font-size:14px;">▶️</button>
+        </div>
         <div class="quest-en">${w.en}</div>
       </div>
-      <div class="quest-xp">+10 XP</div>
-    </div>
-  `).join('');
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span style="background:${lvlColor[w.lvl]||'#ccc'};color:white;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;">${w.lvl}</span>
+        <div class="quest-xp" onclick="learnWord(${i},event)" style="cursor:pointer;">${done?'✅':'+ 10 XP'}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 const learnedWords = new Set();
 function learnWord(i, e) {
   if (!learnedWords.has(i)) {
     learnedWords.add(i);
     gainXP(10, e.clientX, e.clientY);
-    document.getElementById('qc-' + i).classList.add('done');
+    const card = document.getElementById('qc-' + i);
+    if (card) card.classList.add('done');
     document.getElementById('dc-vocab-fill').style.width = (learnedWords.size / vocab.length * 100) + '%';
     if (learnedWords.size === vocab.length) showPopup('🏆 クエスト完了！', '全単語をマスターした！すごい！');
   }
 }
+
 
 // ===== FLASHCARD =====
 function loadFC(idx) {
@@ -861,7 +1776,16 @@ function updateBattleUI() {
   document.getElementById('b-hp-num').textContent = bHP + '/3';
 }
 
-// ===== VIEW TOGGLE =====
+function submitContact() {
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  if (!name || !email || !msg) { alert('すべての必須項目を入力してください。'); return; }
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('contact-success').style.display = 'block';
+}
+
+
 function setView(mode) {
   if (mode === 'pc') {
     document.body.classList.add('pc-mode');
@@ -959,12 +1883,216 @@ document.addEventListener('click', e => {
 popup2.addEventListener('mouseover', () => clearTimeout(popupHideTimer));
 popup2.addEventListener('mouseout', hideKanjiPopup);
 
-// ===== INIT =====
+// ===== CONVERSATION GAME =====
+const scenes = [
+  {
+    id: 'ramen', icon: '🍜', title: 'ラーメン屋でのドラマ', sub: '注文したら予想外の展開に！',
+    color: 'linear-gradient(135deg,#FF6B35,#F7C59F)',
+    steps: [
+      { dialogue: [{ side:'left', avatar:'👨‍🍳', ja:'いらっしゃいませ！何名様ですか？', en:'Welcome! How many people?' }],
+        question: 'あなたは一人。なんと言う？',
+        choices: [{ ja:'一人です。', en:'Just one person.', correct:true },{ ja:'三人です。', en:'Three people.', correct:false },{ ja:'さようなら！', en:'Goodbye!', correct:false },{ ja:'犬がいます。', en:'There is a dog.', correct:false }],
+        feedback:'「一人です」— ひとりでラーメン最高！🍜' },
+      { dialogue: [{ side:'left', avatar:'👨‍🍳', ja:'ご注文は何にしますか？', en:'What would you like to order?' }],
+        question: '醤油ラーメンを注文したい。なんと言う？',
+        choices: [{ ja:'醤油ラーメンを一つください。', en:'One soy sauce ramen, please.', correct:true },{ ja:'ピザをください。', en:'Pizza please.', correct:false },{ ja:'お水だけでいいです。', en:'Just water is fine.', correct:false },{ ja:'わかりません！', en:"I don't understand!", correct:false }],
+        feedback:'ナイス注文！「〜を一つください」は最強フレーズ🏆' },
+      { dialogue: [{ side:'left', avatar:'👨‍🍳', ja:'すみません…醤油ラーメン、今日は売り切れです。', en:'Sorry… the soy sauce ramen is sold out today.' },{ side:'right', avatar:'🙋', ja:'え！？', en:'What!?' }],
+        question: '残念だが受け入れる。なんと言う？',
+        choices: [{ ja:'じゃあ、味噌ラーメンにします。', en:"Then I'll have miso ramen.", correct:true },{ ja:'マネージャーを呼んでください！', en:'Call the manager!', correct:false },{ ja:'帰ります。', en:"I'll leave.", correct:false },{ ja:'作ってください！', en:'Please make it!', correct:false }],
+        feedback:'「じゃあ〜にします」で切り替え上手😎' },
+      { dialogue: [{ side:'left', avatar:'👨‍🍳', ja:'味噌ラーメン、お待たせしました！', en:'Here is your miso ramen!' }],
+        question: 'ラーメンが辛すぎた！店員に伝えるには？',
+        choices: [{ ja:'すみません、ちょっと辛すぎます…', en:"Excuse me, it's a bit too spicy…", correct:true },{ ja:'おいしいです！また来ます！', en:"It's delicious! I'll come again!", correct:false },{ ja:'辛いものが大好きです！', en:'I love spicy food!', correct:false },{ ja:'水をください。', en:'Water please.', correct:false }],
+        feedback:'「ちょっと〜すぎます」は超使える苦情フレーズ🌶️' },
+      { dialogue: [{ side:'left', avatar:'👨‍🍳', ja:'お会計は500円になります。', en:'Your bill comes to 500 yen.' }],
+        question: '支払い後、帰り際に言う言葉は？',
+        choices: [{ ja:'ごちそうさまでした！', en:'Thank you for the meal!', correct:true },{ ja:'いただきます！', en:"Let's eat!", correct:false },{ ja:'おやすみなさい！', en:'Good night!', correct:false },{ ja:'また明日！', en:'See you tomorrow!', correct:false }],
+        feedback:'「ごちそうさまでした」— 食後の魔法の言葉！✨ ラーメン屋クリア！🍜' }
+    ]
+  },
+  {
+    id: 'train', icon: '🚃', title: '電車で謎のおじさん', sub: '隣のおじさんがなぜか話しかけてくる',
+    color: 'linear-gradient(135deg,#4D96FF,#6BCB77)',
+    steps: [
+      { dialogue: [{ side:'left', avatar:'👴', ja:'あのー、この電車、渋谷に止まりますか？', en:'Excuse me, does this train stop at Shibuya?' }],
+        question: 'はい、止まると伝える。なんと言う？',
+        choices: [{ ja:'はい、止まりますよ！', en:'Yes, it stops!', correct:true },{ ja:'わかりません、すみません。', en:"I don't know, sorry.", correct:false },{ ja:'バスに乗ってください。', en:'Please take the bus.', correct:false },{ ja:'渋谷は遠いです。', en:'Shibuya is far.', correct:false }],
+        feedback:'「〜ますよ」は優しく強調するフレーズ🚃' },
+      { dialogue: [{ side:'left', avatar:'👴', ja:'ありがとう！どこから来ましたか？', en:'Thank you! Where are you from?' }],
+        question: 'アメリカから来たと答える。なんと言う？',
+        choices: [{ ja:'アメリカから来ました。', en:'I came from America.', correct:true },{ ja:'日本人です。', en:'I am Japanese.', correct:false },{ ja:'東京に住んでいます。', en:'I live in Tokyo.', correct:false },{ ja:'秘密です！', en:"It's a secret!", correct:false }],
+        feedback:'「〜から来ました」— どこから来ても使える！🌎' },
+      { dialogue: [{ side:'left', avatar:'👴', ja:'へえ！日本語が上手ですね！', en:'Oh! Your Japanese is good!' }],
+        question: '謙遜して答える（日本文化的にベスト！）',
+        choices: [{ ja:'いいえ、まだまだです。', en:'No, I still have a long way to go.', correct:true },{ ja:'そうです、天才です！', en:"That's right, I'm a genius!", correct:false },{ ja:'ありがとう！私は最高です！', en:'Thank you! I am the best!', correct:false },{ ja:'日本語？知りません。', en:"Japanese? I don't know it.", correct:false }],
+        feedback:'「まだまだです」— 謙遜文化マスター！🎌' },
+      { dialogue: [{ side:'left', avatar:'👴', ja:'私の娘もアメリカに住んでるんですよ〜！写真見ますか？', en:'My daughter also lives in America! Want to see a photo?' }],
+        question: '優しく断る。なんと言う？',
+        choices: [{ ja:'ありがとうございます、でも次の駅で降ります。', en:'Thank you, but I get off at the next station.', correct:true },{ ja:'絶対に嫌です！', en:'Absolutely not!', correct:false },{ ja:'100枚全部見せてください！', en:'Show me all 100 photos!', correct:false },{ ja:'娘さんはかわいいですか？', en:'Is your daughter cute?', correct:false }],
+        feedback:'「でも〜で降ります」最高の逃げフレーズ😂' },
+      { dialogue: [{ side:'left', avatar:'👴', ja:'そうですか〜。また電車で会いましょう！', en:"Is that so~ Let's meet on the train again!" }],
+        question: '電車を降りながら挨拶する。なんと言う？',
+        choices: [{ ja:'お気をつけて！', en:'Take care!', correct:true },{ ja:'さよなら、永遠に！', en:'Goodbye, forever!', correct:false },{ ja:'また明日ここで！', en:"See you here again tomorrow!", correct:false },{ ja:'電話番号を教えてください。', en:'Please give me your phone number.', correct:false }],
+        feedback:'「お気をつけて」— 温かいお別れの言葉🚃 電車シーンクリア！' }
+    ]
+  },
+  {
+    id: 'karaoke', icon: '🎤', title: 'カラオケで大事件', sub: '友達に無理やり連れてこられた…',
+    color: 'linear-gradient(135deg,#C77DFF,#FF6B9D)',
+    steps: [
+      { dialogue: [{ side:'left', avatar:'😎', ja:'ねえ！歌って歌って！あなたの番だよ！', en:"Hey! Sing sing! It's your turn!" }],
+        question: '恥ずかしくて歌いたくない。なんと言う？',
+        choices: [{ ja:'え〜、恥ずかしいな…', en:"Aw~, I'm embarrassed…", correct:true },{ ja:'もちろん！全部歌います！', en:"Of course! I'll sing everything!", correct:false },{ ja:'歌は禁止です。', en:'Singing is prohibited.', correct:false },{ ja:'私はロボットです。', en:'I am a robot.', correct:false }],
+        feedback:'「恥ずかしいな〜」共感100%フレーズ！🙈' },
+      { dialogue: [{ side:'left', avatar:'😎', ja:'大丈夫大丈夫！みんな下手だから！', en:"It's fine it's fine! Everyone's bad at it!" }],
+        question: '勇気を出して一曲だけ歌うことにした。どう言う？',
+        choices: [{ ja:'じゃあ、一曲だけ歌います！', en:"Okay, I'll sing just one song!", correct:true },{ ja:'100曲歌います！徹夜します！', en:"I'll sing 100 songs! All night!", correct:false },{ ja:'やっぱりやめます。', en:"I changed my mind, I'll pass.", correct:false },{ ja:'私はプロ歌手です。', en:'I am a professional singer.', correct:false }],
+        feedback:'「じゃあ〜だけ」— 妥協の神フレーズ！🎤' },
+      { dialogue: [{ side:'left', avatar:'😎', ja:'うまい！！！天才じゃん！！', en:"You're good!! You're a genius!!" }],
+        question: '照れながらお礼を言う。なんと言う？',
+        choices: [{ ja:'そんなことないよ〜！', en:'No way~!', correct:true },{ ja:'わかってる、私は最高だ。', en:'I know, I am the best.', correct:false },{ ja:'サインしましょうか？', en:'Shall I give you an autograph?', correct:false },{ ja:'もう一度歌いません。', en:"I won't sing again.", correct:false }],
+        feedback:'「そんなことないよ〜」— カジュアル謙遜の定番！😆' },
+      { dialogue: [{ side:'left', avatar:'😎', ja:'お腹すいた〜！何か頼もうよ！', en:"I'm hungry~ Let's order something!" }],
+        question: 'フライドポテトを頼みたい。なんと言う？',
+        choices: [{ ja:'フライドポテトを頼みましょう！', en:"Let's order French fries!", correct:true },{ ja:'何も食べません。ダイエット中です。', en:"I won't eat anything. I'm on a diet.", correct:false },{ ja:'ピザを500枚頼みましょう！', en:"Let's order 500 pizzas!", correct:false },{ ja:'食べ物は持ってきました。', en:'I brought food.', correct:false }],
+        feedback:'「〜を頼みましょう」— 提案フレーズ完璧！🍟' },
+      { dialogue: [{ side:'left', avatar:'😎', ja:'あ！時間切れだ！もう一時間延長しよう！', en:"Oh! Time's up! Let's extend another hour!" }],
+        question: 'もう帰りたい。なんと言う？',
+        choices: [{ ja:'ごめん、もう帰らないといけないんだ…', en:"Sorry, I have to go home now…", correct:true },{ ja:'あと10時間歌います！', en:"I'll sing for 10 more hours!", correct:false },{ ja:'帰ることは不可能です。', en:'Going home is impossible.', correct:false },{ ja:'ここに住みます。', en:"I'll live here.", correct:false }],
+        feedback:'「〜ないといけないんだ」— 優しい断り方の神！😅 カラオケシーンクリア！🎤' }
+    ]
+  },
+  {
+    id: 'convenience', icon: '🏪', title: 'コンビニ深夜2時', sub: '深夜のコンビニで予想外の出来事',
+    color: 'linear-gradient(135deg,#FFD93D,#FF9F43)',
+    steps: [
+      { dialogue: [{ side:'left', avatar:'🏪', ja:'いらっしゃいませ〜（半分寝ながら）', en:'Welcome~ (half asleep)' }],
+        question: 'おにぎりを探している。店員に聞く。なんと言う？',
+        choices: [{ ja:'すみません、おにぎりはどこですか？', en:'Excuse me, where are the rice balls?', correct:true },{ ja:'おにぎりをください。', en:'Give me rice balls.', correct:false },{ ja:'おにぎりが好きです。', en:'I like rice balls.', correct:false },{ ja:'何もいりません。', en:"I don't need anything.", correct:false }],
+        feedback:'「〜はどこですか？」— 場所探しの鉄板フレーズ！🗺️' },
+      { dialogue: [{ side:'left', avatar:'🏪', ja:'...（無言で指差す）', en:'...(points silently)' },{ side:'right', avatar:'🙋', ja:'（全部売り切れだった…）', en:'(all sold out…)' }],
+        question: '全部売り切れだった！なんと言う？',
+        choices: [{ ja:'えー！全部売り切れですか…', en:"Wow, they're all sold out…", correct:true },{ ja:'警察を呼びます！', en:"I'll call the police!", correct:false },{ ja:'おにぎりなんて必要ありません。', en:"I don't need rice balls anyway.", correct:false },{ ja:'私が作ります。', en:"I'll make them.", correct:false }],
+        feedback:'「えー！〜ですか」— ショックを自然に表現！😱' },
+      { dialogue: [{ side:'left', avatar:'🏪', ja:'5時に新しいの入りますよ〜', en:'New ones come in at 5am~' }],
+        question: '3時間待てない。代わりにパンを買う。なんと言う？',
+        choices: [{ ja:'じゃあ、このパンにします。', en:"Then I'll go with this bread.", correct:true },{ ja:'5時まで待ちます。床で寝ます。', en:"I'll wait until 5. I'll sleep on the floor.", correct:false },{ ja:'パンは嫌いです。', en:"I don't like bread.", correct:false },{ ja:'材料はありますか？', en:'Do you have ingredients?', correct:false }],
+        feedback:'「じゃあ〜にします」— 切り替え上手！パン最高🍞' },
+      { dialogue: [{ side:'left', avatar:'🏪', ja:'お会計は320円です。ポイントカードはお持ちですか？', en:"That'll be 320 yen. Do you have a points card?" }],
+        question: 'ポイントカードを持っていない。なんと言う？',
+        choices: [{ ja:'いいえ、持っていません。', en:"No, I don't have one.", correct:true },{ ja:'はい、100枚あります。', en:'Yes, I have 100 of them.', correct:false },{ ja:'カードは嫌いです。', en:'I hate cards.', correct:false },{ ja:'ポイントって何ですか？', en:'What are points?', correct:false }],
+        feedback:'「いいえ、持っていません」— シンプルで完璧！💳' },
+      { dialogue: [{ side:'left', avatar:'🏪', ja:'袋はご利用になりますか？（3円です）', en:'Would you like a bag? (3 yen)' }],
+        question: '袋はいらない。なんと言う？',
+        choices: [{ ja:'結構です、袋は要りません。', en:"It's fine, I don't need a bag.", correct:true },{ ja:'100枚ください！', en:"Give me 100!", correct:false },{ ja:'もちろんです！エコじゃないです！', en:"Of course! I'm not eco-friendly!", correct:false },{ ja:'バッグは家にあります。', en:'My bag is at home.', correct:false }],
+        feedback:'「結構です、〜要りません」— 断りの礼儀正しいフレーズ！🌱 コンビニシーンクリア！🏪' }
+    ]
+  }
+];
+
+let currentSceneIdx = 0, currentStepIdx = 0, convoScore = 0, answered = false;
+
+function buildSceneSelector() {
+  const el = document.getElementById('scene-selector');
+  if (!el) return;
+  el.innerHTML = scenes.map((s, i) => `
+    <div class="scene-card ${i===currentSceneIdx?'active-scene':''}" onclick="selectScene(${i})">
+      <div class="sc-icon">${s.icon}</div>
+      <div class="sc-title">${s.title}</div>
+      <div class="sc-sub">${s.sub}</div>
+    </div>`).join('');
+}
+
+function selectScene(idx) {
+  currentSceneIdx = idx; currentStepIdx = 0; convoScore = 0; answered = false;
+  buildSceneSelector();
+  document.getElementById('convo-game').style.display = 'block';
+  document.getElementById('scene-complete').classList.remove('show');
+  renderConvoStep();
+}
+
+function renderConvoStep() {
+  const scene = scenes[currentSceneIdx];
+  const step = scene.steps[currentStepIdx];
+  document.getElementById('convo-scene-header').style.background = scene.color;
+  document.getElementById('convo-scene-header').innerHTML = `<span style="font-size:24px">${scene.icon}</span> ${scene.title}`;
+  const dots = document.getElementById('convo-dots');
+  dots.innerHTML = scene.steps.map((_,i)=>`<div class="convo-step-dot ${i<currentStepIdx?'done':i===currentStepIdx?'current':''}"></div>`).join('');
+  document.getElementById('convo-step-label').textContent = `シーン ${currentStepIdx+1}/${scene.steps.length}`;
+  document.getElementById('convo-score-label').textContent = `⭐ ${convoScore}pts`;
+  const body = document.getElementById('convo-scene-body');
+  body.innerHTML = step.dialogue.map(d=>`
+    <div class="bubble-row ${d.side}">
+      <div class="bubble-avatar">${d.avatar}</div>
+      <div class="bubble ${d.side}${d.hidden?' hidden-ja':''}">
+        <span class="ja">${d.ja}</span><span class="en">${d.en}</span>
+      </div>
+    </div>`).join('');
+  const qDiv = document.createElement('div');
+  qDiv.style.cssText = 'font-size:13px;font-weight:800;color:var(--text2);padding:8px 12px;background:var(--pink-pale);border-radius:10px;margin-top:4px;';
+  qDiv.textContent = '💭 ' + step.question;
+  body.appendChild(qDiv);
+  answered = false;
+  document.getElementById('convo-result').className = 'convo-result';
+  document.getElementById('convo-result').textContent = '';
+  document.getElementById('convo-choices').innerHTML = step.choices.map((c,i)=>`
+    <button class="convo-choice" onclick="answerConvo(${i})">
+      <span class="ja-ans">${c.ja}</span><span class="en-ans">${c.en}</span>
+    </button>`).join('');
+  document.getElementById('scene-complete').classList.remove('show');
+}
+
+function answerConvo(idx) {
+  if (answered) return;
+  answered = true;
+  const step = scenes[currentSceneIdx].steps[currentStepIdx];
+  const choice = step.choices[idx];
+  document.querySelectorAll('.convo-choice').forEach((b,i) => {
+    b.onclick = null;
+    if (step.choices[i].correct) b.classList.add('correct');
+    else if (i===idx && !choice.correct) b.classList.add('wrong');
+  });
+  const result = document.getElementById('convo-result');
+  if (choice.correct) {
+    result.className = 'convo-result ok show';
+    result.textContent = '✅ ' + step.feedback;
+    convoScore += 20; gainXP(15, window.innerWidth/2, 300);
+  } else {
+    result.className = 'convo-result ng show';
+    result.textContent = '❌ 惜しい！正解: ' + step.choices.find(c=>c.correct).ja;
+    gainXP(3, window.innerWidth/2, 300);
+  }
+  document.getElementById('convo-score-label').textContent = `⭐ ${convoScore}pts`;
+  setTimeout(() => {
+    currentStepIdx++;
+    if (currentStepIdx >= scenes[currentSceneIdx].steps.length) showSceneComplete();
+    else renderConvoStep();
+  }, 1800);
+}
+
+function showSceneComplete() {
+  const scene = scenes[currentSceneIdx];
+  const pct = convoScore / (scene.steps.length * 20) * 100;
+  const emoji = pct===100?'🏆':pct>=60?'🎉':'💪';
+  document.getElementById('sc-emoji').textContent = emoji;
+  document.getElementById('sc-title').textContent = scene.title + ' クリア！';
+  document.getElementById('sc-msg').textContent = pct===100?'全問正解！パーフェクト！！':`${convoScore}点！もう一度挑戦しよう！`;
+  document.getElementById('scene-complete').classList.add('show');
+  document.getElementById('convo-choices').innerHTML = '';
+  document.getElementById('convo-result').className = 'convo-result';
+  if (pct===100) showPopup('🏆 パーフェクト！', scene.title + 'を全問正解！すごい！');
+}
+
+function nextConvoScene() { selectScene((currentSceneIdx+1) % scenes.length); }
+
+
 buildKanaGrid();
 buildQuest();
 loadFC(0);
 initBattle();
 updateXPBar();
+buildSceneSelector();
 </script>
 </body>
 </html>
