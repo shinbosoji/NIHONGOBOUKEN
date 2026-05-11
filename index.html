@@ -1,5 +1,2624 @@
 <!DOCTYPE html>
+<html lang="ja"><!DOCTYPE html>
 <html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>にほんご冒険 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink: #FF6B9D;
+  --pink-light: #FFB3CC;
+  --pink-pale: #FFF0F5;
+  --yellow: #FFD93D;
+  --yellow-light: #FFF3B0;
+  --mint: #6BCB77;
+  --mint-light: #C8F5CC;
+  --sky: #4D96FF;
+  --sky-light: #C0DBFF;
+  --purple: #C77DFF;
+  --purple-light: #EDD5FF;
+  --orange: #FF9F43;
+  --bg: #FFF8FC;
+  --card: #FFFFFF;
+  --text: #3D2B4F;
+  --text2: #7A6B8A;
+  --border: #F0D6E8;
+  --shadow: 0 4px 20px rgba(255,107,157,0.15);
+  --shadow-lg: 0 8px 32px rgba(255,107,157,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Floating bg stars */
+body::before {
+  content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
+  position: fixed; top: 0; left: 0; right: 0;
+  font-size: 24px; color: var(--pink-light);
+  letter-spacing: 40px; line-height: 80px;
+  pointer-events: none; opacity: 0.3; z-index: 0;
+  white-space: nowrap; overflow: hidden;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  background: white;
+  border-bottom: 3px solid var(--pink-light);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(255,107,157,0.12);
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
+}
+.logo {
+  font-size: 16px; font-weight: 900;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.player-info {
+  display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink-light), var(--purple-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; border: 2px solid var(--pink);
+  flex-shrink: 0;
+}
+.player-stats { flex: 1; min-width: 0; }
+.player-name { font-weight: 800; font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.level-row { display: flex; align-items: center; gap: 5px; }
+.level-badge {
+  background: var(--pink); color: white;
+  font-size: 10px; font-weight: 800;
+  padding: 1px 6px; border-radius: 99px; flex-shrink: 0;
+}
+.xp-bar-wrap { flex: 1; height: 6px; background: var(--pink-pale); border-radius: 99px; overflow: hidden; min-width: 30px; }
+.xp-bar { height: 100%; background: linear-gradient(90deg, var(--pink), var(--purple)); border-radius: 99px; transition: width 0.6s ease; }
+.xp-label { font-size: 10px; color: var(--text2); flex-shrink: 0; white-space: nowrap; }
+.coins {
+  display: flex; align-items: center; gap: 3px;
+  background: var(--yellow-light); border: 2px solid var(--yellow);
+  padding: 3px 8px; border-radius: 99px;
+  font-weight: 800; font-size: 12px; color: #8B6914;
+  flex-shrink: 0; white-space: nowrap;
+}
+.view-toggle {
+  display: flex; align-items: center;
+  background: var(--pink-pale); border: 2px solid var(--pink-light);
+  border-radius: 99px; padding: 3px; gap: 2px; flex-shrink: 0;
+}
+.vt-btn {
+  padding: 3px 7px; border-radius: 99px; border: none; cursor: pointer;
+  font-size: 13px; background: transparent; transition: all 0.15s; line-height: 1;
+}
+.vt-btn.active { background: white; box-shadow: 0 1px 4px rgba(255,107,157,0.25); }
+@media (max-width: 420px) {
+  .xp-label { display: none; }
+  .logo { font-size: 13px; }
+  .coins { padding: 3px 6px; font-size: 11px; }
+}
+/* PC mode: wider layout */
+body.pc-mode .main { max-width: 1100px; }
+body.pc-mode .cards-grid { grid-template-columns: repeat(4, 1fr); }
+body.pc-mode .topbar { padding: 12px 32px; gap: 16px; }
+body.pc-mode .logo { font-size: 20px; }
+body.pc-mode .avatar { width: 42px; height: 42px; font-size: 20px; }
+body.pc-mode .player-name { font-size: 14px; }
+body.pc-mode .coins { font-size: 14px; padding: 5px 12px; }
+body.pc-mode .nav { padding: 16px 32px 0; }
+body.pc-mode .main { padding: 24px 32px; }
+
+/* ===== NAV ===== */
+.nav {
+  display: flex; gap: 8px; padding: 16px 24px 0;
+  overflow-x: auto; position: relative; z-index: 1;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  padding: 10px 20px; border-radius: 99px;
+  border: 2.5px solid var(--border);
+  background: white; cursor: pointer;
+  font-size: 14px; font-weight: 700;
+  color: var(--text2); white-space: nowrap;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.nav-btn:hover { border-color: var(--pink); color: var(--pink); transform: translateY(-2px); }
+.nav-btn.active {
+  background: var(--pink); border-color: var(--pink);
+  color: white; box-shadow: 0 4px 12px rgba(255,107,157,0.4);
+  transform: translateY(-2px);
+}
+
+/* ===== MAIN ===== */
+.main { padding: 20px 24px; position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+.section { display: none; animation: fadeUp 0.3s ease; }
+.section.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+/* ===== DASHBOARD ===== */
+.dash-hero {
+  background: linear-gradient(135deg, #FFB3CC 0%, #EDD5FF 50%, #C0DBFF 100%);
+  border-radius: 24px; padding: 28px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 20px;
+  border: 3px solid white; box-shadow: var(--shadow-lg);
+}
+.hero-char { font-size: 72px; line-height: 1; }
+.hero-text h2 { font-size: 24px; font-weight: 900; color: var(--text); }
+.hero-text p { font-size: 14px; color: var(--text2); margin-top: 4px; }
+.hero-streak {
+  margin-top: 12px; display: flex; align-items: center; gap: 6px;
+  font-weight: 700; font-size: 14px; color: var(--orange);
+}
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.dash-card {
+  background: white; border-radius: 20px; padding: 20px;
+  border: 2.5px solid var(--border); text-align: center;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.dash-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--pink); }
+.dash-card .icon { font-size: 36px; margin-bottom: 8px; }
+.dash-card .title { font-size: 15px; font-weight: 800; color: var(--text); }
+.dash-card .sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.dash-card .progress-mini { height: 6px; background: var(--pink-pale); border-radius: 99px; margin-top: 10px; overflow: hidden; }
+.dash-card .progress-mini-fill { height: 100%; border-radius: 99px; transition: width 0.6s; }
+
+/* ===== KANA ===== */
+.kana-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.kana-header h2 { font-size: 20px; font-weight: 900; }
+.kana-tabs { display: flex; gap: 8px; }
+.kana-tab {
+  padding: 8px 18px; border-radius: 99px; border: 2px solid var(--border);
+  background: white; cursor: pointer; font-weight: 700; font-size: 13px;
+  color: var(--text2); font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.kana-tab.active { background: var(--sky); border-color: var(--sky); color: white; }
+.kana-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  direction: rtl;
+  gap: 8px;
+  overflow-x: auto;
+}
+.kana-cell {
+  background: white; border: 2.5px solid var(--border);
+  border-radius: 16px; padding: 12px 6px; text-align: center;
+  cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  direction: ltr; min-width: 60px;
+}
+.kana-cell:hover { transform: scale(1.08); border-color: var(--sky); box-shadow: 0 4px 16px rgba(77,150,255,0.2); }
+.kana-cell.mastered {
+  background: linear-gradient(135deg, var(--mint-light), var(--sky-light));
+  border-color: var(--mint);
+}
+.kana-cell .char { font-size: 26px; display: block; color: var(--text); }
+.kana-cell .rom { font-size: 11px; color: var(--text2); margin-top: 2px; font-weight: 700; }
+.kana-cell.mastered .char { color: var(--mint); }
+
+/* ===== QUEST (VOCAB) ===== */
+.quest-list { display: flex; flex-direction: column; gap: 12px; }
+.quest-card {
+  background: white; border: 2.5px solid var(--border);
+  border-radius: 20px; padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.quest-card:hover { transform: translateX(4px); border-color: var(--yellow); box-shadow: var(--shadow-lg); }
+.quest-icon { font-size: 32px; flex-shrink: 0; }
+.quest-info { flex: 1; }
+.quest-ja { font-size: 22px; font-weight: 900; color: var(--text); }
+.quest-reading { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.quest-en { font-size: 14px; color: var(--text); margin-top: 4px; font-weight: 600; }
+.quest-xp {
+  background: var(--yellow-light); border: 2px solid var(--yellow);
+  padding: 4px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 800; color: #8B6914;
+  flex-shrink: 0;
+}
+.quest-card.done { opacity: 0.5; }
+
+/* ===== BATTLE (QUIZ) ===== */
+.battle-arena {
+  background: linear-gradient(135deg, #2D1B4E 0%, #1a0a3e 100%);
+  border-radius: 24px; padding: 28px; margin-bottom: 16px;
+  border: 3px solid var(--purple); box-shadow: 0 8px 32px rgba(199,125,255,0.3);
+  position: relative; overflow: hidden;
+}
+.battle-arena::before {
+  content: '⭐🌟✨💫⭐🌟✨💫⭐🌟✨💫';
+  position: absolute; top: 8px; left: 0; right: 0;
+  font-size: 16px; letter-spacing: 20px;
+  opacity: 0.15; pointer-events: none;
+}
+.battle-question {
+  font-size: 64px; text-align: center; color: white;
+  font-weight: 900; margin: 12px 0; text-shadow: 0 0 20px rgba(199,125,255,0.5);
+}
+.battle-instruction { text-align: center; color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 4px; }
+.battle-timer-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
+.battle-timer {
+  background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 99px; padding: 6px 20px; color: white; font-weight: 800; font-size: 14px;
+}
+.battle-hp { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.hp-label { font-size: 12px; color: rgba(255,255,255,0.6); flex-shrink: 0; }
+.hp-bar-wrap { flex: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+.hp-bar { height: 100%; background: linear-gradient(90deg, #FF6B9D, #FF3366); border-radius: 99px; transition: width 0.5s ease; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.option-btn {
+  background: white; border: 2.5px solid var(--border);
+  border-radius: 18px; padding: 16px; text-align: center;
+  cursor: pointer; font-size: 15px; font-weight: 700;
+  color: var(--text); transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.option-btn:hover { border-color: var(--purple); background: var(--purple-light); transform: scale(1.03); }
+.option-btn.correct { background: var(--mint-light); border-color: var(--mint); color: #1a5e22; }
+.option-btn.wrong { background: #FFE0E0; border-color: #FF5252; color: #8B0000; }
+.battle-score-row { display: flex; gap: 12px; margin-bottom: 16px; }
+.battle-stat {
+  flex: 1; background: white; border-radius: 16px;
+  padding: 12px; text-align: center; border: 2px solid var(--border);
+}
+.battle-stat .num { font-size: 24px; font-weight: 900; color: var(--purple); }
+.battle-stat .lab { font-size: 11px; color: var(--text2); }
+
+/* ===== FLASHCARD ===== */
+.fc-scene {
+  perspective: 1000px; margin-bottom: 20px; cursor: pointer;
+}
+.fc-card {
+  width: 100%; min-height: 220px;
+  border-radius: 24px; position: relative;
+  transform-style: preserve-3d; transition: transform 0.5s ease;
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face {
+  position: absolute; inset: 0; border-radius: 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  backface-visibility: hidden; padding: 28px;
+  border: 3px solid var(--border); box-shadow: var(--shadow-lg);
+}
+.fc-front-face {
+  background: linear-gradient(135deg, white, var(--purple-light));
+}
+.fc-back-face {
+  background: linear-gradient(135deg, var(--mint-light), var(--sky-light));
+  transform: rotateY(180deg);
+}
+.fc-char { font-size: 56px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+.fc-hint { font-size: 13px; color: var(--text2); }
+.fc-answer { font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.fc-reading { font-size: 16px; color: var(--sky); font-weight: 700; }
+.fc-actions { display: flex; gap: 12px; justify-content: center; }
+.fc-btn {
+  padding: 12px 28px; border-radius: 99px; border: none;
+  cursor: pointer; font-size: 15px; font-weight: 800;
+  font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.fc-btn:hover { transform: scale(1.05); }
+.fc-btn.again { background: #FFE0E0; color: #CC3333; }
+.fc-btn.good { background: var(--mint-light); color: #1a5e22; }
+.fc-btn.easy { background: var(--sky-light); color: #0a3d7a; }
+.fc-progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.fc-dots { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+.fc-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.fc-dot.done { background: var(--mint); }
+.fc-dot.current { background: var(--purple); transform: scale(1.3); }
+
+/* ===== LEVELUP POPUP ===== */
+.popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 999; display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.popup-overlay.show { display: flex; }
+.popup-box {
+  background: white; border-radius: 28px; padding: 40px;
+  text-align: center; border: 4px solid var(--yellow);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  max-width: 340px; width: 90%;
+}
+@keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.popup-emoji { font-size: 72px; margin-bottom: 12px; }
+.popup-title { font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+.popup-sub { font-size: 15px; color: var(--text2); margin-bottom: 20px; }
+.popup-btn {
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white; border: none; padding: 14px 32px; border-radius: 99px;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.popup-btn:hover { transform: scale(1.05); }
+
+/* ===== FLOATING XP ===== */
+.float-xp {
+  position: fixed; font-size: 18px; font-weight: 900;
+  color: var(--yellow); pointer-events: none; z-index: 9999;
+  animation: floatUp 1s ease forwards;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+@keyframes floatUp {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-80px); }
+}
+
+/* ===== BTN ===== */
+.btn {
+  padding: 12px 24px; border-radius: 99px;
+  border: none; cursor: pointer;
+  font-size: 15px; font-weight: 800; font-family: 'Nunito', sans-serif;
+  transition: all 0.2s;
+}
+.btn:hover { transform: scale(1.04); }
+.btn-primary { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; box-shadow: 0 4px 16px rgba(255,107,157,0.4); }
+.btn-outline { background: white; border: 2.5px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+
+/* ===== KANJI TOOLTIP ===== */
+.k {
+  border-bottom: 2px dashed var(--pink);
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: color 0.15s;
+}
+.k:hover { color: var(--pink); }
+
+.kanji-popup {
+  position: fixed;
+  z-index: 9000;
+  background: white;
+  border: 3px solid var(--pink-light);
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 12px 40px rgba(255,107,157,0.25);
+  min-width: 180px;
+  max-width: 260px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.95);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.kanji-popup.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.kp-char { font-size: 42px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 8px; }
+.kp-reading { font-size: 16px; font-weight: 800; color: var(--pink); margin-bottom: 4px; }
+.kp-meaning { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+.kp-tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  background: var(--pink-pale); color: var(--pink);
+  border: 1px solid var(--pink-light); border-radius: 99px;
+  padding: 2px 8px;
+}
+.kp-arrow {
+  position: absolute; bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid white;
+}
+.kp-arrow-border {
+  position: absolute; bottom: -13px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid var(--pink-light);
+}
+/* ===== ENEMY BATTLE STAGE ===== */
+.enemy-stage {
+  background: linear-gradient(180deg, #1a0533 0%, #2d1060 50%, #1a2a5e 100%);
+  border-radius: 20px; padding: 16px 20px 20px;
+  border: 3px solid #7B2FBE; position: relative; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(123,47,190,0.4);
+}
+.enemy-stage::before {
+  content: '⭐🌟✨💫⭐🌟✨💫';
+  position: absolute; top: 6px; left: 0; right: 0;
+  font-size: 14px; letter-spacing: 28px; opacity: 0.12;
+  pointer-events: none; white-space: nowrap; overflow: hidden;
+}
+.enemy-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.enemy-name-badge {
+  background: rgba(255,255,255,0.15); color: white;
+  font-size: 13px; font-weight: 900; padding: 3px 12px; border-radius: 99px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+}
+.enemy-level-badge {
+  background: var(--yellow); color: #7a4f00;
+  font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 99px;
+}
+.dmg-label {
+  margin-left: auto; font-size: 22px; font-weight: 900;
+  color: var(--yellow); text-shadow: 0 0 12px rgba(255,211,61,0.8);
+  animation: dmgPop 0.8s ease forwards;
+}
+@keyframes dmgPop {
+  0%   { opacity:1; transform: scale(1.5) translateY(0); }
+  100% { opacity:0; transform: scale(1) translateY(-20px); }
+}
+.enemy-hp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.enemy-hp-wrap { flex: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; }
+.enemy-hp-bar { height: 100%; background: linear-gradient(90deg, #FF3366, #FF9F43); border-radius: 99px; transition: width 0.5s ease; }
+.enemy-hp-num { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; white-space: nowrap; }
+.enemy-sprite {
+  font-size: 80px; text-align: center; display: block;
+  margin: 4px 0 8px; line-height: 1;
+  filter: drop-shadow(0 0 20px rgba(199,125,255,0.6));
+}
+.enemy-sprite.shake { animation: enemyShake 0.4s ease; }
+.enemy-sprite.defeated { animation: enemyDefeat 0.7s ease forwards; }
+@keyframes enemyShake {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-8px) rotate(-5deg); }
+  40% { transform: translateX(8px) rotate(5deg); }
+  60% { transform: translateX(-5px) rotate(-3deg); }
+  80% { transform: translateX(5px) rotate(3deg); }
+}
+@keyframes enemyDefeat {
+  0%   { transform: scale(1) rotate(0deg); opacity:1; }
+  50%  { transform: scale(1.3) rotate(20deg); filter: brightness(3); }
+  100% { transform: scale(0) rotate(40deg); opacity:0; }
+}
+.enemy-status-msg { text-align: center; color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 700; margin-top: 6px; }
+.speak-btn {
+  background: none; border: none; cursor: pointer; font-size: 18px;
+  padding: 3px 5px; border-radius: 50%; transition: background 0.15s; vertical-align: middle;
+}
+.speak-btn:hover { background: var(--pink-pale); }
+/* ===== CONVERSATION GAME ===== */
+.convo-scene {
+  border-radius: 20px; overflow: hidden;
+  border: 3px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+}
+.convo-scene-header {
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 15px; color: white;
+}
+.convo-scene-body {
+  background: white; padding: 16px;
+  min-height: 240px; display: flex; flex-direction: column; gap: 12px;
+}
+.bubble-row { display: flex; align-items: flex-end; gap: 10px; }
+.bubble-row.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0; border: 2px solid var(--border);
+  background: var(--pink-pale);
+}
+.bubble {
+  max-width: 72%; padding: 10px 14px;
+  border-radius: 18px; font-size: 14px; line-height: 1.6;
+  position: relative;
+}
+.bubble.left {
+  background: var(--pink-pale); border: 1.5px solid var(--pink-light);
+  border-bottom-left-radius: 4px; color: var(--text);
+}
+.bubble.right {
+  background: linear-gradient(135deg, var(--sky), var(--purple));
+  color: white; border-bottom-right-radius: 4px;
+}
+.bubble .ja { font-size: 15px; font-weight: 700; display: block; }
+.bubble .en { font-size: 11px; opacity: 0.7; margin-top: 3px; display: block; }
+.bubble.right .en { color: rgba(255,255,255,0.8); }
+.bubble.hidden-ja .ja { filter: blur(4px); cursor: pointer; transition: filter 0.3s; }
+.bubble.hidden-ja .ja:hover { filter: blur(0); }
+.convo-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.convo-choice {
+  padding: 12px 16px; border-radius: 14px;
+  border: 2.5px solid var(--border); background: white;
+  cursor: pointer; font-size: 14px; font-weight: 700;
+  color: var(--text); text-align: left;
+  font-family: 'Nunito','Noto Sans JP',sans-serif;
+  transition: all 0.18s;
+}
+.convo-choice:hover { border-color: var(--purple); background: var(--purple-light); }
+.convo-choice.correct { background: var(--mint-light); border-color: var(--mint); color: #145c1f; }
+.convo-choice.wrong { background: #FFE0E0; border-color: #FF5252; color: #8B0000; }
+.convo-choice .ja-ans { display: block; font-size: 13px; }
+.convo-choice .en-ans { display: block; font-size: 11px; color: var(--text2); margin-top: 2px; }
+.convo-choice.correct .en-ans { color: #145c1f; }
+.convo-result {
+  padding: 14px 16px; border-radius: 14px;
+  font-size: 14px; font-weight: 700; margin-top: 4px;
+  display: none;
+}
+.convo-result.show { display: block; }
+.convo-result.ok { background: var(--mint-light); color: #145c1f; border: 2px solid var(--mint); }
+.convo-result.ng { background: #FFE0E0; color: #8B0000; border: 2px solid #FF5252; }
+.scene-selector {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;
+  margin-bottom: 20px;
+}
+.scene-card {
+  background: white; border: 2.5px solid var(--border);
+  border-radius: 18px; padding: 16px 12px; text-align: center;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.scene-card:hover { transform: translateY(-3px); border-color: var(--pink); box-shadow: var(--shadow-lg); }
+.scene-card.active-scene { border-color: var(--pink); background: var(--pink-pale); }
+.scene-card .sc-icon { font-size: 32px; margin-bottom: 6px; }
+.scene-card .sc-title { font-size: 13px; font-weight: 800; color: var(--text); }
+.scene-card .sc-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.convo-progress {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.convo-step-dots { display: flex; gap: 5px; }
+.convo-step-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--border); transition: background 0.3s;
+}
+.convo-step-dot.done { background: var(--mint); }
+.convo-step-dot.current { background: var(--pink); transform: scale(1.3); }
+.scene-complete {
+  text-align: center; padding: 28px 20px;
+  background: linear-gradient(135deg, var(--yellow-light), var(--mint-light));
+  border-radius: 20px; border: 2px solid var(--yellow);
+  display: none;
+}
+.scene-complete.show { display: block; }
+.scene-complete .big-emoji { font-size: 56px; margin-bottom: 10px; }
+.scene-complete h3 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+.scene-complete p { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
+.typing-indicator { display: flex; gap: 4px; padding: 10px 14px; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--pink-light); animation: typingBounce 1s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+.ad-slot {
+  background: white;
+  border: 2px dashed var(--pink-light);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 6px;
+  color: var(--text2); font-size: 12px; font-weight: 700;
+  position: relative; overflow: hidden;
+  min-height: 90px;
+}
+.ad-slot-banner { width: 100%; min-height: 90px; margin-bottom: 12px; }
+.ad-slot-rect { width: 100%; min-height: 250px; margin: 12px 0; }
+.ad-slot-label {
+  position: absolute; top: 6px; left: 10px;
+  font-size: 10px; color: var(--pink-light); font-weight: 700; letter-spacing: 1px;
+}
+.ad-slot ins { display: block; width: 100%; }
+
+/* ===== FOOTER ===== */
+.site-footer {
+  background: white; border-top: 3px solid var(--pink-light);
+  padding: 24px 20px; margin-top: 32px; text-align: center;
+}
+.footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+.footer-link {
+  font-size: 13px; font-weight: 700; color: var(--text2);
+  text-decoration: none; cursor: pointer;
+  transition: color 0.2s;
+}
+.footer-link:hover { color: var(--pink); }
+.footer-copy { font-size: 12px; color: var(--text2); }
+
+/* ===== CONTACT / PRIVACY PAGES ===== */
+.page-hero {
+  background: linear-gradient(135deg, var(--pink-pale), var(--purple-light));
+  border-radius: 20px; padding: 28px 24px; margin-bottom: 20px;
+  border: 2px solid var(--pink-light); text-align: center;
+}
+.page-hero h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.page-hero p { font-size: 14px; color: var(--text2); }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 12px 16px;
+  border: 2.5px solid var(--border); border-radius: 14px;
+  font-size: 14px; font-family: 'Nunito','Noto Sans JP',sans-serif;
+  color: var(--text); background: white; outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--pink); }
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-submit {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white; border: none; border-radius: 99px;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  font-family: 'Nunito',sans-serif; transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(255,107,157,0.35);
+}
+.form-submit:hover { transform: scale(1.02); }
+.form-success {
+  background: var(--mint-light); border: 2px solid var(--mint);
+  border-radius: 16px; padding: 20px; text-align: center;
+  display: none;
+}
+.form-success .icon { font-size: 40px; margin-bottom: 8px; }
+.form-success p { font-weight: 700; color: #1a5e22; }
+.privacy-section { margin-bottom: 24px; }
+.privacy-section h3 {
+  font-size: 16px; font-weight: 900; color: var(--pink);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--pink-light);
+}
+.privacy-section p { font-size: 14px; color: var(--text2); line-height: 1.8; margin-bottom: 8px; }
+.privacy-section ul { padding-left: 20px; }
+.privacy-section ul li { font-size: 14px; color: var(--text2); line-height: 2; }
+.updated-badge {
+  display: inline-block; background: var(--yellow-light); border: 1.5px solid var(--yellow);
+  border-radius: 99px; padding: 3px 12px; font-size: 12px; font-weight: 700;
+  color: #8B6914; margin-bottom: 20px;
+}
+</style>
+<body>
+
+<!-- KANJI POPUP -->
+<div class="kanji-popup" id="kanji-popup">
+  <div class="kp-arrow-border"></div>
+  <div class="kp-arrow"></div>
+  <div class="kp-char" id="kp-char">水</div>
+  <div class="kp-reading" id="kp-reading">みず</div>
+  <div class="kp-meaning" id="kp-meaning">water（水）</div>
+  <span class="kp-tag" id="kp-tag">N5</span>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">にほんごBOUKEN 🌸</div>
+  <div class="player-info">
+    <div class="avatar">🐱</div>
+    <div class="player-stats">
+      <div class="player-name" id="pname"><span class="k" data-k="冒険者">冒険者</span></div>
+      <div class="level-row">
+        <div class="level-badge" id="plevel">Lv.1</div>
+        <div class="xp-bar-wrap"><div class="xp-bar" id="xpbar" style="width:0%"></div></div>
+        <div class="xp-label" id="xplabel">0/100 XP</div>
+      </div>
+    </div>
+  </div>
+  <div class="coins">🪙 <span id="coins">0</span></div>
+  <div class="view-toggle">
+    <button class="vt-btn active" id="vt-sp" onclick="setView('sp')" title="スマホ表示">📱</button>
+    <button class="vt-btn" id="vt-pc" onclick="setView('pc')" title="PC表示">🖥️</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showSec('dashboard',this)">🏠 ホーム</button>
+  <button class="nav-btn" onclick="showSec('kana',this)">📖 かな<span class="k" data-k="文字">文字</span></button>
+  <button class="nav-btn" onclick="showSec('quest',this)">📜 クエスト</button>
+  <button class="nav-btn" onclick="showSec('flashcard',this)">🃏 カード</button>
+  <button class="nav-btn" onclick="showSec('battle',this)">⚔️ バトル</button>
+  <button class="nav-btn" onclick="showSec('convo',this)">💬 会話ゲーム</button>
+  <button class="nav-btn" onclick="showSec('contact',this)">✉️ お問い合わせ</button>
+  <button class="nav-btn" onclick="showSec('privacy',this)">🔒 プライバシー</button>
+</div>
+
+<!-- AD BANNER TOP (レスポンシブ横長) -->
+<div class="ad-slot ad-slot-banner" style="margin:8px 24px 0; max-width:860px; margin-left:auto; margin-right:auto;">
+  <span class="ad-slot-label">ADVERTISEMENT</span>
+  <!-- Google AdSense ここに貼る ↓ -->
+  <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+  <span>📢 広告スペース（横長バナー）</span>
+  <span style="font-size:10px;opacity:0.6;">728×90 / レスポンシブ対応</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard" class="section active">
+    <div class="dash-hero">
+      <div class="hero-char">🌸</div>
+      <div class="hero-text">
+        <h2>おはよう！<span class="k" data-k="冒険者">冒険者</span>さん！</h2>
+        <p><span class="k" data-k="今日">今日</span>も<span class="k" data-k="日本語">日本語</span>を<span class="k" data-k="学">学</span>ぼう！バトルを<span class="k" data-k="制">制</span>し、レベルアップしよう！</p>
+        <div class="hero-streak">🔥 <span id="streak">0</span> <span class="k" data-k="日">日</span>連続！</div>
+      </div>
+    </div>
+    <div class="cards-grid">
+      <div class="dash-card" onclick="showSec('kana',document.querySelectorAll('.nav-btn')[1])">
+        <div class="icon">📖</div>
+        <div class="title">かな<span class="k" data-k="文字">文字</span></div>
+        <div class="sub" id="dc-kana-sub">0/92 マスター</div>
+        <div class="progress-mini"><div class="progress-mini-fill" id="dc-kana-fill" style="width:0%;background:linear-gradient(90deg,#4D96FF,#6BCB77)"></div></div>
+      </div>
+      <div class="dash-card" onclick="showSec('quest',document.querySelectorAll('.nav-btn')[2])">
+        <div class="icon">📜</div>
+        <div class="title"><span class="k" data-k="単語">単語</span>クエスト</div>
+        <div class="sub">500 <span class="k" data-k="単語">単語</span>を<span class="k" data-k="習得">習得</span></div>
+        <div class="progress-mini"><div class="progress-mini-fill" id="dc-vocab-fill" style="width:0%;background:linear-gradient(90deg,#FFD93D,#FF9F43)"></div></div>
+      </div>
+      <div class="dash-card" onclick="showSec('flashcard',document.querySelectorAll('.nav-btn')[3])">
+        <div class="icon">🃏</div>
+        <div class="title">フラッシュカード</div>
+        <div class="sub"><span class="k" data-k="復習">復習</span>で<span class="k" data-k="記憶">記憶</span>を<span class="k" data-k="定着">定着</span></div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:60%;background:linear-gradient(90deg,#C77DFF,#FF6B9D)"></div></div>
+      </div>
+      <div class="dash-card" onclick="showSec('battle',document.querySelectorAll('.nav-btn')[4])">
+        <div class="icon">⚔️</div>
+        <div class="title">バトルモード</div>
+        <div class="sub">クイズで<span class="k" data-k="敵">敵</span>を<span class="k" data-k="倒">倒</span>す！</div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:30%;background:linear-gradient(90deg,#FF6B9D,#FF3366)"></div></div>
+      </div>
+      <div class="dash-card" onclick="showSec('convo',document.querySelectorAll('.nav-btn')[5])">
+        <div class="icon">💬</div>
+        <div class="title">会話ゲーム</div>
+        <div class="sub">ラーメン・電車・カラオケ…</div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:0%;background:linear-gradient(90deg,#C77DFF,#4D96FF)"></div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="showSec('battle',document.querySelectorAll('.nav-btn')[4])" style="width:100%;font-size:17px;padding:16px;">⚔️ バトルを<span class="k" data-k="始">始</span>める！</button>
+
+    <!-- AD RECT (記事内 300×250) -->
+    <div class="ad-slot ad-slot-rect" style="margin-top:20px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="rectangle"></ins> -->
+      <span>📢 広告スペース（レクタングル）</span>
+      <span style="font-size:10px;opacity:0.6;">300×250</span>
+    </div>
+  </div>
+
+  <!-- KANA -->
+  <div id="sec-kana" class="section">
+    <div class="kana-header">
+      <h2>📖 かな<span class="k" data-k="文字">文字</span></h2>
+      <div class="kana-tabs">
+        <button class="kana-tab active" onclick="switchKana('hira',this)">ひらがな</button>
+        <button class="kana-tab" onclick="switchKana('kata',this)">カタカナ</button>
+      </div>
+    </div>
+    <div class="kana-grid" id="kana-grid"></div>
+  </div>
+
+  <!-- QUEST -->
+  <div id="sec-quest" class="section">
+  </div>
+
+  <!-- FLASHCARD -->
+  <div id="sec-flashcard" class="section">
+    <div class="fc-progress-row">
+      <div class="fc-dots" id="fc-dots"></div>
+      <span style="font-size:13px;color:var(--text2);font-weight:700;" id="fc-num">1/30</span>
+    </div>
+    <div class="fc-scene" onclick="flipFC()">
+      <div class="fc-card" id="fc-card">
+        <div class="fc-face fc-front-face">
+          <div class="fc-char" id="fc-front">水</div>
+          <div class="fc-hint">タップして<span class="k" data-k="答">答</span>えを<span class="k" data-k="見">見</span>る ✨</div>
+        </div>
+        <div class="fc-face fc-back-face">
+          <div class="fc-answer" id="fc-back-en">water</div>
+          <div class="fc-reading" id="fc-back-rd">みず</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-actions" id="fc-actions" style="display:none">
+      <button class="fc-btn again" onclick="fcRate('again')">😓 もう一度</button>
+      <button class="fc-btn good" onclick="fcRate('good')">😊 <span class="k" data-k="覚">覚</span>えた</button>
+      <button class="fc-btn easy" onclick="fcRate('easy')">🌟 <span class="k" data-k="簡単">簡単</span>！</button>
+    </div>
+    <div style="text-align:center;margin-top:12px;" id="fc-tap-hint">
+      <span style="font-size:13px;color:var(--text2);">👆 カードをタップして<span class="k" data-k="答">答</span>えを<span class="k" data-k="確認">確認</span></span>
+    </div>
+  </div>
+
+  <!-- BATTLE -->
+  <div id="sec-battle" class="section">
+    <div class="battle-score-row">
+      <div class="battle-stat"><div class="num" id="b-score">0</div><div class="lab">⭐ 正解</div></div>
+      <div class="battle-stat"><div class="num" id="b-streak">0</div><div class="lab">🔥 連続</div></div>
+      <div class="battle-stat"><div class="num" id="b-total">0</div><div class="lab">📊 問題</div></div>
+    </div>
+
+    <!-- ENEMY STAGE -->
+    <div class="enemy-stage" id="enemy-stage">
+      <div class="enemy-name-row">
+        <span class="enemy-name-badge" id="enemy-name-badge">???</span>
+        <span class="enemy-level-badge" id="enemy-level-badge">Lv.1</span>
+        <span class="dmg-label" id="dmg-label" style="display:none"></span>
+      </div>
+      <div class="enemy-hp-row">
+        <span style="font-size:11px;color:rgba(255,255,255,0.7);">Enemy HP</span>
+        <div class="enemy-hp-wrap"><div class="enemy-hp-bar" id="enemy-hp-bar" style="width:100%"></div></div>
+        <span class="enemy-hp-num" id="enemy-hp-num">100/100</span>
+      </div>
+      <div class="enemy-sprite" id="enemy-sprite">🐉</div>
+      <div class="enemy-status-msg" id="enemy-status-msg">どんな読み方？攻撃せよ！</div>
+    </div>
+
+    <div class="battle-arena" style="margin-top:12px;">
+      <div class="battle-instruction" id="b-inst">読み方を選んでください</div>
+      <div class="battle-question" id="b-question">？</div>
+      <div class="battle-timer-wrap">
+        <div class="battle-timer" id="b-timer">⏱ 準備中...</div>
+      </div>
+      <div class="battle-hp">
+        <span class="hp-label">❤️ 自分HP</span>
+        <div class="hp-bar-wrap"><div class="hp-bar" id="b-hp" style="width:100%"></div></div>
+        <span style="font-size:12px;color:rgba(255,255,255,0.6);" id="b-hp-num">3/3</span>
+      </div>
+    </div>
+    <div class="options-grid" id="b-options"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-outline" onclick="newBattle()">🔄 次の問題</button>
+    </div>
+  </div>
+
+  <!-- CONVERSATION GAME -->
+  <div id="sec-convo" class="section">
+    <div id="convo-scene-picker">
+      <div class="scene-selector" id="scene-selector"></div>
+    </div>
+    <div id="convo-game" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <button class="btn btn-outline" style="padding:7px 16px;font-size:13px;" onclick="exitConvoGame()">← Back</button>
+        <div class="convo-progress" style="flex:1;margin-bottom:0;">
+          <div class="convo-step-dots" id="convo-dots"></div>
+          <span style="font-size:12px;color:var(--text2);font-weight:700;" id="convo-step-label">Scene 1/5</span>
+          <span style="margin-left:auto;font-size:12px;color:var(--orange);font-weight:800;" id="convo-score-label">⭐ 0pts</span>
+        </div>
+      </div>
+      <div class="convo-scene" id="convo-scene-box">
+        <div class="convo-scene-header" id="convo-scene-header"></div>
+        <div class="convo-scene-body" id="convo-scene-body"></div>
+      </div>
+      <div class="convo-result" id="convo-result"></div>
+      <div class="convo-choices" id="convo-choices"></div>
+      <div class="scene-complete" id="scene-complete">
+        <div class="big-emoji" id="sc-emoji">🎊</div>
+        <h3 id="sc-title">Scene Clear!</h3>
+        <p id="sc-msg">Perfect score!</p>
+        <button class="btn btn-primary" onclick="nextConvoScene()" style="margin:0 auto;display:block;">Next Scene ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="sec-contact" class="section">
+    <div class="page-hero">
+      <div style="font-size:40px;margin-bottom:8px;">✉️</div>
+      <h2>お問い合わせ</h2>
+      <p>ご質問・ご意見・バグ報告などお気軽にどうぞ！</p>
+    </div>
+    <!-- AD -->
+    <div class="ad-slot ad-slot-banner" style="margin-bottom:16px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" ...></ins> -->
+      <span>📢 広告スペース</span>
+    </div>
+    <div class="card" style="background:white;border:2px solid var(--border);border-radius:20px;padding:24px;">
+      <div id="contact-form">
+        <form action="https://formspree.io/f/xqenydvk" method="POST" onsubmit="handleContactSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">📛 お名前</label>
+            <input class="form-input" name="name" type="text" placeholder="例：山田 太郎" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📧 メールアドレス</label>
+            <input class="form-input" name="email" type="email" placeholder="例：example@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📋 お問い合わせ種別</label>
+            <select class="form-select" name="type">
+              <option value="">選択してください</option>
+              <option value="bug">🐛 バグ報告</option>
+              <option value="suggest">💡 機能のご提案</option>
+              <option value="content">📖 コンテンツについて</option>
+              <option value="other">📝 その他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💬 メッセージ</label>
+            <textarea class="form-textarea" name="message" placeholder="お問い合わせ内容をご記入ください..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">✨ 送信する</button>
+        </form>
+      </div>
+      <div class="form-success" id="contact-success">
+        <div class="icon">🎉</div>
+        <p>送信ありがとうございました！<br>3〜5営業日以内にご返信いたします。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY -->
+  <div id="sec-privacy" class="section">
+    <div class="page-hero">
+      <div style="font-size:40px;margin-bottom:8px;">🔒</div>
+      <h2>プライバシーポリシー</h2>
+      <p>個人情報の取り扱いについて</p>
+    </div>
+    <div class="updated-badge">📅 最終更新：2026年5月</div>
+    <!-- AD -->
+    <div class="ad-slot ad-slot-banner" style="margin-bottom:20px;">
+      <span class="ad-slot-label">ADVERTISEMENT</span>
+      <!-- <ins class="adsbygoogle" ...></ins> -->
+      <span>📢 広告スペース</span>
+    </div>
+    <div style="background:white;border:2px solid var(--border);border-radius:20px;padding:24px;">
+      <div class="privacy-section">
+        <h3>1. 基本方針</h3>
+        <p>にほんごBOUKEN（以下「当サイト」）は、ユーザーの個人情報保護を重要な責務と認識し、適切な管理・保護に努めます。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>2. 収集する情報</h3>
+        <p>当サイトでは、以下の情報を収集する場合があります：</p>
+        <ul>
+          <li>お問い合わせフォームから送信された氏名・メールアドレス・メッセージ</li>
+          <li>アクセス解析のためのCookieおよびIPアドレス</li>
+          <li>Google AdSenseによる広告配信のための情報</li>
+        </ul>
+      </div>
+      <div class="privacy-section">
+        <h3>3. Google AdSenseについて</h3>
+        <p>当サイトはGoogle AdSenseを利用しています。Googleはユーザーの興味に応じた広告を表示するためにCookieを使用することがあります。</p>
+        <p>Cookieを無効にする方法や、GoogleによるCookieの使用については<a href="https://policies.google.com/technologies/ads" target="_blank" style="color:var(--pink);">Googleの広告ポリシー</a>をご確認ください。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>4. Google Analyticsについて</h3>
+        <p>当サイトはアクセス解析にGoogle Analyticsを使用する場合があります。収集されるデータは匿名であり、個人を特定するものではありません。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>5. 情報の第三者提供</h3>
+        <p>当サイトは、法令に基づく場合を除き、収集した個人情報を第三者に提供することはありません。</p>
+      </div>
+      <div class="privacy-section">
+        <h3>6. お問い合わせ</h3>
+        <p>プライバシーポリシーに関するご質問は、<span style="color:var(--pink);cursor:pointer;font-weight:700;" onclick="showSec('contact',document.querySelectorAll('.nav-btn')[5])">お問い合わせページ</span>よりご連絡ください。</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <!-- AD FOOTER -->
+  <div class="ad-slot ad-slot-banner" style="max-width:860px;margin:0 auto 20px;">
+    <span class="ad-slot-label">ADVERTISEMENT</span>
+    <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+    <span>📢 フッター広告スペース</span>
+    <span style="font-size:10px;opacity:0.6;">728×90 / レスポンシブ</span>
+  </div>
+  <div class="footer-links">
+    <span class="footer-link" onclick="showSec('dashboard',document.querySelectorAll('.nav-btn')[0])">🏠 ホーム</span>
+    <span class="footer-link" onclick="showSec('contact',document.querySelectorAll('.nav-btn')[5])">✉️ お問い合わせ</span>
+    <span class="footer-link" onclick="showSec('privacy',document.querySelectorAll('.nav-btn')[6])">🔒 プライバシーポリシー</span>
+  </div>
+  <div class="footer-copy">© 2026 にほんごBOUKEN 🌸 All rights reserved.</div>
+</footer>
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <div class="popup-emoji">🎉</div>
+    <div class="popup-title" id="popup-title">レベルアップ！</div>
+    <div class="popup-sub" id="popup-sub">レベル2になった！すごい！</div>
+    <button class="popup-btn" onclick="closePopup()">やったー！ ✨</button>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const hiragana = [
+  // あ行
+  ['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],
+  // か行
+  ['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],
+  // さ行
+  ['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],
+  // た行
+  ['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],
+  // な行
+  ['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],
+  // は行
+  ['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],
+  // ま行
+  ['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],
+  // や行（空白セルで揃える）
+  ['や','ya'],['',''],['ゆ','yu'],['',''],['よ','yo'],
+  // ら行
+  ['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],
+  // わ行
+  ['わ','wa'],['',''],['',''],['',''],['を','wo'],
+  // ん（単独）
+  ['ん','n'],['',''],['',''],['',''],['',''],
+];
+const katakana = [
+  ['ア','a'],['イ','i'],['ウ','u'],['エ','e'],['オ','o'],
+  ['カ','ka'],['キ','ki'],['ク','ku'],['ケ','ke'],['コ','ko'],
+  ['サ','sa'],['シ','shi'],['ス','su'],['セ','se'],['ソ','so'],
+  ['タ','ta'],['チ','chi'],['ツ','tsu'],['テ','te'],['ト','to'],
+  ['ナ','na'],['ニ','ni'],['ヌ','nu'],['ネ','ne'],['ノ','no'],
+  ['ハ','ha'],['ヒ','hi'],['フ','fu'],['ヘ','he'],['ホ','ho'],
+  ['マ','ma'],['ミ','mi'],['ム','mu'],['メ','me'],['モ','mo'],
+  ['ヤ','ya'],['',''],['ユ','yu'],['',''],['ヨ','yo'],
+  ['ラ','ra'],['リ','ri'],['ル','ru'],['レ','re'],['ロ','ro'],
+  ['ワ','wa'],['',''],['',''],['',''],['ヲ','wo'],
+  ['ン','n'],['',''],['',''],['',''],['',''],
+];
+const vocab = [
+  // N5 基本
+  {ja:'水',rd:'みず',en:'water',icon:'💧',lvl:'N5'},
+  {ja:'火',rd:'ひ',en:'fire',icon:'🔥',lvl:'N5'},
+  {ja:'風',rd:'かぜ',en:'wind',icon:'🌬️',lvl:'N5'},
+  {ja:'土',rd:'つち',en:'earth/soil',icon:'🟫',lvl:'N5'},
+  {ja:'木',rd:'き',en:'tree',icon:'🌳',lvl:'N5'},
+  {ja:'花',rd:'はな',en:'flower',icon:'🌸',lvl:'N5'},
+  {ja:'草',rd:'くさ',en:'grass',icon:'🌿',lvl:'N5'},
+  {ja:'山',rd:'やま',en:'mountain',icon:'🗻',lvl:'N5'},
+  {ja:'川',rd:'かわ',en:'river',icon:'🏞️',lvl:'N5'},
+  {ja:'海',rd:'うみ',en:'sea',icon:'🌊',lvl:'N5'},
+  {ja:'空',rd:'そら',en:'sky',icon:'☁️',lvl:'N5'},
+  {ja:'太陽',rd:'たいよう',en:'sun',icon:'☀️',lvl:'N5'},
+  {ja:'月',rd:'つき',en:'moon',icon:'🌙',lvl:'N5'},
+  {ja:'星',rd:'ほし',en:'star',icon:'⭐',lvl:'N5'},
+  {ja:'雨',rd:'あめ',en:'rain',icon:'🌧️',lvl:'N5'},
+  {ja:'雪',rd:'ゆき',en:'snow',icon:'❄️',lvl:'N5'},
+  {ja:'猫',rd:'ねこ',en:'cat',icon:'🐱',lvl:'N5'},
+  {ja:'犬',rd:'いぬ',en:'dog',icon:'🐶',lvl:'N5'},
+  {ja:'魚',rd:'さかな',en:'fish',icon:'🐟',lvl:'N5'},
+  {ja:'鳥',rd:'とり',en:'bird',icon:'🐦',lvl:'N5'},
+  {ja:'牛',rd:'うし',en:'cow',icon:'🐄',lvl:'N5'},
+  {ja:'馬',rd:'うま',en:'horse',icon:'🐴',lvl:'N5'},
+  {ja:'豚',rd:'ぶた',en:'pig',icon:'🐷',lvl:'N5'},
+  {ja:'ウサギ',rd:'うさぎ',en:'rabbit',icon:'🐰',lvl:'N5'},
+  {ja:'食べる',rd:'たべる',en:'to eat',icon:'🍜',lvl:'N5'},
+  {ja:'飲む',rd:'のむ',en:'to drink',icon:'🥤',lvl:'N5'},
+  {ja:'行く',rd:'いく',en:'to go',icon:'🚶',lvl:'N5'},
+  {ja:'来る',rd:'くる',en:'to come',icon:'🏃',lvl:'N5'},
+  {ja:'見る',rd:'みる',en:'to see',icon:'👀',lvl:'N5'},
+  {ja:'聞く',rd:'きく',en:'to listen',icon:'👂',lvl:'N5'},
+  {ja:'話す',rd:'はなす',en:'to speak',icon:'💬',lvl:'N5'},
+  {ja:'読む',rd:'よむ',en:'to read',icon:'📚',lvl:'N5'},
+  {ja:'書く',rd:'かく',en:'to write',icon:'✏️',lvl:'N5'},
+  {ja:'買う',rd:'かう',en:'to buy',icon:'🛍️',lvl:'N5'},
+  {ja:'売る',rd:'うる',en:'to sell',icon:'💰',lvl:'N5'},
+  {ja:'寝る',rd:'ねる',en:'to sleep',icon:'😴',lvl:'N5'},
+  {ja:'起きる',rd:'おきる',en:'to wake up',icon:'⏰',lvl:'N5'},
+  {ja:'立つ',rd:'たつ',en:'to stand',icon:'🧍',lvl:'N5'},
+  {ja:'座る',rd:'すわる',en:'to sit',icon:'🪑',lvl:'N5'},
+  {ja:'走る',rd:'はしる',en:'to run',icon:'🏃',lvl:'N5'},
+  {ja:'歩く',rd:'あるく',en:'to walk',icon:'🚶',lvl:'N5'},
+  {ja:'泳ぐ',rd:'およぐ',en:'to swim',icon:'🏊',lvl:'N5'},
+  {ja:'飛ぶ',rd:'とぶ',en:'to fly/jump',icon:'✈️',lvl:'N5'},
+  {ja:'友達',rd:'ともだち',en:'friend',icon:'👫',lvl:'N5'},
+  {ja:'先生',rd:'せんせい',en:'teacher',icon:'👩‍🏫',lvl:'N5'},
+  {ja:'学生',rd:'がくせい',en:'student',icon:'🎒',lvl:'N5'},
+  {ja:'学校',rd:'がっこう',en:'school',icon:'🏫',lvl:'N5'},
+  {ja:'本',rd:'ほん',en:'book',icon:'📖',lvl:'N5'},
+  {ja:'電車',rd:'でんしゃ',en:'train',icon:'🚃',lvl:'N5'},
+  {ja:'駅',rd:'えき',en:'station',icon:'🚉',lvl:'N5'},
+  {ja:'時間',rd:'じかん',en:'time',icon:'⏰',lvl:'N5'},
+  {ja:'今日',rd:'きょう',en:'today',icon:'📅',lvl:'N5'},
+  {ja:'明日',rd:'あした',en:'tomorrow',icon:'🌅',lvl:'N5'},
+  {ja:'昨日',rd:'きのう',en:'yesterday',icon:'🌇',lvl:'N5'},
+  {ja:'朝',rd:'あさ',en:'morning',icon:'🌄',lvl:'N5'},
+  {ja:'昼',rd:'ひる',en:'noon/daytime',icon:'🌞',lvl:'N5'},
+  {ja:'夜',rd:'よる',en:'night',icon:'🌃',lvl:'N5'},
+  {ja:'父',rd:'ちち',en:'father (own)',icon:'👨',lvl:'N5'},
+  {ja:'母',rd:'はは',en:'mother (own)',icon:'👩',lvl:'N5'},
+  {ja:'兄',rd:'あに',en:'older brother',icon:'👦',lvl:'N5'},
+  {ja:'姉',rd:'あね',en:'older sister',icon:'👧',lvl:'N5'},
+  {ja:'弟',rd:'おとうと',en:'younger brother',icon:'👶',lvl:'N5'},
+  {ja:'妹',rd:'いもうと',en:'younger sister',icon:'👶',lvl:'N5'},
+  {ja:'家族',rd:'かぞく',en:'family',icon:'👪',lvl:'N5'},
+  {ja:'家',rd:'いえ',en:'house/home',icon:'🏠',lvl:'N5'},
+  {ja:'部屋',rd:'へや',en:'room',icon:'🛋️',lvl:'N5'},
+  {ja:'ドア',rd:'どあ',en:'door',icon:'🚪',lvl:'N5'},
+  {ja:'窓',rd:'まど',en:'window',icon:'🪟',lvl:'N5'},
+  {ja:'机',rd:'つくえ',en:'desk',icon:'🪑',lvl:'N5'},
+  {ja:'椅子',rd:'いす',en:'chair',icon:'🪑',lvl:'N5'},
+  {ja:'ベッド',rd:'べっど',en:'bed',icon:'🛏️',lvl:'N5'},
+  {ja:'食べ物',rd:'たべもの',en:'food',icon:'🍱',lvl:'N5'},
+  {ja:'ご飯',rd:'ごはん',en:'rice/meal',icon:'🍚',lvl:'N5'},
+  {ja:'パン',rd:'ぱん',en:'bread',icon:'🍞',lvl:'N5'},
+  {ja:'肉',rd:'にく',en:'meat',icon:'🥩',lvl:'N5'},
+  {ja:'野菜',rd:'やさい',en:'vegetables',icon:'🥦',lvl:'N5'},
+  {ja:'果物',rd:'くだもの',en:'fruit',icon:'🍎',lvl:'N5'},
+  {ja:'卵',rd:'たまご',en:'egg',icon:'🥚',lvl:'N5'},
+  {ja:'牛乳',rd:'ぎゅうにゅう',en:'milk',icon:'🥛',lvl:'N5'},
+  {ja:'お茶',rd:'おちゃ',en:'tea',icon:'🍵',lvl:'N5'},
+  {ja:'コーヒー',rd:'こーひー',en:'coffee',icon:'☕',lvl:'N5'},
+  {ja:'ジュース',rd:'じゅーす',en:'juice',icon:'🧃',lvl:'N5'},
+  {ja:'服',rd:'ふく',en:'clothes',icon:'👕',lvl:'N5'},
+  {ja:'靴',rd:'くつ',en:'shoes',icon:'👟',lvl:'N5'},
+  {ja:'帽子',rd:'ぼうし',en:'hat/cap',icon:'🧢',lvl:'N5'},
+  {ja:'鞄',rd:'かばん',en:'bag',icon:'👜',lvl:'N5'},
+  {ja:'財布',rd:'さいふ',en:'wallet',icon:'👛',lvl:'N5'},
+  {ja:'眼鏡',rd:'めがね',en:'glasses',icon:'👓',lvl:'N5'},
+  {ja:'時計',rd:'とけい',en:'clock/watch',icon:'⌚',lvl:'N5'},
+  {ja:'電話',rd:'でんわ',en:'telephone',icon:'📞',lvl:'N5'},
+  {ja:'車',rd:'くるま',en:'car',icon:'🚗',lvl:'N5'},
+  {ja:'自転車',rd:'じてんしゃ',en:'bicycle',icon:'🚲',lvl:'N5'},
+  {ja:'バス',rd:'ばす',en:'bus',icon:'🚌',lvl:'N5'},
+  {ja:'飛行機',rd:'ひこうき',en:'airplane',icon:'✈️',lvl:'N5'},
+  {ja:'お金',rd:'おかね',en:'money',icon:'💴',lvl:'N5'},
+  {ja:'店',rd:'みせ',en:'shop/store',icon:'🏪',lvl:'N5'},
+  {ja:'病院',rd:'びょういん',en:'hospital',icon:'🏥',lvl:'N5'},
+  {ja:'銀行',rd:'ぎんこう',en:'bank',icon:'🏦',lvl:'N5'},
+  {ja:'郵便局',rd:'ゆうびんきょく',en:'post office',icon:'📮',lvl:'N5'},
+  {ja:'公園',rd:'こうえん',en:'park',icon:'🌳',lvl:'N5'},
+  {ja:'図書館',rd:'としょかん',en:'library',icon:'📚',lvl:'N5'},
+  {ja:'大きい',rd:'おおきい',en:'big/large',icon:'🔆',lvl:'N5'},
+  {ja:'小さい',rd:'ちいさい',en:'small/little',icon:'🔅',lvl:'N5'},
+  {ja:'長い',rd:'ながい',en:'long',icon:'📏',lvl:'N5'},
+  {ja:'短い',rd:'みじかい',en:'short',icon:'📏',lvl:'N5'},
+  {ja:'高い',rd:'たかい',en:'tall/expensive',icon:'⬆️',lvl:'N5'},
+  {ja:'低い',rd:'ひくい',en:'low',icon:'⬇️',lvl:'N5'},
+  {ja:'新しい',rd:'あたらしい',en:'new',icon:'✨',lvl:'N5'},
+  {ja:'古い',rd:'ふるい',en:'old',icon:'🏚️',lvl:'N5'},
+  {ja:'良い',rd:'よい',en:'good',icon:'👍',lvl:'N5'},
+  {ja:'悪い',rd:'わるい',en:'bad',icon:'👎',lvl:'N5'},
+  {ja:'速い',rd:'はやい',en:'fast',icon:'⚡',lvl:'N5'},
+  {ja:'遅い',rd:'おそい',en:'slow',icon:'🐢',lvl:'N5'},
+  {ja:'暑い',rd:'あつい',en:'hot (weather)',icon:'🌡️',lvl:'N5'},
+  {ja:'寒い',rd:'さむい',en:'cold (weather)',icon:'🥶',lvl:'N5'},
+  {ja:'熱い',rd:'あつい',en:'hot (touch)',icon:'🔥',lvl:'N5'},
+  {ja:'冷たい',rd:'つめたい',en:'cold (touch)',icon:'🧊',lvl:'N5'},
+  {ja:'甘い',rd:'あまい',en:'sweet',icon:'🍬',lvl:'N5'},
+  {ja:'辛い',rd:'からい',en:'spicy',icon:'🌶️',lvl:'N5'},
+  {ja:'一',rd:'いち',en:'one',icon:'1️⃣',lvl:'N5'},
+  {ja:'二',rd:'に',en:'two',icon:'2️⃣',lvl:'N5'},
+  {ja:'三',rd:'さん',en:'three',icon:'3️⃣',lvl:'N5'},
+  {ja:'四',rd:'し/よん',en:'four',icon:'4️⃣',lvl:'N5'},
+  {ja:'五',rd:'ご',en:'five',icon:'5️⃣',lvl:'N5'},
+  {ja:'六',rd:'ろく',en:'six',icon:'6️⃣',lvl:'N5'},
+  {ja:'七',rd:'しち/なな',en:'seven',icon:'7️⃣',lvl:'N5'},
+  {ja:'八',rd:'はち',en:'eight',icon:'8️⃣',lvl:'N5'},
+  {ja:'九',rd:'く/きゅう',en:'nine',icon:'9️⃣',lvl:'N5'},
+  {ja:'十',rd:'じゅう',en:'ten',icon:'🔟',lvl:'N5'},
+  {ja:'百',rd:'ひゃく',en:'hundred',icon:'💯',lvl:'N5'},
+  {ja:'千',rd:'せん',en:'thousand',icon:'🔢',lvl:'N5'},
+  // N4
+  {ja:'旅行',rd:'りょこう',en:'travel',icon:'✈️',lvl:'N4'},
+  {ja:'準備',rd:'じゅんび',en:'preparation',icon:'📋',lvl:'N4'},
+  {ja:'説明',rd:'せつめい',en:'explanation',icon:'📢',lvl:'N4'},
+  {ja:'練習',rd:'れんしゅう',en:'practice',icon:'💪',lvl:'N4'},
+  {ja:'試験',rd:'しけん',en:'exam/test',icon:'📝',lvl:'N4'},
+  {ja:'合格',rd:'ごうかく',en:'passing (exam)',icon:'🎉',lvl:'N4'},
+  {ja:'失敗',rd:'しっぱい',en:'failure',icon:'😓',lvl:'N4'},
+  {ja:'成功',rd:'せいこう',en:'success',icon:'🏆',lvl:'N4'},
+  {ja:'約束',rd:'やくそく',en:'promise',icon:'🤝',lvl:'N4'},
+  {ja:'連絡',rd:'れんらく',en:'contact/communication',icon:'📱',lvl:'N4'},
+  {ja:'確認',rd:'かくにん',en:'confirmation',icon:'✅',lvl:'N4'},
+  {ja:'予約',rd:'よやく',en:'reservation',icon:'📅',lvl:'N4'},
+  {ja:'注文',rd:'ちゅうもん',en:'order',icon:'📋',lvl:'N4'},
+  {ja:'支払い',rd:'しはらい',en:'payment',icon:'💳',lvl:'N4'},
+  {ja:'割引',rd:'わりびき',en:'discount',icon:'🏷️',lvl:'N4'},
+  {ja:'送る',rd:'おくる',en:'to send',icon:'📨',lvl:'N4'},
+  {ja:'受け取る',rd:'うけとる',en:'to receive',icon:'📥',lvl:'N4'},
+  {ja:'返す',rd:'かえす',en:'to return',icon:'↩️',lvl:'N4'},
+  {ja:'借りる',rd:'かりる',en:'to borrow',icon:'🤲',lvl:'N4'},
+  {ja:'貸す',rd:'かす',en:'to lend',icon:'🤝',lvl:'N4'},
+  {ja:'覚える',rd:'おぼえる',en:'to memorize',icon:'🧠',lvl:'N4'},
+  {ja:'忘れる',rd:'わすれる',en:'to forget',icon:'💭',lvl:'N4'},
+  {ja:'始める',rd:'はじめる',en:'to begin',icon:'▶️',lvl:'N4'},
+  {ja:'終わる',rd:'おわる',en:'to end',icon:'⏹️',lvl:'N4'},
+  {ja:'続ける',rd:'つづける',en:'to continue',icon:'⏩',lvl:'N4'},
+  {ja:'止まる',rd:'とまる',en:'to stop',icon:'🛑',lvl:'N4'},
+  {ja:'変える',rd:'かえる',en:'to change',icon:'🔄',lvl:'N4'},
+  {ja:'使う',rd:'つかう',en:'to use',icon:'🔧',lvl:'N4'},
+  {ja:'作る',rd:'つくる',en:'to make',icon:'🔨',lvl:'N4'},
+  {ja:'直す',rd:'なおす',en:'to fix/correct',icon:'🔧',lvl:'N4'},
+  {ja:'壊す',rd:'こわす',en:'to break',icon:'💥',lvl:'N4'},
+  {ja:'開ける',rd:'あける',en:'to open',icon:'🔓',lvl:'N4'},
+  {ja:'閉める',rd:'しめる',en:'to close',icon:'🔒',lvl:'N4'},
+  {ja:'入る',rd:'はいる',en:'to enter',icon:'🚪',lvl:'N4'},
+  {ja:'出る',rd:'でる',en:'to exit/leave',icon:'🚶',lvl:'N4'},
+  {ja:'上がる',rd:'あがる',en:'to rise/go up',icon:'⬆️',lvl:'N4'},
+  {ja:'下がる',rd:'さがる',en:'to descend/go down',icon:'⬇️',lvl:'N4'},
+  {ja:'増える',rd:'ふえる',en:'to increase',icon:'📈',lvl:'N4'},
+  {ja:'減る',rd:'へる',en:'to decrease',icon:'📉',lvl:'N4'},
+  {ja:'集める',rd:'あつめる',en:'to collect',icon:'📦',lvl:'N4'},
+  {ja:'探す',rd:'さがす',en:'to search',icon:'🔍',lvl:'N4'},
+  {ja:'見つける',rd:'みつける',en:'to find',icon:'🎯',lvl:'N4'},
+  {ja:'選ぶ',rd:'えらぶ',en:'to choose',icon:'✅',lvl:'N4'},
+  {ja:'決める',rd:'きめる',en:'to decide',icon:'✔️',lvl:'N4'},
+  {ja:'考える',rd:'かんがえる',en:'to think',icon:'💭',lvl:'N4'},
+  {ja:'信じる',rd:'しんじる',en:'to believe',icon:'🙏',lvl:'N4'},
+  {ja:'心配する',rd:'しんぱいする',en:'to worry',icon:'😰',lvl:'N4'},
+  {ja:'楽しむ',rd:'たのしむ',en:'to enjoy',icon:'😄',lvl:'N4'},
+  {ja:'悲しむ',rd:'かなしむ',en:'to grieve',icon:'😢',lvl:'N4'},
+  {ja:'怒る',rd:'おこる',en:'to get angry',icon:'😡',lvl:'N4'},
+  {ja:'笑う',rd:'わらう',en:'to laugh',icon:'😂',lvl:'N4'},
+  {ja:'泣く',rd:'なく',en:'to cry',icon:'😭',lvl:'N4'},
+  {ja:'驚く',rd:'おどろく',en:'to be surprised',icon:'😲',lvl:'N4'},
+  {ja:'疲れる',rd:'つかれる',en:'to get tired',icon:'😴',lvl:'N4'},
+  {ja:'休む',rd:'やすむ',en:'to rest',icon:'💤',lvl:'N4'},
+  {ja:'働く',rd:'はたらく',en:'to work',icon:'💼',lvl:'N4'},
+  {ja:'手伝う',rd:'てつだう',en:'to help',icon:'🤝',lvl:'N4'},
+  {ja:'教える',rd:'おしえる',en:'to teach',icon:'👩‍🏫',lvl:'N4'},
+  {ja:'学ぶ',rd:'まなぶ',en:'to learn',icon:'📖',lvl:'N4'},
+  {ja:'答える',rd:'こたえる',en:'to answer',icon:'💬',lvl:'N4'},
+  {ja:'質問',rd:'しつもん',en:'question',icon:'❓',lvl:'N4'},
+  {ja:'会議',rd:'かいぎ',en:'meeting',icon:'👥',lvl:'N4'},
+  {ja:'報告',rd:'ほうこく',en:'report',icon:'📊',lvl:'N4'},
+  {ja:'計画',rd:'けいかく',en:'plan',icon:'📅',lvl:'N4'},
+  {ja:'目的',rd:'もくてき',en:'purpose/goal',icon:'🎯',lvl:'N4'},
+  {ja:'理由',rd:'りゆう',en:'reason',icon:'💡',lvl:'N4'},
+  {ja:'方法',rd:'ほうほう',en:'method',icon:'🔧',lvl:'N4'},
+  {ja:'問題',rd:'もんだい',en:'problem',icon:'❗',lvl:'N4'},
+  {ja:'答え',rd:'こたえ',en:'answer',icon:'✅',lvl:'N4'},
+  {ja:'結果',rd:'けっか',en:'result',icon:'📊',lvl:'N4'},
+  {ja:'原因',rd:'げんいん',en:'cause',icon:'🔍',lvl:'N4'},
+  {ja:'影響',rd:'えいきょう',en:'influence/effect',icon:'💥',lvl:'N4'},
+  {ja:'関係',rd:'かんけい',en:'relationship',icon:'🔗',lvl:'N4'},
+  {ja:'種類',rd:'しゅるい',en:'type/kind',icon:'📂',lvl:'N4'},
+  {ja:'場合',rd:'ばあい',en:'case/situation',icon:'📋',lvl:'N4'},
+  {ja:'状況',rd:'じょうきょう',en:'situation',icon:'🗺️',lvl:'N4'},
+  {ja:'様子',rd:'ようす',en:'appearance/situation',icon:'👁️',lvl:'N4'},
+  {ja:'特に',rd:'とくに',en:'especially',icon:'⭐',lvl:'N4'},
+  {ja:'最近',rd:'さいきん',en:'recently',icon:'📅',lvl:'N4'},
+  {ja:'以前',rd:'いぜん',en:'before/previously',icon:'⏪',lvl:'N4'},
+  {ja:'以後',rd:'いご',en:'after/from now on',icon:'⏩',lvl:'N4'},
+  {ja:'必要',rd:'ひつよう',en:'necessary',icon:'‼️',lvl:'N4'},
+  {ja:'大切',rd:'たいせつ',en:'important/precious',icon:'💎',lvl:'N4'},
+  {ja:'安全',rd:'あんぜん',en:'safe',icon:'🛡️',lvl:'N4'},
+  {ja:'危険',rd:'きけん',en:'dangerous',icon:'⚠️',lvl:'N4'},
+  {ja:'難しい',rd:'むずかしい',en:'difficult',icon:'😤',lvl:'N4'},
+  {ja:'簡単',rd:'かんたん',en:'easy/simple',icon:'😊',lvl:'N4'},
+  {ja:'複雑',rd:'ふくざつ',en:'complicated',icon:'🌀',lvl:'N4'},
+  {ja:'正確',rd:'せいかく',en:'accurate',icon:'🎯',lvl:'N4'},
+  {ja:'曖昧',rd:'あいまい',en:'vague/ambiguous',icon:'🌫️',lvl:'N4'},
+  {ja:'自由',rd:'じゆう',en:'freedom',icon:'🕊️',lvl:'N4'},
+  {ja:'平和',rd:'へいわ',en:'peace',icon:'☮️',lvl:'N4'},
+  // N3
+  {ja:'経験',rd:'けいけん',en:'experience',icon:'🎖️',lvl:'N3'},
+  {ja:'記憶',rd:'きおく',en:'memory',icon:'🧠',lvl:'N3'},
+  {ja:'想像',rd:'そうぞう',en:'imagination',icon:'💭',lvl:'N3'},
+  {ja:'感情',rd:'かんじょう',en:'emotion/feeling',icon:'❤️',lvl:'N3'},
+  {ja:'意識',rd:'いしき',en:'consciousness',icon:'💡',lvl:'N3'},
+  {ja:'判断',rd:'はんだん',en:'judgment',icon:'⚖️',lvl:'N3'},
+  {ja:'選択',rd:'せんたく',en:'choice/selection',icon:'✅',lvl:'N3'},
+  {ja:'行動',rd:'こうどう',en:'action/behavior',icon:'🏃',lvl:'N3'},
+  {ja:'態度',rd:'たいど',en:'attitude',icon:'🤔',lvl:'N3'},
+  {ja:'習慣',rd:'しゅうかん',en:'habit',icon:'🔄',lvl:'N3'},
+  {ja:'文化',rd:'ぶんか',en:'culture',icon:'🎭',lvl:'N3'},
+  {ja:'伝統',rd:'でんとう',en:'tradition',icon:'🏮',lvl:'N3'},
+  {ja:'歴史',rd:'れきし',en:'history',icon:'📜',lvl:'N3'},
+  {ja:'社会',rd:'しゃかい',en:'society',icon:'🏙️',lvl:'N3'},
+  {ja:'政治',rd:'せいじ',en:'politics',icon:'🗳️',lvl:'N3'},
+  {ja:'経済',rd:'けいざい',en:'economy',icon:'💹',lvl:'N3'},
+  {ja:'環境',rd:'かんきょう',en:'environment',icon:'🌍',lvl:'N3'},
+  {ja:'自然',rd:'しぜん',en:'nature',icon:'🌿',lvl:'N3'},
+  {ja:'科学',rd:'かがく',en:'science',icon:'🔬',lvl:'N3'},
+  {ja:'技術',rd:'ぎじゅつ',en:'technology/skill',icon:'⚙️',lvl:'N3'},
+  {ja:'医学',rd:'いがく',en:'medicine',icon:'🏥',lvl:'N3'},
+  {ja:'法律',rd:'ほうりつ',en:'law',icon:'⚖️',lvl:'N3'},
+  {ja:'教育',rd:'きょういく',en:'education',icon:'🎓',lvl:'N3'},
+  {ja:'芸術',rd:'げいじゅつ',en:'art',icon:'🎨',lvl:'N3'},
+  {ja:'音楽',rd:'おんがく',en:'music',icon:'🎵',lvl:'N3'},
+  {ja:'映画',rd:'えいが',en:'movie',icon:'🎬',lvl:'N3'},
+  {ja:'演劇',rd:'えんげき',en:'theater/drama',icon:'🎭',lvl:'N3'},
+  {ja:'スポーツ',rd:'すぽーつ',en:'sports',icon:'⚽',lvl:'N3'},
+  {ja:'競争',rd:'きょうそう',en:'competition',icon:'🏆',lvl:'N3'},
+  {ja:'勝つ',rd:'かつ',en:'to win',icon:'🥇',lvl:'N3'},
+  {ja:'負ける',rd:'まける',en:'to lose',icon:'😔',lvl:'N3'},
+  {ja:'引き分け',rd:'ひきわけ',en:'draw/tie',icon:'🤝',lvl:'N3'},
+  {ja:'努力',rd:'どりょく',en:'effort',icon:'💪',lvl:'N3'},
+  {ja:'挑戦',rd:'ちょうせん',en:'challenge',icon:'⚔️',lvl:'N3'},
+  {ja:'克服',rd:'こくふく',en:'to overcome',icon:'🏋️',lvl:'N3'},
+  {ja:'達成',rd:'たっせい',en:'achievement',icon:'🎯',lvl:'N3'},
+  {ja:'諦める',rd:'あきらめる',en:'to give up',icon:'🏳️',lvl:'N3'},
+  {ja:'我慢する',rd:'がまんする',en:'to endure',icon:'😤',lvl:'N3'},
+  {ja:'辛抱',rd:'しんぼう',en:'patience/perseverance',icon:'🧘',lvl:'N3'},
+  {ja:'喜び',rd:'よろこび',en:'joy/delight',icon:'😊',lvl:'N3'},
+  {ja:'悲しみ',rd:'かなしみ',en:'sadness',icon:'😢',lvl:'N3'},
+  {ja:'恐れ',rd:'おそれ',en:'fear',icon:'😱',lvl:'N3'},
+  {ja:'怒り',rd:'いかり',en:'anger',icon:'😠',lvl:'N3'},
+  {ja:'驚き',rd:'おどろき',en:'surprise',icon:'😲',lvl:'N3'},
+  {ja:'恥ずかしい',rd:'はずかしい',en:'embarrassing',icon:'😳',lvl:'N3'},
+  {ja:'羨ましい',rd:'うらやましい',en:'envious/jealous',icon:'😒',lvl:'N3'},
+  {ja:'寂しい',rd:'さびしい',en:'lonely',icon:'😔',lvl:'N3'},
+  {ja:'懐かしい',rd:'なつかしい',en:'nostalgic',icon:'🥹',lvl:'N3'},
+  {ja:'誇り',rd:'ほこり',en:'pride',icon:'🦁',lvl:'N3'},
+  {ja:'後悔',rd:'こうかい',en:'regret',icon:'😞',lvl:'N3'},
+  {ja:'希望',rd:'きぼう',en:'hope',icon:'🌟',lvl:'N3'},
+  {ja:'夢',rd:'ゆめ',en:'dream',icon:'💭',lvl:'N3'},
+  {ja:'目標',rd:'もくひょう',en:'goal/target',icon:'🎯',lvl:'N3'},
+  {ja:'計画',rd:'けいかく',en:'plan',icon:'📋',lvl:'N3'},
+  {ja:'戦略',rd:'せんりゃく',en:'strategy',icon:'♟️',lvl:'N3'},
+  {ja:'協力',rd:'きょうりょく',en:'cooperation',icon:'🤝',lvl:'N3'},
+  {ja:'信頼',rd:'しんらい',en:'trust',icon:'🤗',lvl:'N3'},
+  {ja:'裏切り',rd:'うらぎり',en:'betrayal',icon:'🗡️',lvl:'N3'},
+  {ja:'許す',rd:'ゆるす',en:'to forgive',icon:'🙏',lvl:'N3'},
+  {ja:'謝る',rd:'あやまる',en:'to apologize',icon:'🙇',lvl:'N3'},
+  {ja:'感謝',rd:'かんしゃ',en:'gratitude',icon:'🙏',lvl:'N3'},
+  {ja:'尊敬',rd:'そんけい',en:'respect',icon:'🫡',lvl:'N3'},
+  {ja:'批判',rd:'ひはん',en:'criticism',icon:'🗣️',lvl:'N3'},
+  {ja:'比較',rd:'ひかく',en:'comparison',icon:'⚖️',lvl:'N3'},
+  {ja:'分析',rd:'ぶんせき',en:'analysis',icon:'🔬',lvl:'N3'},
+  {ja:'評価',rd:'ひょうか',en:'evaluation',icon:'⭐',lvl:'N3'},
+  {ja:'改善',rd:'かいぜん',en:'improvement',icon:'📈',lvl:'N3'},
+  {ja:'提案',rd:'ていあん',en:'proposal/suggestion',icon:'💡',lvl:'N3'},
+  {ja:'意見',rd:'いけん',en:'opinion',icon:'💬',lvl:'N3'},
+  {ja:'議論',rd:'ぎろん',en:'discussion/debate',icon:'🗣️',lvl:'N3'},
+  {ja:'主張',rd:'しゅちょう',en:'assertion',icon:'📢',lvl:'N3'},
+  {ja:'反論',rd:'はんろん',en:'counterargument',icon:'↩️',lvl:'N3'},
+  {ja:'証明',rd:'しょうめい',en:'proof',icon:'📜',lvl:'N3'},
+  {ja:'事実',rd:'じじつ',en:'fact',icon:'✅',lvl:'N3'},
+  {ja:'嘘',rd:'うそ',en:'lie',icon:'🤥',lvl:'N3'},
+  {ja:'秘密',rd:'ひみつ',en:'secret',icon:'🤫',lvl:'N3'},
+  {ja:'噂',rd:'うわさ',en:'rumor/gossip',icon:'🗣️',lvl:'N3'},
+  {ja:'事件',rd:'じけん',en:'incident/case',icon:'🚨',lvl:'N3'},
+  {ja:'事故',rd:'じこ',en:'accident',icon:'🚑',lvl:'N3'},
+  {ja:'災害',rd:'さいがい',en:'disaster',icon:'🌪️',lvl:'N3'},
+  {ja:'救助',rd:'きゅうじょ',en:'rescue',icon:'🆘',lvl:'N3'},
+  {ja:'警告',rd:'けいこく',en:'warning',icon:'⚠️',lvl:'N3'},
+  {ja:'禁止',rd:'きんし',en:'prohibition',icon:'🚫',lvl:'N3'},
+  {ja:'許可',rd:'きょか',en:'permission',icon:'✅',lvl:'N3'},
+  {ja:'義務',rd:'ぎむ',en:'obligation/duty',icon:'📋',lvl:'N3'},
+  {ja:'権利',rd:'けんり',en:'right/entitlement',icon:'✊',lvl:'N3'},
+  {ja:'責任',rd:'せきにん',en:'responsibility',icon:'⚖️',lvl:'N3'},
+  {ja:'役割',rd:'やくわり',en:'role',icon:'🎭',lvl:'N3'},
+  {ja:'立場',rd:'たちば',en:'position/standpoint',icon:'🗺️',lvl:'N3'},
+  {ja:'背景',rd:'はいけい',en:'background',icon:'🖼️',lvl:'N3'},
+  {ja:'状態',rd:'じょうたい',en:'state/condition',icon:'📊',lvl:'N3'},
+  {ja:'変化',rd:'へんか',en:'change',icon:'🔄',lvl:'N3'},
+  {ja:'発展',rd:'はってん',en:'development',icon:'📈',lvl:'N3'},
+  {ja:'進歩',rd:'しんぽ',en:'progress',icon:'⏩',lvl:'N3'},
+  {ja:'衰退',rd:'すいたい',en:'decline',icon:'📉',lvl:'N3'},
+  {ja:'原則',rd:'げんそく',en:'principle/rule',icon:'📜',lvl:'N3'},
+  {ja:'例外',rd:'れいがい',en:'exception',icon:'❗',lvl:'N3'},
+  // N2
+  {ja:'概念',rd:'がいねん',en:'concept/notion',icon:'💡',lvl:'N2'},
+  {ja:'抽象',rd:'ちゅうしょう',en:'abstraction',icon:'🌀',lvl:'N2'},
+  {ja:'具体',rd:'ぐたい',en:'concrete/specific',icon:'🔷',lvl:'N2'},
+  {ja:'論理',rd:'ろんり',en:'logic',icon:'🧮',lvl:'N2'},
+  {ja:'矛盾',rd:'むじゅん',en:'contradiction',icon:'⚡',lvl:'N2'},
+  {ja:'前提',rd:'ぜんてい',en:'premise/prerequisite',icon:'📌',lvl:'N2'},
+  {ja:'仮定',rd:'かてい',en:'hypothesis/assumption',icon:'❓',lvl:'N2'},
+  {ja:'結論',rd:'けつろん',en:'conclusion',icon:'🏁',lvl:'N2'},
+  {ja:'根拠',rd:'こんきょ',en:'basis/ground',icon:'📐',lvl:'N2'},
+  {ja:'客観',rd:'きゃっかん',en:'objectivity',icon:'🔭',lvl:'N2'},
+  {ja:'主観',rd:'しゅかん',en:'subjectivity',icon:'👁️',lvl:'N2'},
+  {ja:'本質',rd:'ほんしつ',en:'essence',icon:'💎',lvl:'N2'},
+  {ja:'現象',rd:'げんしょう',en:'phenomenon',icon:'✨',lvl:'N2'},
+  {ja:'観察',rd:'かんさつ',en:'observation',icon:'🔭',lvl:'N2'},
+  {ja:'実験',rd:'じっけん',en:'experiment',icon:'🧪',lvl:'N2'},
+  {ja:'仮説',rd:'かせつ',en:'hypothesis',icon:'💭',lvl:'N2'},
+  {ja:'検証',rd:'けんしょう',en:'verification',icon:'✅',lvl:'N2'},
+  {ja:'模倣',rd:'もほう',en:'imitation',icon:'🪞',lvl:'N2'},
+  {ja:'革新',rd:'かくしん',en:'innovation',icon:'🚀',lvl:'N2'},
+  {ja:'普及',rd:'ふきゅう',en:'spread/popularization',icon:'📡',lvl:'N2'},
+  {ja:'依存',rd:'いぞん',en:'dependence',icon:'🔗',lvl:'N2'},
+  {ja:'独立',rd:'どくりつ',en:'independence',icon:'🦅',lvl:'N2'},
+  {ja:'統合',rd:'とうごう',en:'integration',icon:'🔀',lvl:'N2'},
+  {ja:'分離',rd:'ぶんり',en:'separation',icon:'✂️',lvl:'N2'},
+  {ja:'対立',rd:'たいりつ',en:'conflict/opposition',icon:'⚔️',lvl:'N2'},
+  {ja:'妥協',rd:'だきょう',en:'compromise',icon:'🤝',lvl:'N2'},
+  {ja:'交渉',rd:'こうしょう',en:'negotiation',icon:'🗣️',lvl:'N2'},
+  {ja:'合意',rd:'ごうい',en:'agreement/consensus',icon:'✅',lvl:'N2'},
+  {ja:'調整',rd:'ちょうせい',en:'adjustment',icon:'🎚️',lvl:'N2'},
+  {ja:'維持',rd:'いじ',en:'maintenance/upkeep',icon:'🔧',lvl:'N2'},
+  {ja:'促進',rd:'そくしん',en:'promotion/facilitation',icon:'🚀',lvl:'N2'},
+  {ja:'抑制',rd:'よくせい',en:'suppression/restraint',icon:'🛑',lvl:'N2'},
+  {ja:'強化',rd:'きょうか',en:'strengthening',icon:'💪',lvl:'N2'},
+  {ja:'緩和',rd:'かんわ',en:'alleviation/relaxation',icon:'😌',lvl:'N2'},
+  {ja:'深刻',rd:'しんこく',en:'serious/grave',icon:'😰',lvl:'N2'},
+  {ja:'軽微',rd:'けいび',en:'minor/slight',icon:'🤏',lvl:'N2'},
+  {ja:'急激',rd:'きゅうげき',en:'sudden/rapid',icon:'⚡',lvl:'N2'},
+  {ja:'緩やか',rd:'ゆるやか',en:'gradual/gentle',icon:'🌊',lvl:'N2'},
+  {ja:'持続',rd:'じぞく',en:'continuity/sustainability',icon:'♻️',lvl:'N2'},
+  {ja:'循環',rd:'じゅんかん',en:'circulation/cycle',icon:'🔄',lvl:'N2'},
+  {ja:'均衡',rd:'きんこう',en:'balance/equilibrium',icon:'⚖️',lvl:'N2'},
+  {ja:'偏り',rd:'かたより',en:'bias/skew',icon:'📐',lvl:'N2'},
+  {ja:'多様性',rd:'たようせい',en:'diversity',icon:'🌈',lvl:'N2'},
+  {ja:'普遍',rd:'ふへん',en:'universal',icon:'🌍',lvl:'N2'},
+  {ja:'特殊',rd:'とくしゅ',en:'special/peculiar',icon:'⭐',lvl:'N2'},
+  {ja:'稀少',rd:'きしょう',en:'rare/scarce',icon:'💎',lvl:'N2'},
+  {ja:'豊富',rd:'ほうふ',en:'abundant/rich',icon:'🌾',lvl:'N2'},
+  {ja:'欠乏',rd:'けつぼう',en:'shortage/deficiency',icon:'📉',lvl:'N2'},
+  {ja:'拡大',rd:'かくだい',en:'expansion',icon:'🔍',lvl:'N2'},
+  {ja:'縮小',rd:'しゅくしょう',en:'reduction/shrinkage',icon:'🔎',lvl:'N2'},
+  // N1
+  {ja:'哲学',rd:'てつがく',en:'philosophy',icon:'🤔',lvl:'N1'},
+  {ja:'倫理',rd:'りんり',en:'ethics/morality',icon:'⚖️',lvl:'N1'},
+  {ja:'価値観',rd:'かちかん',en:'value system',icon:'💎',lvl:'N1'},
+  {ja:'世界観',rd:'せかいかん',en:'world view',icon:'🌍',lvl:'N1'},
+  {ja:'人生観',rd:'じんせいかん',en:'outlook on life',icon:'🧭',lvl:'N1'},
+  {ja:'存在',rd:'そんざい',en:'existence/being',icon:'✨',lvl:'N1'},
+  {ja:'本能',rd:'ほんのう',en:'instinct',icon:'🦁',lvl:'N1'},
+  {ja:'理性',rd:'りせい',en:'reason/rationality',icon:'🧠',lvl:'N1'},
+  {ja:'直感',rd:'ちょっかん',en:'intuition',icon:'⚡',lvl:'N1'},
+  {ja:'認識',rd:'にんしき',en:'recognition/cognition',icon:'👁️',lvl:'N1'},
+  {ja:'思想',rd:'しそう',en:'thought/ideology',icon:'💭',lvl:'N1'},
+  {ja:'観念',rd:'かんねん',en:'idea/notion',icon:'💡',lvl:'N1'},
+  {ja:'精神',rd:'せいしん',en:'spirit/mind',icon:'🌟',lvl:'N1'},
+  {ja:'魂',rd:'たましい',en:'soul',icon:'👻',lvl:'N1'},
+  {ja:'運命',rd:'うんめい',en:'fate/destiny',icon:'⭐',lvl:'N1'},
+  {ja:'偶然',rd:'ぐうぜん',en:'coincidence/chance',icon:'🎲',lvl:'N1'},
+  {ja:'必然',rd:'ひつぜん',en:'necessity/inevitability',icon:'🎯',lvl:'N1'},
+  {ja:'矛盾',rd:'むじゅん',en:'contradiction',icon:'⚡',lvl:'N1'},
+  {ja:'逆説',rd:'ぎゃくせつ',en:'paradox',icon:'🌀',lvl:'N1'},
+  {ja:'隠喩',rd:'いんゆ',en:'metaphor',icon:'🎭',lvl:'N1'},
+  {ja:'皮肉',rd:'ひにく',en:'irony/sarcasm',icon:'😏',lvl:'N1'},
+  {ja:'暗示',rd:'あんじ',en:'hint/implication',icon:'🤫',lvl:'N1'},
+  {ja:'象徴',rd:'しょうちょう',en:'symbol',icon:'🔮',lvl:'N1'},
+  {ja:'抽象化',rd:'ちゅうしょうか',en:'abstraction',icon:'🎨',lvl:'N1'},
+  {ja:'具現化',rd:'ぐげんか',en:'realization/embodiment',icon:'✨',lvl:'N1'},
+  {ja:'超越',rd:'ちょうえつ',en:'transcendence',icon:'🚀',lvl:'N1'},
+  {ja:'内在',rd:'ないざい',en:'immanence',icon:'🔍',lvl:'N1'},
+  {ja:'外在',rd:'がいざい',en:'external existence',icon:'🌐',lvl:'N1'},
+  {ja:'二項対立',rd:'にこうたいりつ',en:'binary opposition',icon:'⚔️',lvl:'N1'},
+  {ja:'弁証法',rd:'べんしょうほう',en:'dialectics',icon:'🔄',lvl:'N1'},
+  {ja:'帰納',rd:'きのう',en:'induction (logic)',icon:'⬆️',lvl:'N1'},
+  {ja:'演繹',rd:'えんえき',en:'deduction (logic)',icon:'⬇️',lvl:'N1'},
+  {ja:'類推',rd:'るいすい',en:'analogy/inference',icon:'🔗',lvl:'N1'},
+  {ja:'批評',rd:'ひひょう',en:'criticism/review',icon:'✍️',lvl:'N1'},
+  {ja:'解釈',rd:'かいしゃく',en:'interpretation',icon:'🔍',lvl:'N1'},
+  {ja:'文脈',rd:'ぶんみゃく',en:'context',icon:'📖',lvl:'N1'},
+  {ja:'含意',rd:'がんい',en:'implication',icon:'💬',lvl:'N1'},
+  {ja:'前後関係',rd:'ぜんごかんけい',en:'context (before/after)',icon:'↔️',lvl:'N1'},
+  {ja:'因果関係',rd:'いんがかんけい',en:'causality',icon:'🔗',lvl:'N1'},
+  {ja:'相互作用',rd:'そうごさよう',en:'interaction',icon:'🔄',lvl:'N1'},
+  {ja:'パラダイム',rd:'ぱらだいむ',en:'paradigm',icon:'🌐',lvl:'N1'},
+  {ja:'構造',rd:'こうぞう',en:'structure',icon:'🏗️',lvl:'N1'},
+  {ja:'体系',rd:'たいけい',en:'system/framework',icon:'📊',lvl:'N1'},
+  {ja:'枠組み',rd:'わくぐみ',en:'framework',icon:'🖼️',lvl:'N1'},
+  {ja:'視点',rd:'してん',en:'viewpoint/perspective',icon:'👁️',lvl:'N1'},
+  {ja:'観点',rd:'かんてん',en:'viewpoint/standpoint',icon:'🔭',lvl:'N1'},
+  {ja:'側面',rd:'そくめん',en:'aspect/facet',icon:'🎲',lvl:'N1'},
+  {ja:'次元',rd:'じげん',en:'dimension',icon:'📐',lvl:'N1'},
+  {ja:'境界',rd:'きょうかい',en:'boundary',icon:'🚧',lvl:'N1'},
+  {ja:'閾値',rd:'しきいち',en:'threshold',icon:'⚡',lvl:'N1'},
+  {ja:'臨界点',rd:'りんかいてん',en:'critical point',icon:'⚠️',lvl:'N1'},
+];
+
+// ===== SPEAK =====
+// ===== JAPANESE SPEECH =====
+let _jpVoice = null;
+const _voiceReadyCallbacks = [];
+let _voiceReady = false;
+
+// Voice priority: most natural first
+const JP_VOICE_PRIORITY = [
+  // macOS / iOS — highest quality
+  'kyoko',        // macOS female (standard)
+  'otoya',        // macOS male
+  'o-ren',        // macOS female variant
+  'ren',          // iOS variant
+  // Google — very natural
+  'google 日本語',
+  'google japanese',
+  // Windows 11 neural voices
+  'nanami',       // Microsoft Nanami (neural)
+  'keita',        // Microsoft Keita (neural)
+  // Windows older voices
+  'haruka',
+  'ichiro',
+  'ayumi',
+  'sayaka',
+  'hiroshi',
+];
+
+function _pickBestJpVoice(voices) {
+  const jaVoices = voices.filter(v => v.lang && v.lang.startsWith('ja'));
+  if (!jaVoices.length) return null;
+
+  // Score each voice by priority index
+  let best = null, bestScore = 999;
+  for (const v of jaVoices) {
+    const nameLower = v.name.toLowerCase();
+    const idx = JP_VOICE_PRIORITY.findIndex(p => nameLower.includes(p));
+    const score = idx === -1 ? 500 : idx;
+    if (score < bestScore) { bestScore = score; best = v; }
+  }
+  return best;
+}
+
+function _initVoices() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return;
+  _jpVoice = _pickBestJpVoice(voices);
+  _voiceReady = true;
+  _voiceReadyCallbacks.forEach(fn => fn());
+  _voiceReadyCallbacks.length = 0;
+}
+
+// Load voices immediately if available, otherwise wait for event
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices().length
+    ? _initVoices()
+    : window.speechSynthesis.addEventListener('voiceschanged', _initVoices);
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+
+  const fire = () => {
+    // Small delay prevents clipping on rapid button presses
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang    = 'ja-JP';
+      u.voice   = _jpVoice || null;
+      u.rate    = 0.88;   // slightly slower than native for clarity
+      u.pitch   = 1.05;   // very slightly raised — sounds less robotic
+      u.volume  = 1.0;
+      window.speechSynthesis.speak(u);
+    }, 80);
+  };
+
+  if (_voiceReady) {
+    fire();
+  } else {
+    _voiceReadyCallbacks.push(fire);
+    // Safety timeout — speak with default voice if voices never load (e.g. some Android)
+    setTimeout(() => {
+      if (!_voiceReady) { _voiceReady = true; fire(); }
+    }, 1500);
+  }
+}
+
+// ===== QUEST FILTER STATE =====
+let questFilter = 'all', questSearch = '';
+
+// ===== QUEST SECTION HTML =====
+function injectQuestUI() {
+  const sec = document.getElementById('sec-quest');
+  if (!sec) return;
+  sec.innerHTML =
+    '<h2 style="font-size:20px;font-weight:900;margin-bottom:12px;">📜 単語クエスト <span style="font-size:13px;color:var(--text2);font-weight:600;" id="quest-count"><\/span><\/h2>' +
+    '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">' +
+      '<input id="quest-search" type="text" placeholder="🔍 単語を検索..." oninput="questSearch=this.value;buildQuest()" style="flex:1;min-width:160px;padding:9px 14px;border:2px solid var(--border);border-radius:99px;font-size:14px;font-family:inherit;outline:none;">' +
+      '<select id="quest-lvl-filter" onchange="questFilter=this.value;buildQuest()" style="padding:8px 14px;border:2px solid var(--border);border-radius:99px;font-size:13px;font-family:inherit;font-weight:700;background:white;outline:none;cursor:pointer;">' +
+        '<option value="all">🌏 全レベル<\/option>' +
+        '<option value="N5">🟢 N5<\/option>' +
+        '<option value="N4">🔵 N4<\/option>' +
+        '<option value="N3">🟣 N3<\/option>' +
+        '<option value="N2">🟠 N2<\/option>' +
+        '<option value="N1">🔴 N1<\/option>' +
+      '<\/select>' +
+    '<\/div>' +
+    '<div class="quest-list" id="quest-list"><\/div>';
+}
+
+
+// ===== STATE =====
+let xp = 0, level = 1, coins = 0, streak = 1;
+const xpThresholds = [0,100,250,450,700,1000,1400,1900,2500,3200];
+const hiraKnown = new Set(), kataKnown = new Set();
+let currentKana = 'hira';
+let fcIdx = 0, fcFlipped = false;
+let bHP = 3, bScore = 0, bStreak = 0, bTotal = 0, bCorrect = null;
+let bTimerInterval = null, bTimeLeft = 10;
+
+// ===== XP / LEVEL =====
+function gainXP(amount, x, y) {
+  showFloatXP('+' + amount + ' XP', x, y);
+  xp += amount;
+  coins += Math.floor(amount / 5);
+  document.getElementById('coins').textContent = coins;
+  checkLevelUp();
+  updateXPBar();
+}
+function checkLevelUp() {
+  const needed = xpThresholds[level] || (xpThresholds[xpThresholds.length-1] + level * 200);
+  if (xp >= needed) {
+    level++;
+    showPopup('🎉 レベルアップ！', 'レベル' + level + 'になった！すごい！');
+  }
+}
+function updateXPBar() {
+  const prev = xpThresholds[level-1] || 0;
+  const next = xpThresholds[level] || (prev + level * 200);
+  const pct = Math.min(100, ((xp - prev) / (next - prev)) * 100);
+  document.getElementById('xpbar').style.width = pct + '%';
+  document.getElementById('xplabel').textContent = (xp - prev) + '/' + (next - prev) + ' XP';
+  document.getElementById('plevel').textContent = 'Lv.' + level;
+  document.getElementById('streak').textContent = streak;
+}
+
+function showFloatXP(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'float-xp';
+  el.textContent = text;
+  el.style.left = (x || window.innerWidth/2) + 'px';
+  el.style.top = (y || 200) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+// ===== POPUP =====
+function showPopup(title, sub) {
+  document.getElementById('popup-title').textContent = title;
+  document.getElementById('popup-sub').textContent = sub;
+  document.getElementById('popup').classList.add('show');
+}
+function closePopup() {
+  document.getElementById('popup').classList.remove('show');
+}
+
+// ===== NAV =====
+function showSec(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'battle') initBattle();
+  if (name === 'kana') buildKanaGrid();
+  if (name === 'flashcard') loadFC(fcIdx);
+  if (name === 'quest') buildQuest();
+  if (name === 'convo') buildSceneSelector();
+}
+
+// ===== KANA =====
+function buildKanaGrid() {
+  const data = currentKana === 'hira' ? hiragana : katakana;
+  const known = currentKana === 'hira' ? hiraKnown : kataKnown;
+  const grid = document.getElementById('kana-grid');
+  grid.innerHTML = '';
+  data.forEach(([char, rom], i) => {
+    const cell = document.createElement('div');
+    if (!char) {
+      // empty placeholder cell
+      cell.className = 'kana-cell';
+      cell.style.cssText = 'background:transparent;border-color:transparent;box-shadow:none;pointer-events:none;';
+      grid.appendChild(cell);
+      return;
+    }
+    cell.className = 'kana-cell' + (known.has(i) ? ' mastered' : '');
+    cell.innerHTML = `<span class="char">${char}<\/span><span class="rom">${rom}<\/span>`;
+    cell.onclick = (e) => {
+      if (known.has(i)) { known.delete(i); cell.classList.remove('mastered'); }
+      else { known.add(i); cell.classList.add('mastered'); gainXP(3, e.clientX, e.clientY); }
+      updateDashKana();
+    };
+    grid.appendChild(cell);
+  });
+}
+function switchKana(type, btn) {
+  currentKana = type;
+  document.querySelectorAll('.kana-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  buildKanaGrid();
+}
+function updateDashKana() {
+  const total = hiraKnown.size + kataKnown.size;
+  document.getElementById('dc-kana-sub').textContent = total + '/92 マスター';
+  document.getElementById('dc-kana-fill').style.width = (total/92*100) + '%';
+}
+
+// ===== QUEST =====
+const lvlColor = {N5:'#6BCB77',N4:'#4D96FF',N3:'#C77DFF',N2:'#FF9F43',N1:'#FF3366'};
+function buildQuest() {
+  const search = (questSearch||'').toLowerCase();
+  const filtered = vocab.filter((w,i) => {
+    if (questFilter !== 'all' && w.lvl !== questFilter) return false;
+    if (search && !w.ja.includes(questSearch) && !w.rd.includes(search) && !w.en.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const el = document.getElementById('quest-list');
+  const cnt = document.getElementById('quest-count');
+  if (cnt) cnt.textContent = `(${filtered.length}語)`;
+  if (!el) return;
+  el.innerHTML = filtered.map((w) => {
+    const i = vocab.indexOf(w);
+    const done = learnedWords.has(i);
+    return `<div class="quest-card ${done?'done':''}" id="qc-${i}">
+      <div class="quest-icon">${w.icon}<\/div>
+      <div class="quest-info">
+        <div class="quest-ja">${w.ja}
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${w.ja}')" title="発音を聞く">🔊<\/button>
+        <\/div>
+        <div class="quest-reading">
+          ${w.rd}
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${w.rd}')" title="読み方を聞く" style="font-size:14px;">▶️<\/button>
+        <\/div>
+        <div class="quest-en">${w.en}<\/div>
+      <\/div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span style="background:${lvlColor[w.lvl]||'#ccc'};color:white;font-size:10px;font-weight:900;padding:2px 7px;border-radius:99px;">${w.lvl}<\/span>
+        <div class="quest-xp" onclick="learnWord(${i},event)" style="cursor:pointer;">${done?'✅':'+ 10 XP'}<\/div>
+      <\/div>
+    <\/div>`;
+  }).join('');
+}
+const learnedWords = new Set();
+function learnWord(i, e) {
+  if (!learnedWords.has(i)) {
+    learnedWords.add(i);
+    gainXP(10, e.clientX, e.clientY);
+    const card = document.getElementById('qc-' + i);
+    if (card) card.classList.add('done');
+    document.getElementById('dc-vocab-fill').style.width = (learnedWords.size / vocab.length * 100) + '%';
+    if (learnedWords.size === vocab.length) showPopup('🏆 クエスト完了！', '全単語をマスターした！すごい！');
+  }
+}
+
+
+// ===== FLASHCARD =====
+function loadFC(idx) {
+  const w = vocab[idx];
+  fcFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-front').textContent = w.ja;
+  document.getElementById('fc-back-en').textContent = w.en;
+  document.getElementById('fc-back-rd').textContent = w.rd;
+  document.getElementById('fc-actions').style.display = 'none';
+  document.getElementById('fc-tap-hint').style.display = '';
+  document.getElementById('fc-num').textContent = (idx+1) + '/' + vocab.length;
+  const dots = document.getElementById('fc-dots');
+  dots.innerHTML = vocab.map((_, i) => `<div class="fc-dot ${i < idx ? 'done' : i === idx ? 'current' : ''}"><\/div>`).join('');
+}
+function flipFC() {
+  if (fcFlipped) return;
+  fcFlipped = true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-actions').style.display = 'flex';
+  document.getElementById('fc-tap-hint').style.display = 'none';
+}
+function fcRate(r) {
+  const xpMap = {again: 2, good: 8, easy: 15};
+  gainXP(xpMap[r], window.innerWidth/2, 300);
+  fcIdx = (fcIdx + 1) % vocab.length;
+  loadFC(fcIdx);
+}
+
+// ===== BATTLE =====
+function initBattle() {
+  bHP = 3; bScore = 0; bStreak = 0; bTotal = 0;
+  updateBattleUI();
+  newBattle();
+}
+function newBattle() {
+  if (bTimerInterval) clearInterval(bTimerInterval);
+  bTimeLeft = 10;
+  const idx = Math.floor(Math.random() * vocab.length);
+  const w = vocab[idx];
+  bCorrect = w.rd;
+  document.getElementById('b-question').textContent = w.ja;
+  document.getElementById('b-inst').textContent = '読み方を選んでください';
+  const opts = [w.rd];
+  while (opts.length < 4) {
+    const r = vocab[Math.floor(Math.random()*vocab.length)].rd;
+    if (!opts.includes(r)) opts.push(r);
+  }
+  opts.sort(() => Math.random()-0.5);
+  const el = document.getElementById('b-options');
+  el.innerHTML = opts.map(o => `<button class="option-btn" onclick="battleAnswer(this,'${o}')">${o}<\/button>`).join('');
+  bTimerInterval = setInterval(() => {
+    bTimeLeft--;
+    document.getElementById('b-timer').textContent = '⏱ ' + bTimeLeft + '秒';
+    if (bTimeLeft <= 0) {
+      clearInterval(bTimerInterval);
+      timeOut();
+    }
+  }, 1000);
+  document.getElementById('b-timer').textContent = '⏱ ' + bTimeLeft + '秒';
+}
+function battleAnswer(btn, chosen) {
+  clearInterval(bTimerInterval);
+  document.querySelectorAll('.option-btn').forEach(b => b.onclick = null);
+  bTotal++;
+  if (chosen === bCorrect) {
+    btn.classList.add('correct');
+    bScore++; bStreak++;
+    const bonus = bStreak >= 3 ? 20 : 10;
+    gainXP(bonus, btn.getBoundingClientRect().left, btn.getBoundingClientRect().top);
+    if (bStreak === 3) showFloatXP('🔥 コンボ！ +20XP', window.innerWidth/2, 200);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.option-btn').forEach(b => { if (b.textContent === bCorrect) b.classList.add('correct'); });
+    bStreak = 0; bHP--;
+    if (bHP <= 0) { setTimeout(() => { showPopup('💀 ゲームオーバー！', 'スコア: ' + bScore + '点！もう一度挑戦！'); initBattle(); }, 800); }
+  }
+  updateBattleUI();
+}
+function timeOut() {
+  bStreak = 0; bHP--;
+  document.getElementById('b-inst').textContent = '⏰ 時間切れ！答えは「' + bCorrect + '」';
+  updateBattleUI();
+  if (bHP <= 0) setTimeout(() => { showPopup('💀 ゲームオーバー！', 'スコア: ' + bScore + '点！'); initBattle(); }, 800);
+}
+function updateBattleUI() {
+  document.getElementById('b-score').textContent = bScore;
+  document.getElementById('b-streak').textContent = bStreak;
+  document.getElementById('b-total').textContent = bTotal;
+  document.getElementById('b-hp').style.width = (bHP / 3 * 100) + '%';
+  document.getElementById('b-hp-num').textContent = bHP + '/3';
+}
+
+async function handleContactSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type="submit"]');
+  btn.textContent = '送信中...';
+  btn.disabled = true;
+  try {
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      document.getElementById('contact-form').style.display = 'none';
+      document.getElementById('contact-success').style.display = 'block';
+    } else {
+      btn.textContent = '✨ 送信する';
+      btn.disabled = false;
+      alert('送信に失敗しました。もう一度お試しください。');
+    }
+  } catch {
+    btn.textContent = '✨ 送信する';
+    btn.disabled = false;
+    alert('通信エラーが発生しました。インターネット接続をご確認ください。');
+  }
+}
+
+
+function setView(mode) {
+  if (mode === 'pc') {
+    document.body.classList.add('pc-mode');
+    document.getElementById('vt-pc').classList.add('active');
+    document.getElementById('vt-sp').classList.remove('active');
+  } else {
+    document.body.classList.remove('pc-mode');
+    document.getElementById('vt-sp').classList.add('active');
+    document.getElementById('vt-pc').classList.remove('active');
+  }
+}
+
+// ===== KANJI DICTIONARY =====
+const kanjiDB = {
+  '冒険':  {rd:'ぼうけん', en:'adventure / quest', lvl:'N3'},
+  '冒険者':{rd:'ぼうけんしゃ', en:'adventurer / explorer', lvl:'N3'},
+  '文字':  {rd:'もじ', en:'character / letter / writing', lvl:'N4'},
+  '単語':  {rd:'たんご', en:'word / vocabulary', lvl:'N4'},
+  '習得':  {rd:'しゅうとく', en:'acquisition / learning', lvl:'N2'},
+  '今日':  {rd:'きょう', en:'today', lvl:'N5'},
+  '日本語':{rd:'にほんご', en:'Japanese language', lvl:'N5'},
+  '学':    {rd:'まな（ぶ）', en:'to learn / study', lvl:'N5'},
+  '制':    {rd:'せい / せ（める）', en:'to control / to conquer', lvl:'N3'},
+  '日':    {rd:'にち／ひ', en:'day / sun', lvl:'N5'},
+  '敵':    {rd:'てき', en:'enemy / opponent', lvl:'N3'},
+  '倒':    {rd:'たお（す）', en:'to defeat / to knock down', lvl:'N3'},
+  '始':    {rd:'はじ（める）', en:'to begin / to start', lvl:'N4'},
+  '答':    {rd:'こた（え）', en:'answer / response', lvl:'N4'},
+  '見':    {rd:'み（る）', en:'to see / to look', lvl:'N5'},
+  '覚':    {rd:'おぼ（える）', en:'to remember / to memorize', lvl:'N4'},
+  '簡単':  {rd:'かんたん', en:'simple / easy', lvl:'N4'},
+  '確認':  {rd:'かくにん', en:'confirmation / verification', lvl:'N3'},
+  '復習':  {rd:'ふくしゅう', en:'review / revision', lvl:'N3'},
+  '記憶':  {rd:'きおく', en:'memory / recollection', lvl:'N2'},
+  '定着':  {rd:'ていちゃく', en:'taking root / becoming established', lvl:'N2'},
+  '正解':  {rd:'せいかい', en:'correct answer', lvl:'N4'},
+  '問題':  {rd:'もんだい', en:'problem / question', lvl:'N4'},
+  '読':    {rd:'よ（む）', en:'to read', lvl:'N5'},
+  '方':    {rd:'かた／ほう', en:'direction / way / method', lvl:'N5'},
+  '選':    {rd:'えら（ぶ）', en:'to choose / to select', lvl:'N4'},
+  '準備':  {rd:'じゅんび', en:'preparation / readiness', lvl:'N4'},
+};
+
+// ===== KANJI POPUP LOGIC =====
+const popup2 = document.getElementById('kanji-popup');
+let popupHideTimer = null;
+
+function showKanjiPopup(el) {
+  const key = el.getAttribute('data-k');
+  const data = kanjiDB[key];
+  if (!data) return;
+  clearTimeout(popupHideTimer);
+  document.getElementById('kp-char').textContent = key;
+  document.getElementById('kp-reading').textContent = data.rd;
+  document.getElementById('kp-meaning').textContent = data.en;
+  document.getElementById('kp-tag').textContent = data.lvl;
+  const rect = el.getBoundingClientRect();
+  const pw = 220;
+  let left = rect.left + rect.width/2 - pw/2;
+  left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+  const top = rect.top - 10;
+  popup2.style.left = left + 'px';
+  popup2.style.top = (top - popup2.offsetHeight - 12) + 'px';
+  popup2.style.width = pw + 'px';
+  popup2.classList.add('visible');
+  // Reposition after render
+  requestAnimationFrame(() => {
+    const ph = popup2.offsetHeight;
+    let t = rect.top + window.scrollY - ph - 14;
+    if (t < window.scrollY + 8) t = rect.bottom + window.scrollY + 8;
+    popup2.style.top = t + 'px';
+  });
+}
+
+function hideKanjiPopup() {
+  popupHideTimer = setTimeout(() => popup2.classList.remove('visible'), 120);
+}
+
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('.k');
+  if (el) showKanjiPopup(el);
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('.k')) hideKanjiPopup();
+});
+document.addEventListener('click', e => {
+  const el = e.target.closest('.k');
+  if (el) { showKanjiPopup(el); e.stopPropagation(); }
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.k') && !e.target.closest('#kanji-popup')) hideKanjiPopup();
+});
+popup2.addEventListener('mouseover', () => clearTimeout(popupHideTimer));
+popup2.addEventListener('mouseout', hideKanjiPopup);
+
+// ===== ROMAJI via Google IME API =====
+// Converts Japanese text (including kanji) to romaji via Google IME suggest API
+// Falls back to wanakana-style kana→romaji if API unavailable
+
+const HEPBURN_MAP = [
+  ['きゃ','kya'],['きゅ','kyu'],['きょ','kyo'],['しゃ','sha'],['しゅ','shu'],['しょ','sho'],
+  ['ちゃ','cha'],['ちゅ','chu'],['ちょ','cho'],['にゃ','nya'],['にゅ','nyu'],['にょ','nyo'],
+  ['ひゃ','hya'],['ひゅ','hyu'],['ひょ','hyo'],['みゃ','mya'],['みゅ','myu'],['みょ','myo'],
+  ['りゃ','rya'],['りゅ','ryu'],['りょ','ryo'],['ぎゃ','gya'],['ぎゅ','gyu'],['ぎょ','gyo'],
+  ['じゃ','ja'],['じゅ','ju'],['じょ','jo'],['びゃ','bya'],['びゅ','byu'],['びょ','byo'],
+  ['ぴゃ','pya'],['ぴゅ','pyu'],['ぴょ','pyo'],
+  ['シャ','sha'],['シュ','shu'],['ショ','sho'],['チャ','cha'],['チュ','chu'],['チョ','cho'],
+  ['ジャ','ja'],['ジュ','ju'],['ジョ','jo'],['ファ','fa'],['フィ','fi'],['フォ','fo'],
+  ['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],
+  ['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],
+  ['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],
+  ['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],
+  ['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],
+  ['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],
+  ['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],
+  ['や','ya'],['ゆ','yu'],['よ','yo'],
+  ['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],
+  ['わ','wa'],['を','o'],['ん','n'],
+  ['が','ga'],['ぎ','gi'],['ぐ','gu'],['げ','ge'],['ご','go'],
+  ['ざ','za'],['じ','ji'],['ず','zu'],['ぜ','ze'],['ぞ','zo'],
+  ['だ','da'],['ぢ','ji'],['づ','zu'],['で','de'],['ど','do'],
+  ['ば','ba'],['び','bi'],['ぶ','bu'],['べ','be'],['ぼ','bo'],
+  ['ぱ','pa'],['ぴ','pi'],['ぷ','pu'],['ぺ','pe'],['ぽ','po'],
+  ['ア','a'],['イ','i'],['ウ','u'],['エ','e'],['オ','o'],
+  ['カ','ka'],['キ','ki'],['ク','ku'],['ケ','ke'],['コ','ko'],
+  ['サ','sa'],['シ','shi'],['ス','su'],['セ','se'],['ソ','so'],
+  ['タ','ta'],['チ','chi'],['ツ','tsu'],['テ','te'],['ト','to'],
+  ['ナ','na'],['ニ','ni'],['ヌ','nu'],['ネ','ne'],['ノ','no'],
+  ['ハ','ha'],['ヒ','hi'],['フ','fu'],['ヘ','he'],['ホ','ho'],
+  ['マ','ma'],['ミ','mi'],['ム','mu'],['メ','me'],['モ','mo'],
+  ['ヤ','ya'],['ユ','yu'],['ヨ','yo'],
+  ['ラ','ra'],['リ','ri'],['ル','ru'],['レ','re'],['ロ','ro'],
+  ['ワ','wa'],['ヲ','o'],['ン','n'],
+  ['ガ','ga'],['ギ','gi'],['グ','gu'],['ゲ','ge'],['ゴ','go'],
+  ['ザ','za'],['ジ','ji'],['ズ','zu'],['ゼ','ze'],['ゾ','zo'],
+  ['ダ','da'],['デ','de'],['ド','do'],
+  ['バ','ba'],['ビ','bi'],['ブ','bu'],['ベ','be'],['ボ','bo'],
+  ['パ','pa'],['ピ','pi'],['プ','pu'],['ペ','pe'],['ポ','po'],
+  ['っ','__X__'],['ッ','__X__'],['ー','-'],['〜','-'],
+  ['。','. '],['、',', '],['！','! '],['？','? '],['…','...'],
+];
+
+function kanaToRomaji(kana) {
+  let result = '';
+  let i = 0;
+  while (i < kana.length) {
+    let matched = false;
+    if (i + 1 < kana.length) {
+      const two = kana[i] + kana[i+1];
+      for (const [k,v] of HEPBURN_MAP) {
+        if (k === two) { result += v; i += 2; matched = true; break; }
+      }
+    }
+    if (!matched) {
+      for (const [k,v] of HEPBURN_MAP) {
+        if (k === kana[i]) { result += v; i++; matched = true; break; }
+      }
+    }
+    if (!matched) {
+      if (kana.charCodeAt(i) < 256) result += kana[i];
+      i++;
+    }
+  }
+  result = result.replace(/__X__([a-z])/g, (_, c) => c + c).replace(/__X__/g, '');
+  return result.replace(/ +/g, ' ').trim().toLowerCase();
+}
+
+// Google IME API: converts Japanese (incl. kanji) → hiragana reading
+const romajiCache = {};
+async function getKanaReading(text) {
+  if (romajiCache[text]) return romajiCache[text];
+  try {
+    const clean = text.replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
+    const url = 'https://www.google.com/transliterate?langpair=ja-Hira|ja&text=' + encodeURIComponent(clean);
+    const res = await fetch(url);
+    const data = await res.json();
+    // Response: [[original, [candidates]], ...]
+    const kana = data.map(function(seg) { return seg[1][0]; }).join('');
+    romajiCache[text] = kana;
+    return kana;
+  } catch(e) {
+    return null; // API unavailable, fall back to stored romaji
+  }
+}
+
+async function updateChoiceRomaji(sceneIdx, stepIdx, choices) {
+  for (let i = 0; i < choices.length; i++) {
+    const c = choices[i];
+    const el = document.getElementById('rom-' + sceneIdx + '-' + stepIdx + '-' + i);
+    if (!el) continue;
+    // If stored romaji has no kanji, skip API call
+    const hasKanji = /[\u4e00-\u9faf\u3400-\u4dbf]/.test(c.romaji || '');
+    if (c.romaji && !hasKanji) continue; // already good
+    try {
+      const kana = await getKanaReading(c.ja);
+      if (kana) {
+        const rom = kanaToRomaji(kana);
+        el.textContent = rom;
+      }
+    } catch(e) {}
+  }
+}
+
+
+
+// ===== CONVERSATION GAME =====
+const scenes = [
+  {
+    id:'ramen',icon:'🍜',title:'ラーメン屋でのドラマ',sub:'注文したら売り切れ！どうする？',
+    color:'linear-gradient(135deg,#FF6B35,#F7C59F)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👨‍🍳',ja:'いらっしゃいませ！何名様ですか？',en:'Welcome! How many people?'}],
+       question:'一人だと伝える。なんと言う？',questionEn:'You\'re dining alone. What do you say?',
+       choices:[{ja:'一人です。',romaji:'hitoridesu.',en:'Just one.',correct:true},{ja:'三人です。',romaji:'sannindesu.',en:'Three people.',correct:false},{ja:'さようなら！',romaji:'sayounara!',en:'Goodbye!',correct:false},{ja:'犬がいます。',romaji:'inugaimasu.',en:'There is a dog.',correct:false}],
+       feedback:'「一人です」— ひとりでラーメン最高！🍜'},
+      {dialogue:[{side:'left',avatar:'👨‍🍳',ja:'ご注文は？',en:'What would you like?'}],
+       question:'醤油ラーメンを注文する。なんと言う？',questionEn:'You want to order soy sauce ramen. What do you say?',
+       choices:[{ja:'醤油ラーメンを一つください。',romaji:'shouyura-menohitotsukudasai.',en:'One soy sauce ramen please.',correct:true},{ja:'ピザをください。',romaji:'pizaokudasai.',en:'Pizza please.',correct:false},{ja:'お水だけでいいです。',romaji:'omizudakedeiidesu.',en:'Just water.',correct:false},{ja:'わかりません！',romaji:'wakarimasen!',en:'I don\'t know!',correct:false}],
+       feedback:'「〜を一つください」は最強フレーズ🏆'},
+      {dialogue:[{side:'left',avatar:'👨‍🍳',ja:'すみません…醤油ラーメン、今日は売り切れです。',en:'Sorry, soy sauce ramen is sold out today.'}],
+       question:'残念だが受け入れる。なんと言う？',questionEn:'Disappointing, but you accept it. What do you say?',
+       choices:[{ja:'じゃあ、味噌ラーメンにします。',romaji:'jaa, misora-mennishimasu.',en:'Then I\'ll have miso ramen.',correct:true},{ja:'マネージャーを呼んでください！',romaji:'mane-ja-oyondekudasai!',en:'Call the manager!',correct:false},{ja:'帰ります。',romaji:'kaerimasu.',en:'I\'ll leave.',correct:false},{ja:'作ってください！',romaji:'tsukuttekudasai!',en:'Please make it!',correct:false}],
+       feedback:'「じゃあ〜にします」で切り替え上手😎'},
+      {dialogue:[{side:'left',avatar:'👨‍🍳',ja:'味噌ラーメン、お待たせしました！',en:'Here is your miso ramen!'}],
+       question:'辛すぎた！店員に伝えるには？',questionEn:'It was too spicy! How do you tell the staff?',
+       choices:[{ja:'すみません、ちょっと辛すぎます…',romaji:'sumimasen, chottokarasugimasu...',en:'Excuse me, it\'s a bit too spicy…',correct:true},{ja:'おいしいです！',romaji:'oishiidesu!',en:'It\'s delicious!',correct:false},{ja:'辛いものが大好きです！',romaji:'karaimonogadaisukidesu!',en:'I love spicy food!',correct:false},{ja:'水をください。',romaji:'mizuokudasai.',en:'Water please.',correct:false}],
+       feedback:'「ちょっと〜すぎます」は超使える苦情フレーズ🌶️'},
+      {dialogue:[{side:'left',avatar:'👨‍🍳',ja:'お会計は500円になります。',en:'That will be 500 yen.'}],
+       question:'帰り際に言う言葉は？',questionEn:'What do you say when leaving after the meal?',
+       choices:[{ja:'ごちそうさまでした！',romaji:'gochisousamadeshita!',en:'Thank you for the meal!',correct:true},{ja:'いただきます！',romaji:'itadakimasu!',en:'Let\'s eat!',correct:false},{ja:'おやすみなさい！',romaji:'oyasuminasai!',en:'Good night!',correct:false},{ja:'また明日！',romaji:'mataashita!',en:'See you tomorrow!',correct:false}],
+       feedback:'「ごちそうさまでした」— 食後の魔法の言葉！✨ ラーメン屋クリア！🍜'}
+    ]
+  },
+  {
+    id:'train',icon:'🚃',title:'電車で謎のおじさん',sub:'隣のおじさんがなぜか話しかけてくる',
+    color:'linear-gradient(135deg,#4D96FF,#6BCB77)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👴',ja:'この電車、渋谷に止まりますか？',en:'Does this train stop at Shibuya?'}],
+       question:'はい、止まると伝える。なんと言う？',questionEn:'Yes, it does stop. What do you say?',
+       choices:[{ja:'はい、止まりますよ！',romaji:'hai, tomarimasuyo!',en:'Yes, it stops!',correct:true},{ja:'わかりません。',romaji:'wakarimasen.',en:'I don\'t know.',correct:false},{ja:'バスに乗ってください。',romaji:'basuninottekudasai.',en:'Please take the bus.',correct:false},{ja:'渋谷は遠いです。',romaji:'shibuyahatooidesu.',en:'Shibuya is far.',correct:false}],
+       feedback:'「〜ますよ」は優しく強調するフレーズ🚃'},
+      {dialogue:[{side:'left',avatar:'👴',ja:'どこから来ましたか？',en:'Where are you from?'}],
+       question:'アメリカから来たと答える。なんと言う？',questionEn:'You came from America. What do you say?',
+       choices:[{ja:'アメリカから来ました。',romaji:'amerikakarakimashita.',en:'I came from America.',correct:true},{ja:'日本人です。',romaji:'nihonjindesu.',en:'I am Japanese.',correct:false},{ja:'東京に住んでいます。',romaji:'toukyounisundeimasu.',en:'I live in Tokyo.',correct:false},{ja:'秘密です！',romaji:'himitsudesu!',en:'It\'s a secret!',correct:false}],
+       feedback:'「〜から来ました」— どこから来ても使える！🌎'},
+      {dialogue:[{side:'left',avatar:'👴',ja:'日本語が上手ですね！',en:'Your Japanese is good!'}],
+       question:'謙遜して答える。なんと言う？',questionEn:'Respond humbly. What do you say?',
+       choices:[{ja:'いいえ、まだまだです。',romaji:'iie, madamadadesu.',en:'No, I still have a long way to go.',correct:true},{ja:'そうです、天才です！',romaji:'soudesu, tensaidesu!',en:'That\'s right, I\'m a genius!',correct:false},{ja:'ありがとう！私は最高です！',romaji:'arigatou!watashihasaikoudesu!',en:'Thank you! I am the best!',correct:false},{ja:'日本語？知りません。',romaji:'nihongo?shirimasen.',en:'Japanese? I don\'t know it.',correct:false}],
+       feedback:'「まだまだです」— 謙遜文化マスター！🎌'},
+      {dialogue:[{side:'left',avatar:'👴',ja:'娘の写真見ますか？',en:'Want to see a photo of my daughter?'}],
+       question:'優しく断る。なんと言う？',questionEn:'Politely decline. What do you say?',
+       choices:[{ja:'ありがとうございます、でも次の駅で降ります。',romaji:'arigatougozaimasu, demotsuginoekideorimasu.',en:'Thank you, but I get off at the next station.',correct:true},{ja:'絶対に嫌です！',romaji:'zettainiiyadesu!',en:'Absolutely not!',correct:false},{ja:'100枚全部見せてください！',romaji:'hyakumaizenbumisetekudasai!',en:'Show me all 100 photos!',correct:false},{ja:'娘さんはかわいいですか？',romaji:'musumesanhakawaiidesuka?',en:'Is your daughter cute?',correct:false}],
+       feedback:'「でも〜で降ります」最高の逃げフレーズ😂'},
+      {dialogue:[{side:'left',avatar:'👴',ja:'また電車で会いましょう！',en:'Let\'s meet on the train again!'}],
+       question:'電車を降りながら挨拶する。なんと言う？',questionEn:'Say goodbye as you get off the train. What do you say?',
+       choices:[{ja:'お気をつけて！',romaji:'okiotsukete!',en:'Take care!',correct:true},{ja:'さよなら、永遠に！',romaji:'sayonara, eienni!',en:'Goodbye, forever!',correct:false},{ja:'また明日ここで！',romaji:'mataashitakokode!',en:'See you here again tomorrow!',correct:false},{ja:'電話番号を教えてください。',romaji:'denwabangouooshietekudasai.',en:'Please give me your phone number.',correct:false}],
+       feedback:'「お気をつけて」— 温かいお別れの言葉🚃 電車シーンクリア！'}
+    ]
+  },
+  {
+    id:'karaoke',icon:'🎤',title:'カラオケで大事件',sub:'友達に無理やり連れてこられた…',
+    color:'linear-gradient(135deg,#C77DFF,#FF6B9D)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'😎',ja:'歌って！あなたの番だよ！',en:'Sing! It\'s your turn!'}],
+       question:'恥ずかしくて歌いたくない。なんと言う？',questionEn:'You\'re embarrassed and don\'t want to sing. What do you say?',
+       choices:[{ja:'え〜、恥ずかしいな…',romaji:'e-, hazukashiina...',en:'Aw~, I\'m embarrassed…',correct:true},{ja:'もちろん！全部歌います！',romaji:'mochiron!zenbuutaimasu!',en:'Of course! I\'ll sing everything!',correct:false},{ja:'歌は禁止です。',romaji:'utahakinshidesu.',en:'Singing is prohibited.',correct:false},{ja:'私はロボットです。',romaji:'watashiharobottodesu.',en:'I am a robot.',correct:false}],
+       feedback:'「恥ずかしいな〜」共感100%フレーズ！🙈'},
+      {dialogue:[{side:'left',avatar:'😎',ja:'大丈夫！みんな下手だから！',en:'It\'s fine! Everyone\'s bad at it!'}],
+       question:'一曲だけ歌うことにした。どう言う？',questionEn:'You decided to sing just one song. What do you say?',
+       choices:[{ja:'じゃあ、一曲だけ歌います！',romaji:'jaa, ikkyokudakeutaimasu!',en:'Okay, I\'ll sing just one song!',correct:true},{ja:'100曲歌います！',romaji:'hyakkyokuutaimasu!',en:'I\'ll sing 100 songs!',correct:false},{ja:'やっぱりやめます。',romaji:'yappariyamemasu.',en:'I changed my mind.',correct:false},{ja:'私はプロ歌手です。',romaji:'watashihapurokashudesu.',en:'I am a professional singer.',correct:false}],
+       feedback:'「じゃあ〜だけ」— 妥協の神フレーズ！🎤'},
+      {dialogue:[{side:'left',avatar:'😎',ja:'うまい！天才じゃん！',en:'You\'re good!! You\'re a genius!!'}],
+       question:'照れながらお礼を言う。なんと言う？',questionEn:'Say thanks while being modest. What do you say?',
+       choices:[{ja:'そんなことないよ〜！',romaji:'sonnakotonaiyo-!',en:'No way~!',correct:true},{ja:'わかってる、私は最高だ。',romaji:'wakatteru, watashihasaikouda.',en:'I know, I am the best.',correct:false},{ja:'サインしましょうか？',romaji:'sainshimashouka?',en:'Shall I give you an autograph?',correct:false},{ja:'もう一度歌いません。',romaji:'mouichidoutaimasen.',en:'I won\'t sing again.',correct:false}],
+       feedback:'「そんなことないよ〜」— カジュアル謙遜の定番！😆'},
+      {dialogue:[{side:'left',avatar:'😎',ja:'お腹すいた！何か頼もうよ！',en:'I\'m hungry! Let\'s order something!'}],
+       question:'フライドポテトを頼みたい。なんと言う？',questionEn:'You want to order French fries. What do you say?',
+       choices:[{ja:'フライドポテトを頼みましょう！',romaji:'furaidopotetootanomimashou!',en:'Let\'s order French fries!',correct:true},{ja:'何も食べません。ダイエット中です。',romaji:'nanimotabemasen.daiettochuudesu.',en:'I won\'t eat. I\'m on a diet.',correct:false},{ja:'ピザを500枚頼みましょう！',romaji:'pizaogohyakumaitanomimashou!',en:'Let\'s order 500 pizzas!',correct:false},{ja:'食べ物は持ってきました。',romaji:'tabemonohamottekimashita.',en:'I brought food.',correct:false}],
+       feedback:'「〜を頼みましょう」— 提案フレーズ完璧！🍟'},
+      {dialogue:[{side:'left',avatar:'😎',ja:'時間切れだ！もう一時間延長しよう！',en:'Time\'s up! Let\'s extend another hour!'}],
+       question:'もう帰りたい。なんと言う？',questionEn:'You want to go home now. What do you say?',
+       choices:[{ja:'ごめん、もう帰らないといけないんだ…',romaji:'gomen, moukaeranaitoikenainda...',en:'Sorry, I have to go home now…',correct:true},{ja:'あと10時間歌います！',romaji:'atojuujikanutaimasu!',en:'I\'ll sing for 10 more hours!',correct:false},{ja:'帰ることは不可能です。',romaji:'kaerukotohafukanoudesu.',en:'Going home is impossible.',correct:false},{ja:'ここに住みます。',romaji:'kokonisumimasu.',en:'I\'ll live here.',correct:false}],
+       feedback:'「〜ないといけないんだ」— 優しい断り方！😅 カラオケクリア！🎤'}
+    ]
+  },
+  {
+    id:'conbini',icon:'🏪',title:'コンビニ深夜2時',sub:'深夜のコンビニで予想外の出来事',
+    color:'linear-gradient(135deg,#FFD93D,#FF9F43)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'🏪',ja:'いらっしゃいませ〜（半分寝ながら）',en:'Welcome~ (half asleep)'}],
+       question:'おにぎりはどこか聞く。なんと言う？',questionEn:'You\'re looking for rice balls. What do you ask?',
+       choices:[{ja:'すみません、おにぎりはどこですか？',romaji:'sumimasen, onigirihadokodesuka?',en:'Excuse me, where are the rice balls?',correct:true},{ja:'おにぎりをください。',romaji:'onigiriokudasai.',en:'Give me rice balls.',correct:false},{ja:'おにぎりが好きです。',romaji:'onigirigasukidesu.',en:'I like rice balls.',correct:false},{ja:'何もいりません。',romaji:'nanimoirimasen.',en:'I don\'t need anything.',correct:false}],
+       feedback:'「〜はどこですか？」— 場所探しの鉄板フレーズ！🗺️'},
+      {dialogue:[{side:'left',avatar:'🏪',ja:'...（無言で指差す）',en:'...(points silently)'},{side:'right',avatar:'🙋',ja:'（全部売り切れだった…）',en:'(all sold out…)'}],
+       question:'全部売り切れだった！なんと言う？',questionEn:'They\'re all sold out! What do you say?',
+       choices:[{ja:'えー！全部売り切れですか…',romaji:'e-!zenbuurikiredesuka...',en:'Wow, they\'re all sold out…',correct:true},{ja:'警察を呼びます！',romaji:'keisatsuoyobimasu!',en:'I\'ll call the police!',correct:false},{ja:'おにぎりなんて必要ありません。',romaji:'onigirinantehitsuyouarimasen.',en:'I don\'t need rice balls anyway.',correct:false},{ja:'私が作ります。',romaji:'watashigatsukurimasu.',en:'I\'ll make them.',correct:false}],
+       feedback:'「えー！〜ですか」— ショックを自然に表現！😱'},
+      {dialogue:[{side:'left',avatar:'🏪',ja:'5時に新しいの入りますよ〜',en:'New ones come in at 5am~'}],
+       question:'3時間待てない。パンを買う。なんと言う？',questionEn:'You can\'t wait 3 hours. You\'ll buy bread instead. What do you say?',
+       choices:[{ja:'じゃあ、このパンにします。',romaji:'jaa, konopannishimasu.',en:'Then I\'ll go with this bread.',correct:true},{ja:'5時まで床で寝ます。',romaji:'gojimadeyukadenemasu.',en:'I\'ll sleep on the floor until 5.',correct:false},{ja:'パンは嫌いです。',romaji:'panhakiraidesu.',en:'I don\'t like bread.',correct:false},{ja:'材料はありますか？',romaji:'zairyouhaarimasuka?',en:'Do you have ingredients?',correct:false}],
+       feedback:'「じゃあ〜にします」— 切り替え上手！パン最高🍞'},
+      {dialogue:[{side:'left',avatar:'🏪',ja:'320円です。ポイントカードはお持ちですか？',en:'That\'s 320 yen. Do you have a points card?'}],
+       question:'カードを持っていない。なんと言う？',questionEn:'You don\'t have a points card. What do you say?',
+       choices:[{ja:'いいえ、持っていません。',romaji:'iie, motteimasen.',en:'No, I don\'t have one.',correct:true},{ja:'はい、100枚あります。',romaji:'hai, hyakumaiarimasu.',en:'Yes, I have 100 of them.',correct:false},{ja:'カードは嫌いです。',romaji:'ka-dohakiraidesu.',en:'I hate cards.',correct:false},{ja:'ポイントって何ですか？',romaji:'pointottenandesuka?',en:'What are points?',correct:false}],
+       feedback:'「いいえ、持っていません」— シンプルで完璧！💳'},
+      {dialogue:[{side:'left',avatar:'🏪',ja:'袋はご利用になりますか？（3円です）',en:'Would you like a bag? (3 yen)'}],
+       question:'袋はいらない。なんと言う？',questionEn:'You don\'t need a bag. What do you say?',
+       choices:[{ja:'結構です、袋は要りません。',romaji:'kekkoudesu, fukurohairimasen.',en:'It\'s fine, I don\'t need a bag.',correct:true},{ja:'100枚ください！',romaji:'hyakumaikudasai!',en:'Give me 100!',correct:false},{ja:'もちろんです！エコじゃないです！',romaji:'mochirondesu!ekojanaidesu!',en:'Of course! I\'m not eco-friendly!',correct:false},{ja:'バッグは家にあります。',romaji:'bagguhaieniarimasu.',en:'My bag is at home.',correct:false}],
+       feedback:'「結構です」— 断りの礼儀フレーズ！🌱 コンビニクリア！🏪'}
+    ]
+  },
+  {
+    id:'doctor',icon:'🏥',title:'病院でパニック',sub:'日本語で症状を説明しなきゃ…',
+    color:'linear-gradient(135deg,#4D96FF,#C0DBFF)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👨‍⚕️',ja:'どうされましたか？',en:'What seems to be the problem?'}],
+       question:'お腹が痛いと伝える。なんと言う？',questionEn:'Your stomach hurts. What do you say?',
+       choices:[{ja:'お腹が痛いです。',romaji:'onakagaitaidesu.',en:'My stomach hurts.',correct:true},{ja:'頭が大きいです。',romaji:'atamagaookiidesu.',en:'My head is big.',correct:false},{ja:'元気です！',romaji:'genkidesu!',en:'I\'m fine!',correct:false},{ja:'医者が好きです。',romaji:'ishagasukidesu.',en:'I like doctors.',correct:false}],
+       feedback:'「〜が痛いです」— 体の不調を伝える基本フレーズ！🩺'},
+      {dialogue:[{side:'left',avatar:'👨‍⚕️',ja:'いつから痛いですか？',en:'Since when has it been hurting?'}],
+       question:'昨日の朝からと伝える。なんと言う？',questionEn:'It\'s been hurting since yesterday morning. What do you say?',
+       choices:[{ja:'昨日の朝からです。',romaji:'kinounoasakaradesu.',en:'Since yesterday morning.',correct:true},{ja:'生まれた時からです。',romaji:'umaretatokikaradesu.',en:'Since I was born.',correct:false},{ja:'今日の夜からです。',romaji:'kyounoyorukaradesu.',en:'From tonight.',correct:false},{ja:'わかりません。',romaji:'wakarimasen.',en:'I don\'t know.',correct:false}],
+       feedback:'「〜からです」— 時間の起点を伝えるフレーズ！⏰'},
+      {dialogue:[{side:'left',avatar:'👨‍⚕️',ja:'熱はありますか？',en:'Do you have a fever?'}],
+       question:'測っていないと正直に言う。なんと言う？',questionEn:'You haven\'t checked your temperature. What do you honestly say?',
+       choices:[{ja:'測っていないのでわかりません。',romaji:'hakatteinainodewakarimasen.',en:'I haven\'t checked, so I\'m not sure.',correct:true},{ja:'39度です！',romaji:'sanjuukyuudodesu!',en:'It\'s 39 degrees!',correct:false},{ja:'熱は大好きです。',romaji:'netsuhadaisukidesu.',en:'I love fevers.',correct:false},{ja:'熱はありません（測ってないけど）。',romaji:'netsuhaarimasen.',en:'No fever (haven\'t checked though).',correct:false}],
+       feedback:'「〜ていないのでわかりません」— 正直な表現が一番！😅'},
+      {dialogue:[{side:'left',avatar:'👨‍⚕️',ja:'アレルギーはありますか？',en:'Do you have any allergies?'}],
+       question:'ナッツアレルギーがあると伝える。なんと言う？',questionEn:'You have a nut allergy. What do you say?',
+       choices:[{ja:'ナッツアレルギーがあります。',romaji:'nattsuarerugi-gaarimasu.',en:'I have a nut allergy.',correct:true},{ja:'全部アレルギーです。',romaji:'zenbuarerugi-desu.',en:'I am allergic to everything.',correct:false},{ja:'アレルギーって何ですか？',romaji:'arerugi-ttenandesuka?',en:'What are allergies?',correct:false},{ja:'なんでも食べます。',romaji:'nandemotabemasu.',en:'I eat anything.',correct:false}],
+       feedback:'「〜アレルギーがあります」— 超重要フレーズ！命に関わる！⚕️'},
+      {dialogue:[{side:'left',avatar:'👨‍⚕️',ja:'この薬を一日三回飲んでください。',en:'Please take this medicine three times a day.'}],
+       question:'食前か食後か確認する。なんと言う？',questionEn:'You want to confirm before or after meals. What do you ask?',
+       choices:[{ja:'食前と食後、どちらに飲めばいいですか？',romaji:'shokuzentoshokugo, dochiraninomebaiidesuka?',en:'Should I take it before or after meals?',correct:true},{ja:'薬は嫌いです。',romaji:'kusurihakiraidesu.',en:'I don\'t like medicine.',correct:false},{ja:'三回も！？多いです！',romaji:'sankaimo!?ooidesu!',en:'Three times!? Too many!',correct:false},{ja:'飲みません。',romaji:'nomimasen.',en:'I won\'t take it.',correct:false}],
+       feedback:'「〜どちらですか？」— 確認するのは大事！ 病院クリア！🏥'}
+    ]
+  },
+  {
+    id:'job',icon:'💼',title:'就職面接で焦る',sub:'緊張の面接！正しい敬語で乗り切れ！',
+    color:'linear-gradient(135deg,#2D3748,#4A5568)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👔',ja:'自己紹介をお願いします。',en:'Please introduce yourself.'}],
+       question:'名前と出身を丁寧に言う。なんと言う？',questionEn:'Politely state your name and where you\'re from. What do you say?',
+       choices:[{ja:'田中と申します。アメリカ出身です。',romaji:'tanakatomoushimasu.amerikashusshindesu.',en:'My name is Tanaka. I am from America.',correct:true},{ja:'タナカです。アメリカ人。',romaji:'tanakadesu.amerikajin.',en:'I\'m Tanaka. American.',correct:false},{ja:'ここに来るのに迷いました。',romaji:'kokonikurunonimayoimashita.',en:'I got lost getting here.',correct:false},{ja:'よろしく。',romaji:'yoroshiku.',en:'Nice to meet you.',correct:false}],
+       feedback:'「〜と申します」— ビジネス敬語の王様！👔'},
+      {dialogue:[{side:'left',avatar:'👔',ja:'弊社を志望した理由を教えてください。',en:'Why did you apply to our company?'}],
+       question:'御社の文化に惹かれたと言う。なんと言う？',questionEn:'Say you were attracted to the company culture. What do you say?',
+       choices:[{ja:'御社の文化とビジョンに強く惹かれました。',romaji:'onshanobunkatobijonnitsuyokuhikaremashita.',en:'I was strongly attracted to your company culture and vision.',correct:true},{ja:'他に仕事がないからです。',romaji:'hokanishigotoganaikaradesu.',en:'Because I have no other job options.',correct:false},{ja:'お金のためです。',romaji:'okanenotamedesu.',en:'For the money.',correct:false},{ja:'近いからです。',romaji:'chikaikaradesu.',en:'Because it is close by.',correct:false}],
+       feedback:'「〜に惹かれました」— 志望動機の鉄板！😊'},
+      {dialogue:[{side:'left',avatar:'👔',ja:'あなたの短所を教えてください。',en:'Please tell us your weakness.'}],
+       question:'短所をポジティブに言う。なんと言う？',questionEn:'State a weakness in a positive way. What do you say?',
+       choices:[{ja:'完璧主義なところが短所ですが、改善中です。',romaji:'kanpekishuginatokorogatanshodesuga, kaizenchuudesu.',en:'My weakness is perfectionism, but I am working on it.',correct:true},{ja:'短所はありません。完璧です。',romaji:'tanshohaarimasen.kanpekidesu.',en:'I have no weaknesses. I\'m perfect.',correct:false},{ja:'遅刻が多いです。',romaji:'chikokugaooidesu.',en:'I am often late.',correct:false},{ja:'短所が多すぎて言えません。',romaji:'tanshogaoosugiteiemasen.',en:'I have too many to say.',correct:false}],
+       feedback:'「〜ですが、改善中です」の黄金パターン✨'},
+      {dialogue:[{side:'left',avatar:'👔',ja:'5年後のビジョンをお聞かせください。',en:'What is your 5-year vision?'}],
+       question:'プロとして会社に貢献したいと言う。なんと言う？',questionEn:'Say you want to contribute as a professional. What do you say?',
+       choices:[{ja:'5年後には専門家として会社に貢献したいと思っています。',romaji:'gonengonihasenmonkatoshitekaishanikoukenshitaitoomotteimasu.',en:'In 5 years, I hope to contribute to the company as a specialist.',correct:true},{ja:'5年後は別の会社にいます。',romaji:'gonengohabetsunokaishaniimasu.',en:'In 5 years I will be at another company.',correct:false},{ja:'引退したいです。',romaji:'intaishitaidesu.',en:'I want to retire.',correct:false},{ja:'想像できません。',romaji:'souzoudekimasen.',en:'I can\'t imagine it.',correct:false}],
+       feedback:'「〜として貢献したい」— 面接の神フレーズ！💪'},
+      {dialogue:[{side:'left',avatar:'👔',ja:'最後に何か質問はありますか？',en:'Do you have any questions?'}],
+       question:'入社後の研修について聞く。なんと言う？',questionEn:'Ask about training after joining. What do you say?',
+       choices:[{ja:'入社後の研修についてお聞きしてもよろしいですか？',romaji:'nyuushagonokenshuunitsuiteokikishitemoyoroshiidesuka?',en:'May I ask about training after joining?',correct:true},{ja:'給料はいくらですか？',romaji:'kyuuryouhaikuradesuka?',en:'How much is the salary?',correct:false},{ja:'残業はありますか？',romaji:'zangyouhaarimasuka?',en:'Is there overtime?',correct:false},{ja:'質問はありません。帰ります。',romaji:'shitsumonhaarimasen.kaerimasu.',en:'No questions. I will leave.',correct:false}],
+       feedback:'「〜についてお聞きしてもよろしいですか？」— 最高の質問！ 面接クリア！💼'}
+    ]
+  },
+  {
+    id:'festival',icon:'🎆',title:'夏祭りで大騒ぎ',sub:'屋台で食べ過ぎて財布が空に！',
+    color:'linear-gradient(135deg,#FF6B35,#FFD93D)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'🎆',ja:'いらっしゃい！焼き鳥200円だよ！',en:'Welcome! Yakitori is 200 yen!'}],
+       question:'3本ほしいと言う。なんと言う？',questionEn:'You want 3 skewers. What do you say?',
+       choices:[{ja:'3本ください！',romaji:'sanbonkudasai!',en:'3 skewers please!',correct:true},{ja:'全部ください！',romaji:'zenbukudasai!',en:'Give me all of them!',correct:false},{ja:'焼き鳥は嫌いです。',romaji:'yakitorihakiraidesu.',en:'I don\'t like yakitori.',correct:false},{ja:'もっと安くなりますか？',romaji:'mottoyasukunarimasuka?',en:'Can it be cheaper?',correct:false}],
+       feedback:'「〜本ください」— 助数詞「本」をマスター！🍢'},
+      {dialogue:[{side:'left',avatar:'🎆',ja:'たこ焼き6個で400円！',en:'Takoyaki 6 pieces for 400 yen!'}],
+       question:'熱々を食べて口を火傷した！なんと言う？',questionEn:'You burned your mouth on the hot food! What do you say?',
+       choices:[{ja:'あつっ！！でもおいしい！！',romaji:'atsu!!demooishii!!',en:'Hot!! But delicious!!',correct:true},{ja:'冷やしてください。',romaji:'hiyashitekudasai.',en:'Please cool it down.',correct:false},{ja:'食べません（怖い）。',romaji:'tabemasen.',en:'I won\'t eat (scared).',correct:false},{ja:'おいしくないです。',romaji:'oishikunaidesu.',en:'It is not delicious.',correct:false}],
+       feedback:'「あつっ！でもおいしい！」— 屋台あるある！😂🐙'},
+      {dialogue:[{side:'left',avatar:'🎯',ja:'射的どうですか！1回300円！',en:'How about shooting gallery! 300 yen!'}],
+       question:'やってみたいと言う。なんと言う？',questionEn:'You want to give it a try. What do you say?',
+       choices:[{ja:'やってみます！一回お願いします！',romaji:'yattemimasu!ikkaionegaishimasu!',en:'I will try! One round please!',correct:true},{ja:'得意ではありません。',romaji:'tokuidehaarimasen.',en:'I am not good at it.',correct:false},{ja:'景品をください（射的なしで）。',romaji:'keihinokudasai.',en:'Give me the prize without playing.',correct:false},{ja:'子供のゲームですね。',romaji:'kodomonoge-mudesune.',en:'It\'s a children\'s game.',correct:false}],
+       feedback:'「やってみます！」— チャレンジ精神の最強フレーズ！🎯'},
+      {dialogue:[{side:'left',avatar:'🎆',ja:'あ！財布落としましたよ！',en:'Oh! You dropped your wallet!'}],
+       question:'お礼を言う。なんと言う？',questionEn:'Say thank you. What do you say?',
+       choices:[{ja:'えっ！ありがとうございます！助かりました！',romaji:'e!arigatougozaimasu!tasukarimashita!',en:'What! Thank you so much! You saved me!',correct:true},{ja:'知っています。',romaji:'shitteimasu.',en:'I know.',correct:false},{ja:'財布の中身を確認します。',romaji:'saifunonakamiokakuninshimasu.',en:'I\'ll check what\'s inside.',correct:false},{ja:'ありがとう（軽く）。',romaji:'arigatou.',en:'Thanks (lightly).',correct:false}],
+       feedback:'「助かりました！」— 強い感謝フレーズ！🙏'},
+      {dialogue:[{side:'left',avatar:'🎆',ja:'花火が始まりますよ！',en:'The fireworks are starting!'}],
+       question:'感動を表現する。なんと言う？',questionEn:'Express how amazed you are. What do you say?',
+       choices:[{ja:'わあ！すごい！きれい！！',romaji:'waa!sugoi!kirei!!',en:'Wow! Amazing! Beautiful!!',correct:true},{ja:'うるさいですね。',romaji:'urusaidesune.',en:'It is noisy.',correct:false},{ja:'花火は怖いです。',romaji:'hanabihakowaidesu.',en:'Fireworks are scary.',correct:false},{ja:'もう帰ります。',romaji:'moukaerimasu.',en:'I am going home.',correct:false}],
+       feedback:'「わあ！すごい！きれい！」— 感動の三連コンボ！🎆 夏祭りクリア！'}
+    ]
+  },
+  {
+    id:'catcafe',icon:'🐱',title:'ネコカフェで事件',sub:'猫に好かれようと必死！',
+    color:'linear-gradient(135deg,#FFB3CC,#EDD5FF)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'🐱',ja:'いらっしゃいませ！猫が苦手な方はいませんか？',en:'Welcome! Is anyone not good with cats?'}],
+       question:'猫が大好きだと答える。なんと言う？',questionEn:'Tell them you love cats. What do you say?',
+       choices:[{ja:'いいえ！猫が大好きです！',romaji:'iie!nekogadaisukidesu!',en:'No! I love cats!',correct:true},{ja:'少し怖いです。',romaji:'sukoshikowaidesu.',en:'I am a little scared.',correct:false},{ja:'犬の方が好きです。',romaji:'inunohougasukidesu.',en:'I prefer dogs.',correct:false},{ja:'どちらでもないです。',romaji:'dochirademonaidesu.',en:'Neither really.',correct:false}],
+       feedback:'「〜が大好きです！」— 強い好意を表すフレーズ！😍'},
+      {dialogue:[{side:'left',avatar:'🐱',ja:'こちらの猫ちゃん、人見知りなんですよ…',en:'This kitty is a bit shy around strangers…'}],
+       question:'ゆっくり仲良くなれればいいと言う。なんと言う？',questionEn:'Say you hope to slowly become friends with the cat. What do you say?',
+       choices:[{ja:'ゆっくり仲良くなれればいいですね。',romaji:'yukkurinakayokunarerebaiidesune.',en:'It would be nice to slowly become friends.',correct:true},{ja:'早く懐かせてください！',romaji:'hayakunatsukasetekudasai!',en:'Make it warm up to me fast!',correct:false},{ja:'人見知りは直せます。',romaji:'hitomishirihanaosemasu.',en:'Shyness can be fixed.',correct:false},{ja:'この猫は私が嫌いですね。',romaji:'kononekohawatashigakiraidesune.',en:'This cat dislikes me.',correct:false}],
+       feedback:'「ゆっくり〜なれれば」— 焦らない優しい表現！🌸'},
+      {dialogue:[{side:'left',avatar:'🐱',ja:'（猫がひざの上に乗ってきた）',en:'(The cat climbed onto your lap)'}],
+       question:'嬉しくてスタッフに伝える。なんと言う？',questionEn:'You\'re delighted and want to tell the staff. What do you say?',
+       choices:[{ja:'乗ってきました！どうしたらいいですか！？',romaji:'nottekimashita!doushitaraiidesuka!?',en:'It climbed on me! What should I do!?',correct:true},{ja:'降ろしてください。',romaji:'oroshitekudasai.',en:'Please take it off.',correct:false},{ja:'重いです。',romaji:'omoidesu.',en:'It is heavy.',correct:false},{ja:'写真を撮っていいですか？（すでに撮ってる）',romaji:'shashinototteiidesuka?',en:'Can I take a photo? (already taking it)',correct:false}],
+       feedback:'「どうしたらいいですか！？」— パニックの神フレーズ！😂'},
+      {dialogue:[{side:'left',avatar:'🐱',ja:'猫じゃらしで遊んであげてください！',en:'Please play with it using the cat toy!'}],
+       question:'猫が全然反応しない。どう言う？',questionEn:'The cat has no reaction at all. What do you say?',
+       choices:[{ja:'あれ、興味なさそうですね…',romaji:'are, kyouminasasoudesune...',en:'Hmm, it does not seem interested…',correct:true},{ja:'壊れていますか？',romaji:'kowareteimasuka?',en:'Is it broken?',correct:false},{ja:'猫が嫌いになりました。',romaji:'nekogakiraininarimashita.',en:'I have started to dislike cats.',correct:false},{ja:'もっと上手な人に代わってください。',romaji:'mottojouzunahitonikawattekudasai.',en:'Please replace me with someone better.',correct:false}],
+       feedback:'「〜なさそうですね」— 様子を観察して伝えるフレーズ！🐾'},
+      {dialogue:[{side:'left',avatar:'🐱',ja:'お時間になりました。また来てくださいね！',en:'Your time is up. Please come again!'}],
+       question:'絶対また来ると伝える。なんと言う？',questionEn:'Tell them you will definitely come again. What do you say?',
+       choices:[{ja:'絶対また来ます！最高でした！',romaji:'zettaimatakimasu!saikoudeshita!',en:'I will definitely come again! It was the best!',correct:true},{ja:'考えます。',romaji:'kangaemasu.',en:'I will think about it.',correct:false},{ja:'猫を一匹連れて帰りたいです。',romaji:'nekooippikitsuretekaeritaidesu.',en:'I want to take one cat home.',correct:false},{ja:'もっといたいです（泣）。',romaji:'mottoitaidesu.',en:'I want to stay longer (crying).',correct:false}],
+       feedback:'「絶対また来ます！」— リピート宣言フレーズ！ ネコカフェクリア！🐱'}
+    ]
+  },
+  {
+    id:'izakaya',icon:'🍻',title:'居酒屋で盛り上がる',sub:'日本の飲み会文化を体験せよ！',
+    color:'linear-gradient(135deg,#FF9F43,#FFD93D)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'🍺',ja:'乾杯しましょう！何にしますか？',en:'Let\'s toast! What will you have?'}],
+       question:'生ビールを注文する。なんと言う？',questionEn:'Order a draft beer. What do you say?',
+       choices:[{ja:'生ビールをください！',romaji:'namabi-ruokudasai!',en:'A draft beer, please!',correct:true},{ja:'お水をください。',romaji:'omizuokudasai.',en:'Water please.',correct:false},{ja:'何でもいいです。',romaji:'nandemoiidesu.',en:'Anything is fine.',correct:false},{ja:'飲み物は要りません。',romaji:'nomimonohairimasen.',en:'I don\'t need a drink.',correct:false}],
+       feedback:'「生ビールをください！」— 居酒屋の最初の一杯！🍺'},
+      {dialogue:[{side:'left',avatar:'🍺',ja:'かんぱーい！',en:'Cheers!'}],
+       question:'乾杯に応える！なんと言う？',questionEn:'Respond to the toast! What do you say?',
+       choices:[{ja:'かんぱい！',romaji:'kanpai!',en:'Cheers!',correct:true},{ja:'ありがとうございます。',romaji:'arigatougozaimasu.',en:'Thank you.',correct:false},{ja:'お疲れ様でした。',romaji:'otsukaresamadeshita.',en:'Good work.',correct:false},{ja:'いただきます。',romaji:'itadakimasu.',en:'Let\'s eat.',correct:false}],
+       feedback:'「かんぱい！」— 声を合わせて！🥂'},
+      {dialogue:[{side:'left',avatar:'🍺',ja:'唐揚げと枝豆どっちがいいですか？',en:'Which do you want, fried chicken or edamame?'}],
+       question:'両方食べたいと言う。なんと言う？',questionEn:'You want both options. What do you say?',
+       choices:[{ja:'両方ください！どっちも大好きです！',romaji:'ryouhoukudasai!docchimodaisukidesu!',en:'Both please! I love both!',correct:true},{ja:'唐揚げは嫌いです。',romaji:'karaagehakiraidesu.',en:'I don\'t like fried chicken.',correct:false},{ja:'ダイエット中なので食べません。',romaji:'daiettochuunanodetabemasen.',en:'I\'m on a diet so I won\'t eat.',correct:false},{ja:'メニューを見せてください。',romaji:'menyu-omisetekudasai.',en:'Show me the menu.',correct:false}],
+       feedback:'「両方ください！」— 食いしん坊の正直な返し！😋'},
+      {dialogue:[{side:'left',avatar:'🍺',ja:'もう一杯どうですか？',en:'How about another drink?'}],
+       question:'お酒に弱いのでウーロン茶にすると言う。なんと言う？',questionEn:'You\'re a lightweight so you\'ll have oolong tea. What do you say?',
+       choices:[{ja:'ありがとう、でもお酒弱いのでウーロン茶にします。',romaji:'arigatou, demoosakeyowainodeu-ronchanishimasu.',en:'Thanks, but I\'m a lightweight so I\'ll have oolong tea.',correct:true},{ja:'はい！10杯飲みます！',romaji:'hai!juppainomimasu!',en:'Yes! I will drink 10 cups!',correct:false},{ja:'飲みません（冷たく）。',romaji:'nomimasen.',en:'I will not drink (coldly).',correct:false},{ja:'お酒は好きです。',romaji:'osakehasukidesu.',en:'I like alcohol.',correct:false}],
+       feedback:'「お酒弱いので〜にします」— 断り上手！🍵'},
+      {dialogue:[{side:'left',avatar:'🍺',ja:'今日は楽しかったですね！また飲みましょう！',en:'Today was fun! Let\'s drink again!'}],
+       question:'今日は楽しかったと伝えて締める。なんと言う？',questionEn:'Wrap up by saying you had a great time. What do you say?',
+       choices:[{ja:'本当に楽しかったです！ぜひまた！',romaji:'hontounitanoshikattadesu!zehimata!',en:'It was really fun! Definitely again!',correct:true},{ja:'普通でした。',romaji:'futsuudeshita.',en:'It was ordinary.',correct:false},{ja:'もう帰ります。さようなら。',romaji:'moukaerimasu.sayounara.',en:'I\'m going home now. Goodbye.',correct:false},{ja:'楽しくありませんでした。',romaji:'tanoshikuarimasendeshita.',en:'It was not fun.',correct:false}],
+       feedback:'「本当に楽しかったです！」— 飲み会の締めの神フレーズ！ 居酒屋クリア！🍻'}
+    ]
+  },
+  {
+    id:'lost',icon:'🗺️',title:'道に迷った！',sub:'観光中に完全に迷子になった…',
+    color:'linear-gradient(135deg,#4D96FF,#6BCB77)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👮',ja:'どうかされましたか？',en:'Is something wrong?'}],
+       question:'道に迷ったと伝える。なんと言う？',questionEn:'You got lost. What do you say?',
+       choices:[{ja:'すみません、道に迷ってしまいました。',romaji:'sumimasen, michinimayotteshimaimashita.',en:'Excuse me, I got lost.',correct:true},{ja:'迷子です！助けてください！',romaji:'maigodesu!tasuketekudasai!',en:'I\'m lost! Help me!',correct:false},{ja:'地図を売ってください。',romaji:'chizuouttekudasai.',en:'Please sell me a map.',correct:false},{ja:'東京はどこですか？',romaji:'toukyouhadokodesuka?',en:'Where is Tokyo?',correct:false}],
+       feedback:'「道に迷ってしまいました」— 丁寧な迷子フレーズ！🗺️'},
+      {dialogue:[{side:'left',avatar:'👮',ja:'どこへ行きたいですか？',en:'Where would you like to go?'}],
+       question:'渋谷駅に行きたいと言う。なんと言う？',questionEn:'You want to go to Shibuya Station. What do you say?',
+       choices:[{ja:'渋谷駅に行きたいのですが。',romaji:'shibuyaekiniikitainodesuga.',en:'I would like to go to Shibuya Station.',correct:true},{ja:'東京に行きたいです。',romaji:'toukyouniikitaidesu.',en:'I want to go to Tokyo.',correct:false},{ja:'家に帰りたいです。',romaji:'ienikaeritaidesu.',en:'I want to go home.',correct:false},{ja:'どこでもいいです。',romaji:'dokodemoiidesu.',en:'Anywhere is fine.',correct:false}],
+       feedback:'「〜に行きたいのですが」— 目的地を伝える丁寧な言い方！🚉'},
+      {dialogue:[{side:'left',avatar:'👮',ja:'あそこの交差点を右に曲がると駅が見えますよ。',en:'If you turn right at that intersection, you\'ll see the station.'}],
+       question:'繰り返して確認する。なんと言う？',questionEn:'Repeat it back to confirm. What do you say?',
+       choices:[{ja:'あの交差点を右ですね！ありがとうございます！',romaji:'anokousatenomigidesune!arigatougozaimasu!',en:'Right at that intersection! Thank you!',correct:true},{ja:'もう一回言ってください（10回目）。',romaji:'mouikkaiittekudasai.',en:'Say it again please (10th time).',correct:false},{ja:'地図を書いてください。',romaji:'chizuokaitekudasai.',en:'Please draw a map.',correct:false},{ja:'わかりません（諦め）。',romaji:'wakarimasen.',en:'I don\'t understand (giving up).',correct:false}],
+       feedback:'繰り返して確認！「〜ですね！」で確認するの大事🔄'},
+      {dialogue:[{side:'left',avatar:'👮',ja:'歩いて5分くらいです。',en:'It\'s about 5 minutes on foot.'}],
+       question:'お礼を言う。なんと言う？',questionEn:'Say thank you. What do you say?',
+       choices:[{ja:'ありがとうございます！助かりました！',romaji:'arigatougozaimasu!tasukarimashita!',en:'Thank you so much! You saved me!',correct:true},{ja:'5分も！遠いです！',romaji:'gofunmo!tooidesu!',en:'Even 5 minutes! That is far!',correct:false},{ja:'タクシーで行きます。',romaji:'takushi-deikimasu.',en:'I will take a taxi.',correct:false},{ja:'わかりました（全然わかってない）。',romaji:'wakarimashita.',en:'Understood (not at all).',correct:false}],
+       feedback:'「助かりました！」— 感謝の気持ちを強く伝えるフレーズ！🙏'},
+      {dialogue:[{side:'right',avatar:'🙋',ja:'（やっと渋谷駅に着いた）',en:'(Finally arrived at Shibuya Station)'}],
+       question:'無事に到着した！思わず言ってしまう一言は？',questionEn:'You made it safely! What do you blurt out?',
+       choices:[{ja:'やった！着いた！',romaji:'yatta!tsuita!',en:'Yes! I made it!',correct:true},{ja:'思ったより普通の駅ですね。',romaji:'omottayorifutsuunoekidesune.',en:'It is a more ordinary station than expected.',correct:false},{ja:'また迷子になります。',romaji:'matamaigoninarimasu.',en:'I will get lost again.',correct:false},{ja:'道案内の人に電話します。',romaji:'michiannainohitonidenwashimasu.',en:'I\'ll call the person who gave me directions.',correct:false}],
+       feedback:'「やった！着いた！」— 達成感の喜びフレーズ！ 迷子クリア！🗺️'}
+    ]
+  },
+  {
+    id:'school',icon:'🎒',title:'学校で遅刻！',sub:'先生の前で言い訳を考えろ！',
+    color:'linear-gradient(135deg,#FFD93D,#FF9F43)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👩‍🏫',ja:'田中さん、また遅刻ですよ！',en:'Tanaka-san, you are late again!'}],
+       question:'素直に謝る。なんと言う？',questionEn:'Apologize honestly. What do you say?',
+       choices:[{ja:'すみません、遅刻してしまいました。',romaji:'sumimasen, chikokushiteshimaimashita.',en:'I am sorry, I ended up being late.',correct:true},{ja:'先生の時計が間違っています。',romaji:'senseinotokeigamachigatteimasu.',en:'Teacher\'s clock is wrong.',correct:false},{ja:'遅刻じゃないです！',romaji:'chikokujanaidesu!',en:'I\'m not late!',correct:false},{ja:'おはようございます！（無視）',romaji:'ohayougozaimasu!',en:'Good morning! (ignoring)',correct:false}],
+       feedback:'「遅刻してしまいました」— 素直な謝罪が一番！🙇'},
+      {dialogue:[{side:'left',avatar:'👩‍🏫',ja:'理由を聞かせてください。',en:'Please tell me the reason.'}],
+       question:'電車が遅れたと言う。なんと言う？',questionEn:'Say the train was delayed. What do you say?',
+       choices:[{ja:'電車が遅れてしまって…',romaji:'denshagaokureteshimatte...',en:'The train was delayed…',correct:true},{ja:'寝坊しました（正直）。',romaji:'neboushimashita.',en:'I overslept (honest).',correct:false},{ja:'宿題を取りに帰りました。',romaji:'shukudaiotorinikaerimashita.',en:'I went back to get my homework.',correct:false},{ja:'理由は言えません。',romaji:'riyuuhaiemasen.',en:'I cannot say the reason.',correct:false}],
+       feedback:'「電車が遅れて」— 日本で最も使われる遅刻理由！😅'},
+      {dialogue:[{side:'left',avatar:'👩‍🏫',ja:'次は気をつけてください。席に座りなさい。',en:'Please be careful next time. Take your seat.'}],
+       question:'席に座る前にもう一度謝る。なんと言う？',questionEn:'Apologize once more before taking your seat. What do you say?',
+       choices:[{ja:'はい、気をつけます。失礼しました。',romaji:'hai, kiotsukemasu.shitsureishimashita.',en:'Yes, I will be careful. Excuse me.',correct:true},{ja:'わかりました（走って逃げる）。',romaji:'wakarimashita.',en:'Understood (running away).',correct:false},{ja:'ありがとう先生！',romaji:'arigatousensei!',en:'Thank you teacher!',correct:false},{ja:'次は遅刻しません（たぶん）。',romaji:'tsugihachikokushimasen.',en:'I won\'t be late next time (probably).',correct:false}],
+       feedback:'「失礼しました」— 目上の人への謝罪の定番！🎒'},
+      {dialogue:[{side:'left',avatar:'👩‍🏫',ja:'今日の宿題は出しましたか？',en:'Did you turn in today\'s homework?'}],
+       question:'忘れてしまったと正直に言う。なんと言う？',questionEn:'Honestly admit you forgot. What do you say?',
+       choices:[{ja:'すみません、忘れてしまいました…',romaji:'sumimasen, wasureteshimaimashita...',en:'Sorry, I forgot…',correct:true},{ja:'はい！もちろん！（嘘）',romaji:'hai!mochiron!',en:'Yes! Of course! (lie)',correct:false},{ja:'宿題がありましたか？',romaji:'shukudaigaarimashitaka?',en:'Was there homework?',correct:false},{ja:'犬に食べられました。',romaji:'inunitaberaremashita.',en:'My dog ate it.',correct:false}],
+       feedback:'「忘れてしまいました」— 正直が一番！😅'},
+      {dialogue:[{side:'left',avatar:'👩‍🏫',ja:'明日必ず持ってきてください。',en:'Please be sure to bring it tomorrow.'}],
+       question:'約束する。なんと言う？',questionEn:'Make a promise. What do you say?',
+       choices:[{ja:'はい、必ず持ってきます！',romaji:'hai, kanarazumottekimasu!',en:'Yes, I will definitely bring it!',correct:true},{ja:'たぶん持ってきます。',romaji:'tabunmottekimasu.',en:'I will probably bring it.',correct:false},{ja:'明日は休みます。',romaji:'ashitahayasumimasu.',en:'I will be absent tomorrow.',correct:false},{ja:'わかりました（忘れる）。',romaji:'wakarimashita.',en:'Understood (will forget).',correct:false}],
+       feedback:'「必ず〜します！」— 強い約束フレーズ！ 学校クリア！🎒'}
+    ]
+  },
+  {
+    id:'shopping',icon:'🛍️',title:'ショッピングで試着',sub:'服のサイズが見つからない！',
+    color:'linear-gradient(135deg,#FF6B9D,#C77DFF)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'🛍️',ja:'いらっしゃいませ！何かお探しですか？',en:'Welcome! Are you looking for something?'}],
+       question:'デニムジャケットを探していると言う。なんと言う？',questionEn:'You\'re looking for a denim jacket. What do you say?',
+       choices:[{ja:'デニムジャケットを探しているんですが。',romaji:'denimujakettoosagashiteirundesuga.',en:'I\'m looking for a denim jacket.',correct:true},{ja:'何も探していません。',romaji:'nanimosagashiteimasen.',en:'I\'m not looking for anything.',correct:false},{ja:'服は持っています。',romaji:'fukuhamotteimasu.',en:'I have clothes.',correct:false},{ja:'あなたを探していました。',romaji:'anataosagashiteimashita.',en:'I was looking for you.',correct:false}],
+       feedback:'「〜を探しているんですが」— ショッピングの鉄板フレーズ！🛍️'},
+      {dialogue:[{side:'left',avatar:'🛍️',ja:'サイズはどのくらいですか？',en:'What size are you?'}],
+       question:'Mサイズはあるか確認する。なんと言う？',questionEn:'Check if they have a medium size. What do you say?',
+       choices:[{ja:'Mサイズはありますか？',romaji:'emusaizuhaarimasuka?',en:'Do you have a medium size?',correct:true},{ja:'大きいサイズをください。',romaji:'ookiisaizuokudasai.',en:'Give me a large size.',correct:false},{ja:'サイズはわかりません。',romaji:'saizuhawakarimasen.',en:'I don\'t know my size.',correct:false},{ja:'全サイズください。',romaji:'zensaizukudasai.',en:'Give me all sizes.',correct:false}],
+       feedback:'「〜はありますか？」— 商品確認の万能フレーズ！👕'},
+      {dialogue:[{side:'left',avatar:'🛍️',ja:'MサイズはただいまLかSになります。',en:'Currently M is out, we have L or S.'}],
+       question:'試着してみると言う。なんと言う？',questionEn:'Say you want to try it on. What do you say?',
+       choices:[{ja:'では、試着してみてもいいですか？',romaji:'deha, shichakushitemitemoiidesuka?',en:'Then, would it be okay to try it on?',correct:true},{ja:'Mじゃなきゃダメです！',romaji:'emujanakyadamedesu!',en:'It has to be M!',correct:false},{ja:'買いません。',romaji:'kaimasen.',en:'I won\'t buy it.',correct:false},{ja:'Lサイズと同じ値段ですか？',romaji:'erusaizutoonajinedandesuka?',en:'Is it the same price as L?',correct:false}],
+       feedback:'「試着してみてもいいですか？」— ショッピングの必須フレーズ！👗'},
+      {dialogue:[{side:'left',avatar:'🛍️',ja:'Lサイズ、少し大きかったですか？',en:'Was the L size a bit big?'}],
+       question:'少し大きかった。Sを試したいと言う。なんと言う？',questionEn:'It was a bit big. You want to try size S. What do you say?',
+       choices:[{ja:'すみません、少し大きかったです。Sを試してみてもいいですか？',romaji:'sumimasen, sukoshiookikattadesu.esuotameshitemitemoiidesuka?',en:'Excuse me, it was a bit big. Can I try S?',correct:true},{ja:'完璧です！（大きいけど）',romaji:'kanpekidesu!',en:'Perfect! (even though it is big)',correct:false},{ja:'これでいいです（諦め）。',romaji:'koredeiidesu.',en:'This is fine (giving up).',correct:false},{ja:'返品します。',romaji:'henpinshimasu.',en:'I will return it.',correct:false}],
+       feedback:'「少し〜かったです」— サイズフィードバックの正確な伝え方！📏'},
+      {dialogue:[{side:'left',avatar:'🛍️',ja:'Sサイズ、ぴったりですね！',en:'The S size fits perfectly!'}],
+       question:'気に入ったので購入すると伝える。なんと言う？',questionEn:'You like it and will buy it. What do you say?',
+       choices:[{ja:'気に入りました！これにします！',romaji:'kiniirimashita!korenishimasu!',en:'I like it! I will take this one!',correct:true},{ja:'まあまあです。',romaji:'maamaadesu.',en:'It is so-so.',correct:false},{ja:'考えます（買わない）。',romaji:'kangaemasu.',en:'I\'ll think about it (won\'t buy).',correct:false},{ja:'他の色はありますか？（10色目）',romaji:'hokanoirohaarimasuka?',en:'Are there other colors? (10th color)',correct:false}],
+       feedback:'「気に入りました！これにします！」— 購入決断フレーズ！ ショッピングクリア！🛍️'}
+    ]
+  },
+  {
+    id:'airport',icon:'✈️',title:'空港でピンチ！',sub:'乗り遅れそう！走れ！',
+    color:'linear-gradient(135deg,#1a2a5e,#4D96FF)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'✈️',ja:'ご搭乗のフライトはどちらですか？',en:'What flight are you boarding?'}],
+       question:'東京行きJL123便だと伝える。なんと言う？',questionEn:'Your flight is JL123 to Tokyo. What do you say?',
+       choices:[{ja:'東京行きのJL123便です。',romaji:'toukyouyukinojiieruhyakunijuusanbindesu.',en:'It is JL123 to Tokyo.',correct:true},{ja:'飛行機です。',romaji:'hikoukidesu.',en:'An airplane.',correct:false},{ja:'空港にいます。',romaji:'kuukouniimasu.',en:'I am at the airport.',correct:false},{ja:'どこでもいいです。',romaji:'dokodemoiidesu.',en:'Anywhere is fine.',correct:false}],
+       feedback:'「〜行きの〜便です」— フライト確認の基本フレーズ！✈️'},
+      {dialogue:[{side:'left',avatar:'✈️',ja:'搭乗時刻は14時で、現在13時55分です。',en:'Boarding time is 14:00, and it is currently 13:55.'}],
+       question:'急いでいると伝える。なんと言う？',questionEn:'Tell them you\'re in a hurry. What do you say?',
+       choices:[{ja:'急いでいます！ゲートはどこですか？',romaji:'isoideimasu!ge-tohadokodesuka?',en:'I am in a hurry! Where is the gate?',correct:true},{ja:'大丈夫です。時間はあります。',romaji:'daijoubudesu.jikanhaarimasu.',en:'It is fine. I have time.',correct:false},{ja:'次の便でいいです。',romaji:'tsuginobindeiidesu.',en:'The next flight is fine.',correct:false},{ja:'走れません。',romaji:'hashiremasen.',en:'I cannot run.',correct:false}],
+       feedback:'「急いでいます！〜はどこですか？」— 緊急時のフレーズ！🏃'},
+      {dialogue:[{side:'left',avatar:'✈️',ja:'D14ゲートです！こちらへどうぞ！',en:'It is Gate D14! Please follow me!'}],
+       question:'案内してもらえることへの感謝。なんと言う？',questionEn:'Express thanks for being guided. What do you say?',
+       choices:[{ja:'ありがとうございます！助かります！',romaji:'arigatougozaimasu!tasukarimasu!',en:'Thank you! You are a lifesaver!',correct:true},{ja:'走るのは嫌いです。',romaji:'hashirunohakiraidesu.',en:'I hate running.',correct:false},{ja:'なぜD14なんですか？',romaji:'nazede-juuyonnandesuka?',en:'Why is it D14?',correct:false},{ja:'大丈夫です、一人で行けます。',romaji:'daijoubudesu, hitorideikemasu.',en:'It is fine, I can go alone.',correct:false}],
+       feedback:'「助かります！」— ピンチの時の感謝フレーズ！🙏'},
+      {dialogue:[{side:'left',avatar:'✈️',ja:'最後のお客様です！パスポートをご提示ください。',en:'You\'re the last passenger! Please show your passport.'}],
+       question:'パスポートを出しながら言う。なんと言う？',questionEn:'As you hand over your passport, what do you say?',
+       choices:[{ja:'はい、こちらです！間に合いました！',romaji:'hai, kochiradesu!maniaimashita!',en:'Yes, here it is! I made it!',correct:true},{ja:'パスポートはどこですか？',romaji:'pasupo-tohadokodesuka?',en:'Where is my passport?',correct:false},{ja:'パスポートが必要ですか？',romaji:'pasupo-togahitsuyoudesuka?',en:'Is a passport necessary?',correct:false},{ja:'写真が古いです。',romaji:'shashingafuruidesu.',en:'The photo is old.',correct:false}],
+       feedback:'「間に合いました！」— ギリギリセーフの喜びフレーズ！😅'},
+      {dialogue:[{side:'left',avatar:'✈️',ja:'お座席はB22です。',en:'Your seat is B22.'}],
+       question:'座席に着いて隣の人に一言。なんと言う？',questionEn:'You take your seat and greet the person next to you. What do you say?',
+       choices:[{ja:'よろしくお願いします。',romaji:'yoroshikuonegaishimasu.',en:'Nice to meet you / Please take care of me.',correct:true},{ja:'荷物を動かしてください。',romaji:'nimotsuougokashitekudasai.',en:'Please move your luggage.',correct:false},{ja:'窓側に移ってもいいですか？',romaji:'madogawaniutsuttemoiidesuka?',en:'Can I move to the window seat?',correct:false},{ja:'（無視してイヤホンをつける）',romaji:'mushi.',en:'(ignores and puts in earphones)',correct:false}],
+       feedback:'「よろしくお願いします」— 隣の人への日本式挨拶！ 空港クリア！✈️'}
+    ]
+  },
+  {
+    id:'phone',icon:'📱',title:'スマホが壊れた！',sub:'修理屋に日本語で状況説明せよ！',
+    color:'linear-gradient(135deg,#2D3748,#4D96FF)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'📱',ja:'どのような症状ですか？',en:'What are the symptoms?'}],
+       question:'画面が割れて動かないと伝える。なんと言う？',questionEn:'The screen cracked and it won\'t work. What do you say?',
+       choices:[{ja:'画面が割れてしまって、動かなくなりました。',romaji:'gamengawareteshimatte, ugokanakunarimashita.',en:'The screen cracked and it stopped working.',correct:true},{ja:'壊れました。',romaji:'kowaremashita.',en:'It broke.',correct:false},{ja:'画面が黒いです。',romaji:'gamengakuroidesu.',en:'The screen is black.',correct:false},{ja:'落としました。',romaji:'otoshimashita.',en:'I dropped it.',correct:false}],
+       feedback:'「〜てしまって、〜なりました」— 経緯を説明する複合フレーズ！📱'},
+      {dialogue:[{side:'left',avatar:'📱',ja:'いつ壊れましたか？',en:'When did it break?'}],
+       question:'今朝お風呂で落としたと正直に言う。なんと言う？',questionEn:'Honestly admit you dropped it in the bath this morning. What do you say?',
+       choices:[{ja:'今朝、うっかりお風呂に落としてしまいました…',romaji:'kesa, ukkariofuroniotoshiteshimaimashita...',en:'This morning, I accidentally dropped it in the bath…',correct:true},{ja:'わかりません。',romaji:'wakarimasen.',en:'I don\'t know.',correct:false},{ja:'突然壊れました。',romaji:'totsuzenkowaremashita.',en:'It suddenly broke.',correct:false},{ja:'製造不良だと思います。',romaji:'seizoufuryoudatoomoimasu.',en:'I think it is a manufacturing defect.',correct:false}],
+       feedback:'「うっかり〜してしまいました」— ミスを正直に伝えるフレーズ！😅'},
+      {dialogue:[{side:'left',avatar:'📱',ja:'水濡れは保証対象外です。修理費用は3万円です。',en:'Water damage is not covered. Repair cost is 30,000 yen.'}],
+       question:'高いが仕方ないと受け入れる。なんと言う？',questionEn:'It\'s expensive but unavoidable. What do you say?',
+       choices:[{ja:'高いですね…でも仕方ないですね。お願いします。',romaji:'takaidesune...demoshikatanaidesune.onegaishimasu.',en:'That is expensive… but it cannot be helped. Please go ahead.',correct:true},{ja:'高すぎます！返金してください！',romaji:'takasugimasu!henkinshitekudasai!',en:'Too expensive! Please refund me!',correct:false},{ja:'自分で直します。',romaji:'jibundenaoshimasu.',en:'I will fix it myself.',correct:false},{ja:'お風呂禁止にします。',romaji:'ofurokinshinishimasu.',en:'I will ban myself from the bath.',correct:false}],
+       feedback:'「仕方ないですね」— 諦めと受容を示す大人のフレーズ！💸'},
+      {dialogue:[{side:'left',avatar:'📱',ja:'データのバックアップはお取りでしたか？',en:'Did you have a data backup?'}],
+       question:'バックアップしていなかった…どう言う？',questionEn:'You didn\'t have a backup… What do you say?',
+       choices:[{ja:'していませんでした…大切な写真が…',romaji:'shiteimasendeshita...taisetsunashashinga...',en:'I didn\'t… there were important photos…',correct:true},{ja:'もちろんです！',romaji:'mochirondesu!',en:'Of course!',correct:false},{ja:'バックアップって何ですか？',romaji:'bakkuapputtenandesuka?',en:'What is a backup?',correct:false},{ja:'写真は少なかったです。',romaji:'shashinhasukunakattadesu.',en:'There were only a few photos.',correct:false}],
+       feedback:'「していませんでした…」— 後悔が伝わる表現！😢'},
+      {dialogue:[{side:'left',avatar:'📱',ja:'データ復旧を試みることはできますが、保証はできません。',en:'We can try data recovery, but we cannot guarantee it.'}],
+       question:'試してほしいとお願いする。なんと言う？',questionEn:'Ask them to please try. What do you say?',
+       choices:[{ja:'ぜひ試してみてください！お願いします！',romaji:'zehitameshitemitekudasai!onegaishimasu!',en:'Please do try! I am begging you!',correct:true},{ja:'保証がないなら要りません。',romaji:'hoshouganainarairimasen.',en:'If there\'s no guarantee, I don\'t need it.',correct:false},{ja:'絶対に直してください。',romaji:'zettaininaoshitekudasai.',en:'Please definitely fix it.',correct:false},{ja:'無料ですか？',romaji:'muryoudesuka?',en:'Is it free?',correct:false}],
+       feedback:'「ぜひ試してみてください！」— スマホクリア！📱'}
+    ]
+  },
+  {
+    id:'cooking',icon:'🍳',title:'料理教室で奮闘',sub:'日本料理を習う！先生の言葉が難しい…',
+    color:'linear-gradient(135deg,#FF9F43,#6BCB77)',
+    steps:[
+      {dialogue:[{side:'left',avatar:'👩‍🍳',ja:'今日は出汁の取り方から教えます。',en:'Today I will teach you how to make dashi.'}],
+       question:'出汁を知らないと正直に言う。なんと言う？',questionEn:'You\'ve never heard of dashi. What do you honestly say?',
+       choices:[{ja:'あの、出汁って何ですか？初めて聞きました。',romaji:'ano, dashittenandesuka?hajimetekikimashita.',en:'Um, what is dashi? I\'ve never heard of it.',correct:true},{ja:'知っています！（嘘）',romaji:'shitteimasu!',en:'I know it! (lie)',correct:false},{ja:'難しそうですね。',romaji:'muzukashisoudesune.',en:'That sounds difficult.',correct:false},{ja:'スープのことですか？',romaji:'su-punokotodesuka?',en:'Is it soup?',correct:false}],
+       feedback:'「〜って何ですか？」— 知らないことを素直に聞くフレーズ！🍜'},
+      {dialogue:[{side:'left',avatar:'👩‍🍳',ja:'昆布を30分浸してから弱火で煮てください。',en:'Soak the kelp for 30 minutes, then simmer on low heat.'}],
+       question:'弱火の加減がわからないと言う。なんと言う？',questionEn:'You don\'t know what \'low heat\' means. What do you say?',
+       choices:[{ja:'すみません、弱火はどのくらいですか？',romaji:'sumimasen, yowabihadonokuraidesuka?',en:'Excuse me, how low is "low heat"?',correct:true},{ja:'強火でいいですか？',romaji:'tsuyobideiidesuka?',en:'Is high heat okay?',correct:false},{ja:'火は使いません（怖い）。',romaji:'hihatsukaimasen.',en:'I won\'t use fire (scared).',correct:false},{ja:'電子レンジを使います。',romaji:'denshirenjiotsukaimasu.',en:'I will use the microwave.',correct:false}],
+       feedback:'「〜はどのくらいですか？」— 曖昧な指示を確認するフレーズ！🔥'},
+      {dialogue:[{side:'left',avatar:'👩‍🍳',ja:'味見してみてください。',en:'Please try tasting it.'}],
+       question:'少し薄いと思う。なんと言う？',questionEn:'You think it tastes a bit weak. What do you say?',
+       choices:[{ja:'少し薄いような気がするのですが、いかがでしょうか？',romaji:'sukoshiusuiyounakigasurunodesuga, ikagadeshouka?',en:'I feel like it might be a little thin, how does it seem?',correct:true},{ja:'まずいです。',romaji:'mazuidesu.',en:'It does not taste good.',correct:false},{ja:'おいしいです（薄いけど）。',romaji:'oishiidesu.',en:'It is delicious (even though thin).',correct:false},{ja:'醤油をかけます。',romaji:'shouyuokakemasu.',en:'I will pour soy sauce on it.',correct:false}],
+       feedback:'「〜ような気がするのですが」— 柔らかく意見を言うフレーズ！🧂'},
+      {dialogue:[{side:'left',avatar:'👩‍🍳',ja:'その通り！少し塩を足してみましょう。',en:'Exactly! Let\'s add a little salt.'}],
+       question:'先生の指摘が嬉しい。なんと言う？',questionEn:'You\'re happy the teacher agreed. What do you say?',
+       choices:[{ja:'良かった！感覚が合っていて嬉しいです！',romaji:'yokatta!kankakugaatteiteureshiidesu!',en:'I am glad my intuition was right!',correct:true},{ja:'やはりそうでしたか（知ってた風）。',romaji:'yaharisoudeshitaka.',en:'As I thought (acting like I knew).',correct:false},{ja:'塩は体に悪いです。',romaji:'shiohakaradaniwaruidesu.',en:'Salt is bad for you.',correct:false},{ja:'先生が正しいですね。',romaji:'senseigatadashiidesune.',en:'Teacher is right.',correct:false}],
+       feedback:'「感覚が合っていて嬉しいです！」— 料理センスを喜ぶフレーズ！🌟'},
+      {dialogue:[{side:'left',avatar:'👩‍🍳',ja:'完成です！召し上がってみてください。',en:'It\'s done! Please try eating it.'}],
+       question:'本格的な味に感動する。なんと言う？',questionEn:'You\'re amazed by the authentic flavor. What do you say?',
+       choices:[{ja:'本格的な味ですね！信じられないほどおいしいです！',romaji:'honkakutekinaajidesune!shinjirarenaihodooishiidesu!',en:'This is an authentic flavor! It is unbelievably delicious!',correct:true},{ja:'家で作れる気がしません。',romaji:'iedetsukurerukigashimasen.',en:'I don\'t think I can make this at home.',correct:false},{ja:'もっと塩が必要ですね。',romaji:'mottoshiogahitsuyoudesune.',en:'More salt is needed.',correct:false},{ja:'外食した方が早いですね。',romaji:'gaishokushitahougahayaidesune.',en:'Eating out would be faster.',correct:false}],
+       feedback:'「信じられないほどおいしいです！」— 料理教室クリア！🍳'}
+    ]
+  }
+];
+
+let currentSceneIdx = 0, currentStepIdx = 0, convoScore = 0, answered = false;
+
+function buildSceneSelector() {
+  const el = document.getElementById('scene-selector');
+  if (!el) return;
+  let html = '';
+  for (let i = 0; i < scenes.length; i++) {
+    const s = scenes[i];
+    const active = i === currentSceneIdx ? ' active-scene' : '';
+    html += '<div class="scene-card' + active + '" onclick="selectScene(' + i + ')">';
+    html += '<div class="sc-icon">' + s.icon + '<\/div>';
+    html += '<div class="sc-title">' + s.title + '<\/div>';
+    html += '<div class="sc-sub">' + s.sub + '<\/div>';
+    html += '<\/div>';
+  }
+  el.innerHTML = html;
+}
+
+function exitConvoGame() {
+  document.getElementById('convo-game').style.display = 'none';
+  document.getElementById('convo-scene-picker').style.display = 'block';
+  document.getElementById('sec-convo').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function selectScene(idx) {
+  currentSceneIdx = idx; currentStepIdx = 0; convoScore = 0; answered = false;
+  buildSceneSelector();
+  document.getElementById('convo-scene-picker').style.display = 'none';
+  document.getElementById('convo-game').style.display = 'block';
+  document.getElementById('scene-complete').classList.remove('show');
+  document.getElementById('sec-convo').scrollIntoView({behavior:'smooth', block:'start'});
+  renderConvoStep();
+}
+
+function renderConvoStep() {
+  const scene = scenes[currentSceneIdx];
+  const step = scene.steps[currentStepIdx];
+  document.getElementById('convo-scene-header').style.background = scene.color;
+  document.getElementById('convo-scene-header').innerHTML = '<span style="font-size:24px">' + scene.icon + '<\/span> ' + scene.title;
+  let dotHtml = '';
+  for (let i = 0; i < scene.steps.length; i++) {
+    const cls = i < currentStepIdx ? 'done' : i === currentStepIdx ? 'current' : '';
+    dotHtml += '<div class="convo-step-dot ' + cls + '"><\/div>';
+  }
+  document.getElementById('convo-dots').innerHTML = dotHtml;
+  document.getElementById('convo-step-label').textContent = 'Scene ' + (currentStepIdx+1) + '/' + scene.steps.length;
+  document.getElementById('convo-score-label').textContent = '⭐ ' + convoScore + 'pts';
+  const body = document.getElementById('convo-scene-body');
+  let bHtml = '';
+  for (let i = 0; i < step.dialogue.length; i++) {
+    const d = step.dialogue[i];
+    bHtml += '<div class="bubble-row ' + d.side + '">';
+    bHtml += '<div class="bubble-avatar">' + d.avatar + '<\/div>';
+    bHtml += '<div class="bubble ' + d.side + (d.hidden ? ' hidden-ja' : '') + '">';
+    bHtml += '<span class="ja">' + d.ja + '<\/span><span class="en">' + d.en + '<\/span>';
+    bHtml += '<\/div><\/div>';
+  }
+  body.innerHTML = bHtml;
+  const qDiv = document.createElement('div');
+  qDiv.style.cssText = 'font-size:13px;font-weight:800;color:var(--text2);padding:8px 12px;background:var(--pink-pale);border-radius:10px;margin-top:4px;';
+  qDiv.textContent = '💭 ' + step.questionEn;
+  body.appendChild(qDiv);
+  answered = false;
+  document.getElementById('convo-result').className = 'convo-result';
+  document.getElementById('convo-result').textContent = '';
+  let cHtml = '';
+  for (let i = 0; i < step.choices.length; i++) {
+    const c = step.choices[i];
+    cHtml += '<button class="convo-choice" onclick="answerConvo(' + i + ')">';
+    cHtml += '<span class="ja-ans">' + c.ja + '<\/span><span class="en-ans" id="rom-' + currentSceneIdx + '-' + currentStepIdx + '-' + i + '">' + (c.romaji || '...') + '<\/span>';
+    cHtml += '<\/button>';
+  }
+  document.getElementById('convo-choices').innerHTML = cHtml;
+  document.getElementById('scene-complete').classList.remove('show');
+  // Update romaji via Google IME API for any kanji still in display
+  updateChoiceRomaji(currentSceneIdx, currentStepIdx, step.choices);
+}
+
+function answerConvo(idx) {
+  if (answered) return;
+  answered = true;
+  const step = scenes[currentSceneIdx].steps[currentStepIdx];
+  const choice = step.choices[idx];
+  const btns = document.querySelectorAll('.convo-choice');
+  btns.forEach(function(b, i) {
+    b.onclick = null;
+    if (step.choices[i].correct) b.classList.add('correct');
+    else if (i === idx && !choice.correct) b.classList.add('wrong');
+  });
+  const result = document.getElementById('convo-result');
+  if (choice.correct) {
+    result.className = 'convo-result ok show';
+    result.textContent = '✅ ' + step.feedback;
+    convoScore += 20;
+    gainXP(15, window.innerWidth/2, 300);
+  } else {
+    result.className = 'convo-result ng show';
+    const correct = step.choices.find(function(c){ return c.correct; });
+    result.textContent = '❌ 惜しい！正解: ' + correct.ja;
+    gainXP(3, window.innerWidth/2, 300);
+  }
+  document.getElementById('convo-score-label').textContent = '⭐ ' + convoScore + 'pts';
+  setTimeout(function() {
+    currentStepIdx++;
+    if (currentStepIdx >= scenes[currentSceneIdx].steps.length) showSceneComplete();
+    else renderConvoStep();
+  }, 1800);
+}
+
+function showSceneComplete() {
+  const scene = scenes[currentSceneIdx];
+  const pct = convoScore / (scene.steps.length * 20) * 100;
+  const emoji = pct === 100 ? '🏆' : pct >= 60 ? '🎉' : '💪';
+  document.getElementById('sc-emoji').textContent = emoji;
+  document.getElementById('sc-title').textContent = scene.title + ' Clear!';
+  document.getElementById('sc-msg').textContent = pct === 100 ? 'Perfect score! Amazing!!' : convoScore + ' pts! Try again!';
+  document.getElementById('scene-complete').classList.add('show');
+  document.getElementById('convo-choices').innerHTML = '';
+  document.getElementById('convo-result').className = 'convo-result';
+  if (pct === 100) showPopup('🏆 Perfect!', scene.title + ' — all correct! Amazing!');
+}
+
+function nextConvoScene() { selectScene((currentSceneIdx + 1) % scenes.length); }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  injectQuestUI();
+  buildKanaGrid();
+  buildQuest();
+  loadFC(0);
+  initBattle();
+  updateXPBar();
+  buildSceneSelector();
+  if (window.innerWidth >= 768) setView('pc');
+});
+</script>
+</body>
+</html>
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
